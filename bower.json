@@ -1,0 +1,22 @@
+{
+  "name": "clubislive-api-client",
+  "version": "0.1.0",
+  "homepage": "https://github.com/dave-islive/clubislive-api-client",
+  "authors": [
+    "dave-islive <dave@islivebv.nl>"
+  ],
+  "description": "An interface to the clubIslive api",
+  "main": "api.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
