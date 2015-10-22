@@ -318,10 +318,10 @@
           labelElement.setAttribute('for', id);
           labelElement.textContent = input.label || input.name;
 
-          inputElement.id        = id;
-          inputElement.name      = input.name;
+          inputElement.id          = id;
+          inputElement.name        = input.name;
           inputElement.placeholder = input.placeholder || input.name;
-          inputElement.type      = input.type || 'text';
+          inputElement.type        = input.type || 'text';
           inputElement.value       = input.value || 'wawah';
           inputElement.setAttribute('required', input.required || 0);
 
