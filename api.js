@@ -141,6 +141,9 @@
         }
         return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
       }
+    },
+    schedule: {
+      fetch: [GENERATE_GET_APPEND_PARAM_TO_URL, '/schedule/']
     }
   };
 
@@ -235,7 +238,7 @@
       var c        = this.client(),
           paramStr = this.serialize(params);
 
-      c.open(method, (this.url + url) , true);
+      c.open(method, this.url + url + (method === 'GET' && paramStr.length > 0 ? '?' + paramStr : ''), true);
 
       c.setRequestHeader('x-apikey',  this.apiKey);
       c.setRequestHeader('x-version', this.apiVersion);
@@ -275,7 +278,7 @@
         callback(error, response);
       };
 
-      c.send(paramStr);
+      c.send(method === 'POST' && paramStr.length > 0 ? paramStr : null);
     },
 
     /**
