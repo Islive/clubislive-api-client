@@ -143,7 +143,7 @@
       }
     },
     schedule: {
-      fetch: [GENERATE_GET_APPEND_PARAM_TO_URL, '/schedule/']
+      fetch: [GENERATE_GET_APPEND_PARAM_TO_URL, 'schedule/']
     }
   };
 
@@ -213,10 +213,8 @@
         params.testmode = 1;
       }
 
-      // Urls have to start with a slash since we do not have an ending slash in this.url
-      if (url.substr(0,1) !== '/') {
-        url = '/' + url;
-      }
+      // Urls have to start with a slash
+      url = '/' + url;
 
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
       if (this.io) {
@@ -224,13 +222,12 @@
           this.io.socket.get(url, params, function (response) {
             return this.ioCallback(response, callback);
           }.bind(this));
-          return;
-        }
-        if (method === 'POST') {
+        } else if (method === 'POST') {
           this.io.socket.post(url, params, function (response) {
             return this.ioCallback(response, callback);
           }.bind(this));
-          return;
+        } else {
+          throw 'method ' + method + ' not supported';
         }
         return;
       }
