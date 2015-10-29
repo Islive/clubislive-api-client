@@ -1,6 +1,6 @@
 # clubIslive api documentation
 
-This is a quick reference, for the full documentation go to [workingonit](workingonit)
+This is a quick reference, for the full documentation go to [API for clubislive](https://apidocs.clubislive.nl/)
 
 ## notes
 
