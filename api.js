@@ -9,6 +9,7 @@
     module.exports = factory();
   } else {
     // Browser globals
+
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
@@ -28,24 +29,24 @@
       };
     }
 
-    if (!options.url) {
-      options.url = 'https://api.clubislive.nl/';
+    if (!options.url && !options.io) {
+      options.url = 'https://api.clubislive.nl';
     }
 
-    // TODO - test, language
-
-    if (options.url.slice(-1) !== '/') {
-      options.url += '/';
+    // We remove leading slash
+    if (options.url.slice(-1) === '/') {
+      options.url = options.url.slice(0, -1);
     }
-
-    this.url        = options.url;
-    this.apiKey     = apiKey;
-    this.apiVersion = '1';
-    this.language   = options.language || 'en';
 
     if (options.testMode) {
       this.testMode = true;
     }
+
+    this.io         = options.io;
+    this.url        = options.url;
+    this.apiKey     = apiKey;
+    this.apiVersion = '1';
+    this.language   = options.language || 'en';
 
     // Loop through all api methods
     for (var objectName in apiMethods) {
@@ -140,6 +141,9 @@
         }
         return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
       }
+    },
+    schedule: {
+      fetch: [GENERATE_GET_APPEND_PARAM_TO_URL, 'schedule/']
     }
   };
 
@@ -169,6 +173,20 @@
       return str.join('&');
     },
 
+    ioCallback: function (response, callback) {
+      if (!response) {
+        return callback('no_response', response);
+      }
+      if (response.Errors) {
+        return callback(response.Errors, response);
+      }
+      if (response.status && response.status != 200) {
+        return callback(response.status, response);
+      }
+
+      callback(null, response);
+    },
+
     request: function(method, url, params, callback) {
       if (typeof params === 'function') {
         callback = params;
@@ -195,10 +213,29 @@
         params.testmode = 1;
       }
 
+      // Urls have to start with a slash
+      url = '/' + url;
+
+      // Do we have a sails.io instance? if we do, let it handle the request and bail out;
+      if (this.io) {
+        if (method === 'GET') {
+          this.io.socket.get(url, params, function (response) {
+            return this.ioCallback(response, callback);
+          }.bind(this));
+        } else if (method === 'POST') {
+          this.io.socket.post(url, params, function (response) {
+            return this.ioCallback(response, callback);
+          }.bind(this));
+        } else {
+          throw 'method ' + method + ' not supported';
+        }
+        return;
+      }
+
       var c        = this.client(),
           paramStr = this.serialize(params);
 
-      c.open(method, (this.url + url) , true);
+      c.open(method, this.url + url + (method === 'GET' && paramStr.length > 0 ? '?' + paramStr : ''), true);
 
       c.setRequestHeader('x-apikey',  this.apiKey);
       c.setRequestHeader('x-version', this.apiVersion);
@@ -227,10 +264,18 @@
           error.readyState = c.readyState;
         }
 
+        if (error == null && c.status != 200) {
+          error = c.status;
+          response = {
+            status      : c.status,
+            responseText: c.responseText
+          };
+        }
+
         callback(error, response);
       };
 
-      c.send(paramStr);
+      c.send(method === 'POST' && paramStr.length > 0 ? paramStr : null);
     },
 
     /**
