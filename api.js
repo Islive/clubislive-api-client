@@ -13,9 +13,9 @@
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
-  const GENERATE_GET                     = 'GENERATE_GET',
-        GENERATE_GET_APPEND_PARAM_TO_URL = 'GENERATE_GET_APPEND_PARAM_TO_URL',
-        GENERATE_POST                    = 'GENERATE_POST';
+  const GENERATE_GET                      = 'GENERATE_GET',
+        GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
+        GENERATE_POST                     = 'GENERATE_POST';
 
   function Api(apiKey, options) {
 
@@ -42,6 +42,7 @@
       this.testMode = true;
     }
 
+    this.token      = options.token || null;
     this.io         = options.io;
     this.url        = options.url;
     this.apiKey     = apiKey;
@@ -79,7 +80,7 @@
               return Api.prototype.get.apply(this, params);
             }
 
-            if (routeDetails[0] === GENERATE_GET_APPEND_PARAM_TO_URL) {
+            if (routeDetails[0] === GENERATE_GET_APPEND_PARAM1_TO_URL) {
               if (params[0].slice(-1) !== '/') {
                 params[0] += '/';
               }
@@ -105,20 +106,20 @@
 
   var apiMethods = {
     performer: {
-      checkUsername   : [GENERATE_GET_APPEND_PARAM_TO_URL, 'performer/check-username/'],
+      checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
       register        : [GENERATE_POST, 'performer'],
       login           : function (username, password, callback) {
         return this.user.login('performer', username, password, callback);
       },
       search          : GENERATE_GET,
-      searchByUsername: [GENERATE_GET_APPEND_PARAM_TO_URL, 'performer/search/'],
+      searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
       update          : [GENERATE_POST, 'performer/update'],
       forgotPassword: function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
       }
     },
     user: {
-      checkUsername : [GENERATE_GET_APPEND_PARAM_TO_URL, 'user/check-username/'],
+      checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
       register      : [GENERATE_POST, 'user'],
       login         : function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
@@ -140,10 +141,15 @@
           role     = 'user';
         }
         return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
-      }
+      },
+      fetchOwn: [GENERATE_GET, 'user'],
+      register: [GENERATE_POST, 'user']
     },
     schedule: {
-      fetch: [GENERATE_GET_APPEND_PARAM_TO_URL, 'schedule/']
+      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    },
+    message: {
+      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/']
     }
   };
 
@@ -211,6 +217,10 @@
 
       if (this.testMode && !params.testmode) {
         params.testmode = 1;
+      }
+
+      if (!params.token && this.token) {
+        params.token = this.token;
       }
 
       // Urls have to start with a slash
