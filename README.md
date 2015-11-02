@@ -4,7 +4,7 @@ This is a quick reference, for the full documentation go to [API for clubislive]
 
 ## notes
 
-## properties
+### properties
 These can be set during initialization in an options object, or afterwards
 
 * string url

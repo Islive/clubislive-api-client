@@ -169,12 +169,29 @@
     serialize: function(obj, prefix) {
       var str = [];
       for(var p in obj) {
-        if (obj.hasOwnProperty(p)) {
-          var k = prefix ? prefix + '[' + p + ']' : p, v = obj[p];
-          str.push(typeof v == 'object' ?
-                     this.serialize(v, k) :
-                   encodeURIComponent(k) + '=' + encodeURIComponent(v));
+        if (!obj.hasOwnProperty(p)) {
+          continue;
         }
+        var k = prefix ? prefix + '[' + p + ']' : p,
+            v = obj[p];
+
+        if (typeof v === 'object') {
+          if (v === null) {
+            // null values have to be kept intact
+            str.push(encodeURIComponent(k) + '=null');
+          } else {
+            str.push(this.serialize(v, k));
+          }
+          continue;
+        }
+
+        if (typeof v === 'boolean') {
+          // boolean's also can't be cast to a string
+          str.push(encodeURIComponent(k) + '=' + v);
+          continue;
+        }
+
+        str.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
       }
       return str.join('&');
     },
@@ -251,7 +268,7 @@
       c.setRequestHeader('x-version', this.apiVersion);
 
       if (method === 'POST') {
-        c.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        c.setRequestHeader('Content-type', 'application/json');
       }
 
       c.onreadystatechange = function() {
@@ -285,7 +302,7 @@
         callback(error, response);
       };
 
-      c.send(method === 'POST' && paramStr.length > 0 ? paramStr : null);
+      c.send(method === 'POST' ? JSON.stringify(params) : null);
     },
 
     /**
