@@ -38,8 +38,8 @@
       options.url = 'https://api.clubislive.nl';
     }
 
-    // We remove leading slash
-    if (options.url.substr(0, 1) === '/') {
+    // We remove trailing slash
+    if (options.url.substr(-1) === '/') {
       options.url = options.url.slice(0, -1);
     }
 
@@ -86,7 +86,7 @@
             }
 
             if (routeDetails[0] === GENERATE_GET_APPEND_PARAM1_TO_URL) {
-              if (params[0].substr(0, 1) !== '/') {
+              if (params[0].substr(-1) !== '/') {
                 params[0] += '/';
               }
               params[0] += params[1];
