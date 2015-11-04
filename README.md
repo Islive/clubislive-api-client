@@ -53,8 +53,14 @@ If any error is encounterd, **error** will be set
   * **resetPassword** (string hash, string id, string password, function callback)
   * **resendValidationMail** (function callback)
 
-* schedule
-  * **fetch** (string username, function callback)
+* agenda
+  * **fetchSchedule** (string username, function callback)
+
+* news
+  * **fetch** (function callback)
 
 * message
-  * **fetch** (string username, object params, function callback)
+  * **fetchByUsername** (string username, object params, function callback)
+  * **inbox** ([*number page*], function callback)
+  * **compose** (string to, string title, string content, function callback)
+  * **reply** (string to, string hash, string content, function callback)

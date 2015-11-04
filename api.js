@@ -18,7 +18,12 @@
         GENERATE_POST                     = 'GENERATE_POST';
 
   function Api(apiKey, options) {
+    // When this function is called without the new keyword, return a new copy of Api
+    if (!(this instanceof Api)) {
+      return new Api(apiKey, options);
+    }
 
+    // Options has to be an object
     if (!options) {
       options = {};
     }
@@ -34,7 +39,7 @@
     }
 
     // We remove leading slash
-    if (options.url.slice(-1) === '/') {
+    if (options.url.substr(0, 1) === '/') {
       options.url = options.url.slice(0, -1);
     }
 
@@ -81,7 +86,7 @@
             }
 
             if (routeDetails[0] === GENERATE_GET_APPEND_PARAM1_TO_URL) {
-              if (params[0].slice(-1) !== '/') {
+              if (params[0].substr(0, 1) !== '/') {
                 params[0] += '/';
               }
               params[0] += params[1];
@@ -113,7 +118,7 @@
       },
       search          : GENERATE_GET,
       searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
-      update          : [GENERATE_POST, 'performer/update'],
+      update          : GENERATE_POST,
       forgotPassword: function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
       }
@@ -132,7 +137,7 @@
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
       fetchOwn      : [GENERATE_GET, 'user'],
-      update        : [GENERATE_POST, 'user/update'],
+      update        : GENERATE_POST,
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
@@ -148,11 +153,32 @@
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email']
     },
-    schedule: {
-      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    agenda: {
+      fetchSchedule: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    },
+    news: {
+      fetch: [GENERATE_GET, 'news']
     },
     message: {
-      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/']
+      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
+      inbox: function (page, callback) {
+        if (!callback) {
+          callback = page;
+          page     = 1;
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        return this.get('message/inbox', { page: page }, callback)
+      },
+      compose: function (to, title, content, callback) {
+        return this.post('message', { to: to, message: { title: title, content: content } }, callback)
+      },
+      reply: function (to, hash, content, callback) {
+        return this.post('message/' + hash, { to: to, message: { content: content } }, callback)
+      }
     }
   };
 
@@ -206,7 +232,7 @@
       if (response.Errors) {
         return callback(response.Errors, response);
       }
-      if (response.status && response.status != 200) {
+      if (response.status && response.status != 200 && response.status != 'ok') {
         return callback(response.status, response);
       }
 
