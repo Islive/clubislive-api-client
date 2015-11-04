@@ -131,6 +131,7 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
+      fetchOwn      : [GENERATE_GET, 'user'],
       update        : [GENERATE_POST, 'user/update'],
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
@@ -142,8 +143,10 @@
         }
         return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
       },
-      fetchOwn: [GENERATE_GET, 'user'],
-      register: [GENERATE_POST, 'user']
+      resetPassword: function (hash, id, password, callback) {
+        return this.post('user/reset-password', { hash: hash, id: id, password: password }, callback);
+      },
+      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email']
     },
     schedule: {
       fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
@@ -241,7 +244,9 @@
       }
 
       // Urls have to start with a slash
-      url = '/' + url;
+      if (url.substr(0,1) !== '/') {
+        url = '/' + url;
+      }
 
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
       if (this.io) {

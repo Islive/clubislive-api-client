@@ -44,13 +44,14 @@ If any error is encounterd, **error** will be set
   * **forgotPassword** (string username, string email, function callback)
 
 * user
-  * **register** (object form, function callback)
-  * **fetchOwn** (object params, function callback)
   * **checkUsername** (string username, function callback)
   * **register** (object form, function callback)
   * **login** ([*string role*], string username, string password, function callback)
+  * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
   * **forgotPassword** ([*string role*], string username, string email, function callback)
+  * **resetPassword** (string hash, string id, string password, function callback)
+  * **resendValidationMail** (function callback)
 
 * schedule
   * **fetch** (string username, function callback)
