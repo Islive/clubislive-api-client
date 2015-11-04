@@ -13,9 +13,9 @@
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
-  const GENERATE_GET                     = 'GENERATE_GET',
-        GENERATE_GET_APPEND_PARAM_TO_URL = 'GENERATE_GET_APPEND_PARAM_TO_URL',
-        GENERATE_POST                    = 'GENERATE_POST';
+  const GENERATE_GET                      = 'GENERATE_GET',
+        GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
+        GENERATE_POST                     = 'GENERATE_POST';
 
   function Api(apiKey, options) {
 
@@ -42,6 +42,7 @@
       this.testMode = true;
     }
 
+    this.token      = options.token || null;
     this.io         = options.io;
     this.url        = options.url;
     this.apiKey     = apiKey;
@@ -79,7 +80,7 @@
               return Api.prototype.get.apply(this, params);
             }
 
-            if (routeDetails[0] === GENERATE_GET_APPEND_PARAM_TO_URL) {
+            if (routeDetails[0] === GENERATE_GET_APPEND_PARAM1_TO_URL) {
               if (params[0].slice(-1) !== '/') {
                 params[0] += '/';
               }
@@ -105,20 +106,20 @@
 
   var apiMethods = {
     performer: {
-      checkUsername   : [GENERATE_GET_APPEND_PARAM_TO_URL, 'performer/check-username/'],
+      checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
       register        : [GENERATE_POST, 'performer'],
       login           : function (username, password, callback) {
         return this.user.login('performer', username, password, callback);
       },
       search          : GENERATE_GET,
-      searchByUsername: [GENERATE_GET_APPEND_PARAM_TO_URL, 'performer/search/'],
+      searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
       update          : [GENERATE_POST, 'performer/update'],
       forgotPassword: function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
       }
     },
     user: {
-      checkUsername : [GENERATE_GET_APPEND_PARAM_TO_URL, 'user/check-username/'],
+      checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
       register      : [GENERATE_POST, 'user'],
       login         : function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
@@ -130,6 +131,7 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
+      fetchOwn      : [GENERATE_GET, 'user'],
       update        : [GENERATE_POST, 'user/update'],
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
@@ -140,10 +142,17 @@
           role     = 'user';
         }
         return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
-      }
+      },
+      resetPassword: function (hash, id, password, callback) {
+        return this.post('user/reset-password', { hash: hash, id: id, password: password }, callback);
+      },
+      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email']
     },
     schedule: {
-      fetch: [GENERATE_GET_APPEND_PARAM_TO_URL, 'schedule/']
+      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    },
+    message: {
+      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/']
     }
   };
 
@@ -163,12 +172,29 @@
     serialize: function(obj, prefix) {
       var str = [];
       for(var p in obj) {
-        if (obj.hasOwnProperty(p)) {
-          var k = prefix ? prefix + '[' + p + ']' : p, v = obj[p];
-          str.push(typeof v == 'object' ?
-                     this.serialize(v, k) :
-                   encodeURIComponent(k) + '=' + encodeURIComponent(v));
+        if (!obj.hasOwnProperty(p)) {
+          continue;
         }
+        var k = prefix ? prefix + '[' + p + ']' : p,
+            v = obj[p];
+
+        if (typeof v === 'object') {
+          if (v === null) {
+            // null values have to be kept intact
+            str.push(encodeURIComponent(k) + '=null');
+          } else {
+            str.push(this.serialize(v, k));
+          }
+          continue;
+        }
+
+        if (typeof v === 'boolean') {
+          // boolean's also can't be cast to a string
+          str.push(encodeURIComponent(k) + '=' + v);
+          continue;
+        }
+
+        str.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
       }
       return str.join('&');
     },
@@ -213,8 +239,14 @@
         params.testmode = 1;
       }
 
+      if (!params.token && this.token) {
+        params.token = this.token;
+      }
+
       // Urls have to start with a slash
-      url = '/' + url;
+      if (url.substr(0,1) !== '/') {
+        url = '/' + url;
+      }
 
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
       if (this.io) {
@@ -241,7 +273,7 @@
       c.setRequestHeader('x-version', this.apiVersion);
 
       if (method === 'POST') {
-        c.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        c.setRequestHeader('Content-type', 'application/json');
       }
 
       c.onreadystatechange = function() {
@@ -275,7 +307,7 @@
         callback(error, response);
       };
 
-      c.send(method === 'POST' && paramStr.length > 0 ? paramStr : null);
+      c.send(method === 'POST' ? JSON.stringify(params) : null);
     },
 
     /**

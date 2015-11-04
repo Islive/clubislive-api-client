@@ -4,6 +4,22 @@ This is a quick reference, for the full documentation go to [API for clubislive]
 
 ## notes
 
+### properties
+These can be set during initialization in an options object, or afterwards
+
+* string url
+  * Url of api*(when using sails.io this will have no effect after initialization)*
+* string apiKey
+  * The api key that has been assigned to you, this will be supplied on each request
+* object io
+  * A sails.io instance (Has to be initialized before supplying it)
+* string language
+  * 2 character country code for the preferred language
+* bool testMode
+  * During testMode, data will not be changed
+* string token
+  * A login token, which will be sent on every request if supplied
+
 ### callbacks
 
 Callbacks always have 2 arguments; **error** and **result**.
@@ -31,8 +47,14 @@ If any error is encounterd, **error** will be set
   * **checkUsername** (string username, function callback)
   * **register** (object form, function callback)
   * **login** ([*string role*], string username, string password, function callback)
+  * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
   * **forgotPassword** ([*string role*], string username, string email, function callback)
+  * **resetPassword** (string hash, string id, string password, function callback)
+  * **resendValidationMail** (function callback)
 
 * schedule
   * **fetch** (string username, function callback)
+
+* message
+  * **fetch** (string username, object params, function callback)
