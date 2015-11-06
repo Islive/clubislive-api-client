@@ -64,3 +64,10 @@ If any error is encounterd, **error** will be set
   * **inbox** ([*number page*], function callback)
   * **compose** (string to, string title, string content, function callback)
   * **reply** (string to, string hash, string content, function callback)
+
+* follow
+  * **isFollowing** (number userId, function callback)
+  * **fetchAll** (function callback)
+  * **fetchFollowers** (function callback)
+  * **follow** (number userId, function callback)
+  * **unfollow** (number userId, function callback)

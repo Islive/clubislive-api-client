@@ -179,6 +179,15 @@
       reply: function (to, hash, content, callback) {
         return this.post('message/' + hash, { to: to, message: { content: content } }, callback)
       }
+    },
+    follow: {
+      isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
+      fetchAll         : [GENERATE_GET, 'follow/all'],
+      fetchAllFollowers: [GENERATE_GET, 'followers'],
+      follow           : function (userId, callback) {
+        return this.post('follow', { userId: userId }, callback);
+      },
+      unfollow: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
     }
   };
 
