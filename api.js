@@ -116,6 +116,7 @@
       login           : function (username, password, callback) {
         return this.user.login('performer', username, password, callback);
       },
+      fetchOwn        : [GENERATE_GET, 'performer'],
       search          : GENERATE_GET,
       searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
       update          : GENERATE_POST,
