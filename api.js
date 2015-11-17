@@ -13,8 +13,7 @@
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
-  const QUEUE_DELAY                       = 50,
-        GENERATE_GET                      = 'GENERATE_GET',
+  const GENERATE_GET                      = 'GENERATE_GET',
         GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
         GENERATE_POST                     = 'GENERATE_POST';
 
@@ -234,17 +233,17 @@
       this.requestQueue.push([method, url, params, callback]);
 
       if (this.requestsRunning === 0) {
-        this.startQueue(true);
+        this.startQueue();
       }
     },
 
     // Start the queue async
-    startQueue: function (startImmediate) {
+    startQueue: function () {
       if (this.requestsRunning > 0 || this.requestQueue.length === 0) {
         return;
       }
 
-      setTimeout(this.processQueue.bind(this), startImmediate ? 0 : QUEUE_DELAY);
+      setTimeout(this.processQueue.bind(this), 0);
     },
 
     // Process a queue item and advance to the next
