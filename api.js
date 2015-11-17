@@ -13,7 +13,8 @@
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
-  const GENERATE_GET                      = 'GENERATE_GET',
+  const QUEUE_DELAY                       = 50,
+        GENERATE_GET                      = 'GENERATE_GET',
         GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
         GENERATE_POST                     = 'GENERATE_POST';
 
@@ -53,6 +54,12 @@
     this.apiKey     = apiKey;
     this.apiVersion = '1';
     this.language   = options.language || 'en';
+    this.noQueue    = options.noQueue || false;
+
+    // We use a queue when noQueue is omitted from options
+    if (!this.noQueue) {
+        this.initQueue();
+    }
 
     // Loop through all api methods
     for (var objectName in apiMethods) {
@@ -193,6 +200,74 @@
   };
 
   Api.prototype = {
+
+    /**
+     *  Queue stuff
+     */
+
+    // Init the queue, overrides some functions so everything must pass through the queue
+    initQueue: function () {
+      this.doRequest       = this.request;
+      this.request         = this.addToQueue;
+      this.requestQueue    = [];
+      this.requestsRunning = 0;
+    },
+
+    addToQueue: function (method, url, params, callback) {
+      if (typeof params === 'function') {
+        callback = params;
+        params   = {};
+      }
+
+      if (params.skipQueue) {
+        delete params.skipQueue;
+        this.requestsRunning++;
+        return this.doRequest(method, url, params, function (error, result) {
+          this.requestsRunning--;
+          setTimeout(function () {
+            callback(error, result);
+          }, 0);
+          this.startQueue();
+        }.bind(this));
+      }
+
+      this.requestQueue.push([method, url, params, callback]);
+
+      if (this.requestsRunning === 0) {
+        this.startQueue(true);
+      }
+    },
+
+    // Start the queue async
+    startQueue: function (startImmediate) {
+      if (this.requestsRunning > 0 || this.requestQueue.length === 0) {
+        return;
+      }
+
+      setTimeout(this.processQueue.bind(this), startImmediate ? 0 : QUEUE_DELAY);
+    },
+
+    // Process a queue item and advance to the next
+    processQueue: function () {
+      if (this.requestQueue.length === 0 || this.requestsRunning > 0) {
+        return;
+      }
+
+      this.requestsRunning++;
+
+      var currentRequest = this.requestQueue.shift();
+
+      currentRequest[3] = currentRequest[3] || function () {};
+
+      this.doRequest.call(this, currentRequest[0], currentRequest[1], currentRequest[2], function (error, result) {
+        this.requestsRunning--;
+        setTimeout(function () {
+          currentRequest[3](error, result);
+        }, 0);
+        this.startQueue();
+      }.bind(this));
+    },
+
     client: function() {
       var xhr = new XMLHttpRequest();
 
@@ -277,6 +352,11 @@
 
       if (!params.token && this.token) {
         params.token = this.token;
+      }
+
+      // Remove skipQueue if present, because the queue is not enabled if it's still here
+      if (params.skipQueue) {
+        delete params.skipQueue;
       }
 
       // Urls have to start with a slash
