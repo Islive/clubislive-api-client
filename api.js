@@ -18,7 +18,12 @@
         GENERATE_POST                     = 'GENERATE_POST';
 
   function Api(apiKey, options) {
+    // When this function is called without the new keyword, return a new copy of Api
+    if (!(this instanceof Api)) {
+      return new Api(apiKey, options);
+    }
 
+    // Options has to be an object
     if (!options) {
       options = {};
     }
@@ -33,8 +38,8 @@
       options.url = 'https://api.clubislive.nl';
     }
 
-    // We remove leading slash
-    if (options.url.slice(-1) === '/') {
+    // We remove trailing slash
+    if (options.url.substr(-1) === '/') {
       options.url = options.url.slice(0, -1);
     }
 
@@ -48,6 +53,12 @@
     this.apiKey     = apiKey;
     this.apiVersion = '1';
     this.language   = options.language || 'en';
+    this.noQueue    = options.noQueue === true;
+
+    // We use a queue when noQueue is omitted from options
+    if (!this.noQueue) {
+        this.initQueue();
+    }
 
     // Loop through all api methods
     for (var objectName in apiMethods) {
@@ -81,7 +92,7 @@
             }
 
             if (routeDetails[0] === GENERATE_GET_APPEND_PARAM1_TO_URL) {
-              if (params[0].slice(-1) !== '/') {
+              if (params[0].substr(-1) !== '/') {
                 params[0] += '/';
               }
               params[0] += params[1];
@@ -111,9 +122,10 @@
       login           : function (username, password, callback) {
         return this.user.login('performer', username, password, callback);
       },
+      fetchOwn        : [GENERATE_GET, 'performer'],
       search          : GENERATE_GET,
       searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
-      update          : [GENERATE_POST, 'performer/update'],
+      update          : GENERATE_POST,
       forgotPassword: function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
       }
@@ -132,7 +144,7 @@
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
       fetchOwn      : [GENERATE_GET, 'user'],
-      update        : [GENERATE_POST, 'user/update'],
+      update        : GENERATE_POST,
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
@@ -148,15 +160,117 @@
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email']
     },
-    schedule: {
-      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    agenda: {
+      fetchSchedule: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    },
+    news: {
+      fetch: [GENERATE_GET, 'news']
     },
     message: {
-      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/']
+      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
+      inbox: function (page, callback) {
+        if (!callback) {
+          callback = page;
+          page     = 1;
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        return this.get('message/inbox', { page: page }, callback)
+      },
+      compose: function (to, title, content, callback) {
+        return this.post('message', { to: to, message: { title: title, content: content } }, callback)
+      },
+      reply: function (to, hash, content, callback) {
+        return this.post('message/' + hash, { to: to, message: { content: content } }, callback)
+      }
+    },
+    follow: {
+      isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
+      fetchAll         : [GENERATE_GET, 'follow/all'],
+      fetchAllFollowers: [GENERATE_GET, 'followers'],
+      follow           : function (userId, callback) {
+        return this.post('follow', { userId: userId }, callback);
+      },
+      unfollow: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
+    },
+    payment: {
+      getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
+      createSession : [GENERATE_GET, 'payment/start']
     }
   };
 
   Api.prototype = {
+
+    /**
+     *  Queue stuff
+     */
+
+    // Init the queue, overrides some functions so everything must pass through the queue
+    initQueue: function () {
+      this.doRequest       = this.request;
+      this.request         = this.addToQueue;
+      this.requestQueue    = [];
+      this.requestsRunning = 0;
+    },
+
+    addToQueue: function (method, url, params, callback) {
+      if (typeof params === 'function') {
+        callback = params;
+        params   = {};
+      }
+
+      if (params.skipQueue) {
+        delete params.skipQueue;
+        this.requestsRunning++;
+        return this.doRequest(method, url, params, function (error, result) {
+          this.requestsRunning--;
+          setTimeout(function () {
+            callback(error, result);
+          }, 0);
+          this.startQueue();
+        }.bind(this));
+      }
+
+      this.requestQueue.push([method, url, params, callback]);
+
+      if (this.requestsRunning === 0) {
+        this.startQueue();
+      }
+    },
+
+    // Start the queue async
+    startQueue: function () {
+      if (this.requestsRunning > 0 || this.requestQueue.length === 0) {
+        return;
+      }
+
+      setTimeout(this.processQueue.bind(this), 0);
+    },
+
+    // Process a queue item and advance to the next
+    processQueue: function () {
+      if (this.requestQueue.length === 0 || this.requestsRunning > 0) {
+        return;
+      }
+
+      this.requestsRunning++;
+
+      var currentRequest = this.requestQueue.shift();
+
+      currentRequest[3] = currentRequest[3] || function () {};
+
+      this.doRequest.call(this, currentRequest[0], currentRequest[1], currentRequest[2], function (error, result) {
+        this.requestsRunning--;
+        setTimeout(function () {
+          currentRequest[3](error, result);
+        }, 0);
+        this.startQueue();
+      }.bind(this));
+    },
+
     client: function() {
       var xhr = new XMLHttpRequest();
 
@@ -206,7 +320,7 @@
       if (response.Errors) {
         return callback(response.Errors, response);
       }
-      if (response.status && response.status != 200) {
+      if (response.status && response.status != 200 && response.status != 'ok') {
         return callback(response.status, response);
       }
 
@@ -241,6 +355,11 @@
 
       if (!params.token && this.token) {
         params.token = this.token;
+      }
+
+      // Remove skipQueue if present, because the queue is not enabled if it's still here
+      if (params.skipQueue) {
+        delete params.skipQueue;
       }
 
       // Urls have to start with a slash
