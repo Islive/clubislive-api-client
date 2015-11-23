@@ -53,7 +53,7 @@
     this.apiKey     = apiKey;
     this.apiVersion = '1';
     this.language   = options.language || 'en';
-    this.noQueue    = options.noQueue || false;
+    this.noQueue    = options.noQueue === true;
 
     // We use a queue when noQueue is omitted from options
     if (!this.noQueue) {
@@ -195,6 +195,10 @@
         return this.post('follow', { userId: userId }, callback);
       },
       unfollow: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
+    },
+    payment: {
+      getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
+      createSession : [GENERATE_GET, 'payment/start']
     }
   };
 

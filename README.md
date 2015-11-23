@@ -71,3 +71,7 @@ If any error is encounterd, **error** will be set
   * **fetchFollowers** (function callback)
   * **follow** (number userId, function callback)
   * **unfollow** (number userId, function callback)
+
+* payment
+  * **getAssortiment** (string assortimentName, function callback)
+  * **createSession** (object paymentData, function callback)
