@@ -199,6 +199,15 @@
     payment: {
       getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
       createSession : [GENERATE_GET, 'payment/start']
+    },
+    media: {
+      create         : [GENERATE_POST, 'media'],
+      update         : [GENERATE_POST, 'media/update'],
+      fetchOwn       : [GENERATE_GET, 'media'],
+      fetchBought    : [GENERATE_GET, 'media/bought'],
+      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
+      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/']
     }
   };
 

@@ -75,3 +75,12 @@ If any error is encounterd, **error** will be set
 * payment
   * **getAssortiment** (string assortimentName, function callback)
   * **createSession** (object paymentData, function callback)
+
+* media
+  * **create** (object mediaInfo, function callback)
+  * **update** (object mediaInfo, function callback)
+  * **fetchOwn** (function callback)
+  * **fetchBought** (function callback)
+  * **fetchByUsername** (string username, function callback)
+  * **checkAccess** (number mediaId, function callback)
+  * **remove** (number mediaId, function callback)
