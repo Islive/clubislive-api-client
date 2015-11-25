@@ -13,9 +13,9 @@
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
-  const GENERATE_GET                      = 'GENERATE_GET',
-        GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
-        GENERATE_POST                     = 'GENERATE_POST';
+  var GENERATE_GET                      = 'GENERATE_GET',
+      GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
+      GENERATE_POST                     = 'GENERATE_POST';
 
   function Api(apiKey, options) {
     // When this function is called without the new keyword, return a new copy of Api
@@ -130,9 +130,19 @@
         return this.user.forgotPassword('performer', username, email, callback);
       }
     },
+    customer: {
+      register      : [GENERATE_POST, 'customer'],
+      login           : function (username, password, callback) {
+        return this.user.login('user', username, password, callback);
+      },
+      fetchOwn      : [GENERATE_GET, 'customer'],
+      update        : GENERATE_POST,
+      forgotPassword: function (username, email, callback) {
+        return this.user.forgotPassword('performer', username, email, callback);
+      }
+    },
     user: {
       checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      register      : [GENERATE_POST, 'user'],
       login         : function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
@@ -143,8 +153,6 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      fetchOwn      : [GENERATE_GET, 'user'],
-      update        : GENERATE_POST,
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {

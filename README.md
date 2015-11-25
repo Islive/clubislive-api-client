@@ -43,12 +43,16 @@ If any error is encounterd, **error** will be set
   * **update** (object form, function callback)
   * **forgotPassword** (string username, string email, function callback)
 
-* user
-  * **checkUsername** (string username, function callback)
+* customer
   * **register** (object form, function callback)
-  * **login** ([*string role*], string username, string password, function callback)
+  * **login** (string username, string password, function callback)
   * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
+  * **forgotPassword** (string username, string email, function callback)
+
+* user
+  * **checkUsername** (string username, function callback)
+  * **login** ([*string role*], string username, string password, function callback)
   * **forgotPassword** ([*string role*], string username, string email, function callback)
   * **resetPassword** (string hash, string id, string password, function callback)
   * **resendValidationMail** (function callback)
