@@ -77,7 +77,7 @@ If any error is encounterd, **error** will be set
   * **unfollow** (number userId, function callback)
 
 * payment
-  * **getAssortiment** (string assortimentName, function callback)
+  * **getAssortiment** (string assortimentName, [*object extraParameters*], function callback)
   * **createSession** (object paymentData, function callback)
 
 * media
