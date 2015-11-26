@@ -126,19 +126,22 @@
       search          : GENERATE_GET,
       searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
       update          : GENERATE_POST,
-      forgotPassword: function (username, email, callback) {
+      forgotPassword  : function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
       }
     },
     customer: {
       register      : [GENERATE_POST, 'customer'],
-      login           : function (username, password, callback) {
+      login         : function (username, password, callback) {
         return this.user.login('user', username, password, callback);
       },
       fetchOwn      : [GENERATE_GET, 'customer'],
       update        : GENERATE_POST,
       forgotPassword: function (username, email, callback) {
-        return this.user.forgotPassword('performer', username, email, callback);
+        return this.user.forgotPassword('user', username, email, callback);
+      },
+      tip           : function (userId, amount, callback) {
+        return this.post('customer/tip/' + userId, { amount: amount}, callback);
       }
     },
     user: {

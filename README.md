@@ -49,6 +49,7 @@ If any error is encounterd, **error** will be set
   * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
   * **forgotPassword** (string username, string email, function callback)
+  * **tip** (number userId, number amount, function callback)
 
 * user
   * **checkUsername** (string username, function callback)
