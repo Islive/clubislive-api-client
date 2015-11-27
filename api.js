@@ -209,7 +209,9 @@
     },
     payment: {
       getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
-      createSession : [GENERATE_GET, 'payment/start']
+      createSession : function (bundleId, callback) {
+        return this.get('payment/start', { bundle: bundleId }, callback);
+      }
     },
     media: {
       create         : [GENERATE_POST, 'media'],
