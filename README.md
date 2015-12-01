@@ -43,12 +43,17 @@ If any error is encounterd, **error** will be set
   * **update** (object form, function callback)
   * **forgotPassword** (string username, string email, function callback)
 
-* user
-  * **checkUsername** (string username, function callback)
+* customer
   * **register** (object form, function callback)
-  * **login** ([*string role*], string username, string password, function callback)
+  * **login** (string username, string password, function callback)
   * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
+  * **forgotPassword** (string username, string email, function callback)
+  * **tip** (number userId, number amount, function callback)
+
+* user
+  * **checkUsername** (string username, function callback)
+  * **login** ([*string role*], string username, string password, function callback)
   * **forgotPassword** ([*string role*], string username, string email, function callback)
   * **resetPassword** (string hash, string id, string password, function callback)
   * **resendValidationMail** (function callback)
@@ -73,5 +78,14 @@ If any error is encounterd, **error** will be set
   * **unfollow** (number userId, function callback)
 
 * payment
-  * **getAssortiment** (string assortimentName, function callback)
+  * **getAssortiment** (string assortimentName, [*object extraParameters*], function callback)
   * **createSession** (object paymentData, function callback)
+
+* media
+  * **create** (object mediaInfo, function callback)
+  * **update** (object mediaInfo, function callback)
+  * **fetchOwn** (function callback)
+  * **fetchBought** (function callback)
+  * **fetchByUsername** (string username, function callback)
+  * **checkAccess** (number mediaId, function callback)
+  * **remove** (number mediaId, function callback)

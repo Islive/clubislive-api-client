@@ -13,9 +13,9 @@
     root.clubisliveApiClient = factory();
   }
 }(this, function () {
-  const GENERATE_GET                      = 'GENERATE_GET',
-        GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
-        GENERATE_POST                     = 'GENERATE_POST';
+  var GENERATE_GET                      = 'GENERATE_GET',
+      GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
+      GENERATE_POST                     = 'GENERATE_POST';
 
   function Api(apiKey, options) {
     // When this function is called without the new keyword, return a new copy of Api
@@ -126,13 +126,26 @@
       search          : GENERATE_GET,
       searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
       update          : GENERATE_POST,
-      forgotPassword: function (username, email, callback) {
+      forgotPassword  : function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
+      }
+    },
+    customer: {
+      register      : [GENERATE_POST, 'customer'],
+      login         : function (username, password, callback) {
+        return this.user.login('user', username, password, callback);
+      },
+      fetchOwn      : [GENERATE_GET, 'customer'],
+      update        : GENERATE_POST,
+      forgotPassword: function (username, email, callback) {
+        return this.user.forgotPassword('user', username, email, callback);
+      },
+      tip           : function (userId, amount, callback) {
+        return this.post('customer/tip/' + userId, { amount: amount}, callback);
       }
     },
     user: {
       checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      register      : [GENERATE_POST, 'user'],
       login         : function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
@@ -143,8 +156,6 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      fetchOwn      : [GENERATE_GET, 'user'],
-      update        : GENERATE_POST,
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
@@ -198,7 +209,18 @@
     },
     payment: {
       getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
-      createSession : [GENERATE_GET, 'payment/start']
+      createSession : function (bundleId, callback) {
+        return this.get('payment/start', { bundle: bundleId }, callback);
+      }
+    },
+    media: {
+      create         : [GENERATE_POST, 'media'],
+      update         : [GENERATE_POST, 'media/update'],
+      fetchOwn       : [GENERATE_GET, 'media'],
+      fetchBought    : [GENERATE_GET, 'media/bought'],
+      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
+      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/']
     }
   };
 
