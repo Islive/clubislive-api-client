@@ -221,6 +221,15 @@
       fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
       checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
       remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/']
+    },
+    activity: {
+      load: function (username, callback) {
+        if (!callback) {
+          callback = username;
+          return this.get('activity', callback);
+        }
+        return this.get('activity/' + username, callback);
+      }
     }
   };
 

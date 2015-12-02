@@ -89,3 +89,6 @@ If any error is encounterd, **error** will be set
   * **fetchByUsername** (string username, function callback)
   * **checkAccess** (number mediaId, function callback)
   * **remove** (number mediaId, function callback)
+
+* activity
+  * **load** ([*string username*], function callback)
