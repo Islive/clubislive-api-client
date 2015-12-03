@@ -209,8 +209,19 @@
     },
     payment: {
       getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
-      createSession : function (bundleId, callback) {
-        return this.get('payment/start', { bundle: bundleId }, callback);
+      createSession : function (bundleId, extraOptions, callback) {
+        if (!callback) {
+          callback     = extraOptions;
+          extraOptions = undefined;
+        }
+
+        if (typeof extraOptions !== 'object') {
+          extraOptions = {};
+        }
+
+        extraOptions.bundle = bundleId;
+
+        return this.get('payment/start', extraOptions, callback);
       }
     },
     media: {
