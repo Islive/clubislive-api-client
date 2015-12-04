@@ -267,6 +267,8 @@
         params   = {};
       }
 
+      params = params || {};
+
       if (params.skipQueue) {
         delete params.skipQueue;
         this.requestsRunning++;
@@ -389,6 +391,8 @@
       if (typeof callback !== 'function') {
         throw new Error('Callback is not an function');
       }
+
+      params = params || {};
 
       if (!params.lang) {
         params.lang = this.language;
