@@ -239,6 +239,9 @@
           callback = username;
           return this.get('activity', callback);
         }
+        if (!username) {
+          return this.get('activity', callback);
+        }
         return this.get('activity/' + username, callback);
       }
     }
