@@ -49,14 +49,14 @@ If any error is encounterd, **error** will be set
   * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
   * **forgotPassword** (string username, string email, function callback)
-  * **tip** (integer userId, integer amount, function callback)
+  * **tip** (number userId, number amount, function callback)
 
 * user
   * **checkUsername** (string username, function callback)
   * **login** ([*string role*], string username, string password, function callback)
   * **forgotPassword** ([*string role*], string username, string email, function callback)
-  * **resetPassword** (string hash, string id, string password, function callback)
-    * **validateEmail** (integer userId, string hash, function callback)
+  * **resetPassword** (string hash, number id, string password, function callback)
+    * **validateEmail** (number userId, string hash, function callback)
   * **resendValidationMail** (function callback)
 
 * agenda
@@ -67,16 +67,16 @@ If any error is encounterd, **error** will be set
 
 * message
   * **fetchByUsername** (string username, object params, function callback)
-  * **inbox** ([*integer page*], function callback)
+  * **inbox** ([*number page*], function callback)
   * **compose** (string to, string title, string content, function callback)
   * **reply** (string to, string hash, string content, function callback)
 
 * follow
-  * **isFollowing** (integer userId, function callback)
+  * **isFollowing** (number userId, function callback)
   * **fetchAll** (function callback)
   * **fetchFollowers** (function callback)
-  * **follow** (integer userId, function callback)
-  * **unfollow** (integer userId, function callback)
+  * **follow** (number userId, function callback)
+  * **unfollow** (number userId, function callback)
 
 * payment
   * **getAssortiment** (string assortimentName, [*object extraParameters*], function callback)
@@ -87,11 +87,11 @@ If any error is encounterd, **error** will be set
   * **update** (object mediaInfo, function callback)
   * **fetchOwn** (function callback)
   * **fetchBought** (function callback)
-  * **fetchByType** (string type, [*integer page*], function callback)
+  * **fetchByType** (string type, [*number page*], function callback)
   * **fetchByUsername** (string username, function callback)
-  * **fetchAlbum** (string username, integer albumId, function callback)
-  * **checkAccess** (integer mediaId, function callback)
-  * **remove** (integer mediaId, function callback)
+  * **fetchAlbum** (string username, number albumId, function callback)
+  * **checkAccess** (number mediaId, function callback)
+  * **remove** (number mediaId, function callback)
 
 * activity
   * **load** ([*string username*], function callback)
