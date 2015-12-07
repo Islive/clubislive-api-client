@@ -229,7 +229,18 @@
       update         : [GENERATE_POST, 'media/update'],
       fetchOwn       : [GENERATE_GET, 'media'],
       fetchBought    : [GENERATE_GET, 'media/bought'],
+      fetchByType    : function (type, page, callback) {
+        if (!callback) {
+          callback = page;
+          page     = 1;
+        }
+
+        return this.get('media/all/' + type, { page: page }, callback);
+      },
       fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      fetchAlbum     : function (username, albumId, callback) {
+        return this.get('media/' + username + '/' + albumId, callback);
+      },
       checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
       remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/']
     },
