@@ -248,12 +248,61 @@
       load: function (username, callback) {
         if (!callback) {
           callback = username;
-          return this.get('activity', callback);
+          username = undefined;
         }
+
         if (!username) {
           return this.get('activity', callback);
         }
+
         return this.get('activity/' + username, callback);
+      }
+    },
+    chat: {
+      setVIP: function (status, userId, callback) {
+        return this.get('chat/vip/' + status + '/' + userId, callback);
+      },
+      setFreeChat: function (status, callback) {
+        return this.get('chat/freechat/' + status, callback);
+      },
+      start: function (username, callback) {
+        if (!callback) {
+          callback = username;
+          username = undefined;
+        }
+
+        if (username) {
+          return this.get('chat/start/' + username, callback);
+        }
+
+        return this.get('chat/start', callback);
+      },
+      keepAlive: function (userId, callback) {
+        if (!callback) {
+          callback = userId;
+          userId = undefined;
+        }
+
+        if (userId) {
+          return this.get('chat/keepalive/' + username, callback);
+        }
+
+        return this.get('chat/keepalive', callback);
+      },
+      kick: function (userId, callback) {
+        return this.get('chat/kick/' + userId, callback);
+      },
+      end: function (username, callback) {
+        if (!callback) {
+          callback = username;
+          username = undefined;
+        }
+
+        if (username) {
+          return this.get('chat/end/' + username, callback);
+        }
+
+        return this.get('chat/end', callback);
       }
     }
   };
@@ -428,7 +477,7 @@
       }
 
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
-      if (this.io) {
+      if (this.io && this.io.socket) {
         if (method === 'GET') {
           this.io.socket.get(url, params, function (response) {
             return this.ioCallback(response, callback);
