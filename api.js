@@ -482,7 +482,7 @@
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
       if (this.io && this.io.socket) {
         if (!params['x-apikey']) {
-          params[x-apikey] = this.apiKey;
+          params['x-apikey'] = this.apiKey;
         }
 
         if (method === 'GET') {
