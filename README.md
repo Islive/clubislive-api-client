@@ -55,7 +55,8 @@ If any error is encounterd, **error** will be set
   * **checkUsername** (string username, function callback)
   * **login** ([*string role*], string username, string password, function callback)
   * **forgotPassword** ([*string role*], string username, string email, function callback)
-  * **resetPassword** (string hash, string id, string password, function callback)
+  * **resetPassword** (string hash, number id, string password, function callback)
+  * **validateEmail** (number userId, string hash, function callback)
   * **resendValidationMail** (function callback)
 
 * agenda

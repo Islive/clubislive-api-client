@@ -166,6 +166,9 @@
         }
         return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
       },
+      validateEmail: function (userId, hash) {
+        return this.post('user/validate-email', {id: userId, hash: hash}, callback);
+      },
       resetPassword: function (hash, id, password, callback) {
         return this.post('user/reset-password', { hash: hash, id: id, password: password }, callback);
       },
