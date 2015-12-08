@@ -100,5 +100,5 @@ If any error is encounterd, **error** will be set
   * **setFreechat** (string status, function callback)
   * **start** ([*string username*], function callback)
   * **keepAlive** ([*number userId*], function callback)
-  * **kick** (number userId, function callback)
+  * **kick** (string username, function callback)
   * **end** ([*string username*], function callback)

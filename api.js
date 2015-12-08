@@ -284,13 +284,13 @@
         }
 
         if (userId) {
-          return this.get('chat/keepalive/' + username, callback);
+          return this.get('chat/keepalive/' + userId, callback);
         }
 
         return this.get('chat/keepalive', callback);
       },
-      kick: function (userId, callback) {
-        return this.get('chat/kick/' + userId, callback);
+      kick: function (username, callback) {
+        return this.get('chat/kick/' + username, callback);
       },
       end: function (username, callback) {
         if (!callback) {
@@ -478,6 +478,10 @@
 
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
       if (this.io && this.io.socket) {
+        if (!params['x-apikey']) {
+          params[x-apikey] = this.apiKey;
+        }
+
         if (method === 'GET') {
           this.io.socket.get(url, params, function (response) {
             return this.ioCallback(response, callback);
