@@ -94,3 +94,11 @@ If any error is encounterd, **error** will be set
 
 * activity
   * **load** ([*string username*], function callback)
+
+* chat
+  * **setVIP** (string status, number userId, function callback)
+  * **setFreechat** (string status, function callback)
+  * **start** ([*string username*], function callback)
+  * **keepAlive** ([*number userId*], function callback)
+  * **kick** (string username, function callback)
+  * **end** ([*string username*], function callback)
