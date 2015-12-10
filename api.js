@@ -134,7 +134,7 @@
           }
         }
 
-        if (!searchOptions) {
+        if (typeof searchOptions !== 'object') {
           searchOptions = {};
         }
 
