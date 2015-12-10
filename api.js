@@ -123,7 +123,29 @@
         return this.user.login('performer', username, password, callback);
       },
       fetchOwn        : [GENERATE_GET, 'performer'],
-      search          : GENERATE_GET,
+      search          : function (searchOptions, page, callback) {
+        if (!callback) {
+          callback = page;
+          if (typeof searchOptions === 'object') {
+            page = 1;
+          } else {
+            page          = searchOptions;
+            searchOptions = {};
+          }
+        }
+
+        if (typeof searchOptions !== 'object') {
+          searchOptions = {};
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        searchOptions.page = page;
+
+        return this.get('performer/search', searchOptions, callback);
+      },
       searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
       update          : GENERATE_POST,
       forgotPassword  : function (username, email, callback) {
@@ -423,7 +445,10 @@
       return str.join('&');
     },
 
-    ioCallback: function (response, callback) {
+    ioCallback: function (response, JWR, callback) {
+      if (JWR.statusCode !== 200) {
+        return callback(JWR.statusCode, response);
+      }
       if (!response) {
         return callback('no_response', response);
       }
@@ -486,12 +511,12 @@
         }
 
         if (method === 'GET') {
-          this.io.socket.get(url, params, function (response) {
-            return this.ioCallback(response, callback);
+          this.io.socket.get(url, params, function (response, JWR) {
+            return this.ioCallback(response, JWR, callback);
           }.bind(this));
         } else if (method === 'POST') {
-          this.io.socket.post(url, params, function (response) {
-            return this.ioCallback(response, callback);
+          this.io.socket.post(url, params, function (response, JWR) {
+            return this.ioCallback(response, JWR, callback);
           }.bind(this));
         } else {
           throw 'method ' + method + ' not supported';
