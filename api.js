@@ -347,7 +347,7 @@
       MESSAGES     : 'message'
     },
 
-    on: function (event, func) {
+    on: function (eventName, func) {
       if (!this.eventHandlers) {
         // events not initialized, just return
         return;
@@ -358,25 +358,25 @@
       }
 
       // If the event is not yet subscribed to, add it, and listen for it
-      if (!this.eventHandlers[event]) {
-        this.io.socket.on(event, this.trigger.bind(this, event));
+      if (!this.eventHandlers[eventName]) {
+        this.io.socket.on(eventName, this.trigger.bind(this, eventName));
 
-        this.eventHandlers[event] = [func];
+        this.eventHandlers[eventName] = [func];
         return;
       }
 
       // First check if it exists
-      for (var i = 0; i < this.eventHandlers[event].length; i++) {
-        if (this.eventHandlers[event][i] === func) {
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        if (this.eventHandlers[eventName][i] === func) {
           return;
         }
       }
 
       // Add it
-      this.eventHandlers[event].push(func);
+      this.eventHandlers[eventName].push(func);
     },
 
-    off: function (event, func) {
+    off: function (eventName, func) {
       if (!this.eventHandlers) {
         // events not initialized, just return
         return;
@@ -387,38 +387,38 @@
       }
 
       // event is not subscribed to
-      if (!this.eventHandlers[event]) {
+      if (!this.eventHandlers[eventName]) {
         return;
       }
 
       // Check if it exists
-      for (var i = 0; i < this.eventHandlers[event].length; i++) {
-        if (this.eventHandlers[event][i] === func) {
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        if (this.eventHandlers[eventName][i] === func) {
           this.eventHandlers.splice(i, 1);
           break;
         }
       }
 
       // If there are no more listeners, unsubscribe
-      if (this.eventHandlers[event].length === 0) {
-        this.socket.off(event);
-        delete this.eventHandlers[event];
+      if (this.eventHandlers[eventName].length === 0) {
+        this.socket.off(eventName);
+        delete this.eventHandlers[eventName];
       }
     },
 
-    trigger: function (event, data) {
+    trigger: function (eventName, data) {
       if (!this.eventHandlers) {
         // events not initialized, just return
         return;
       }
 
       // event is not subscribed to
-      if (!this.eventHandlers[event]) {
+      if (!this.eventHandlers[eventName]) {
         return;
       }
 
-      for (var i = 0; i < this.eventHandlers[event].length; i++) {
-        setTimeout(this.eventHandlers[event][i].bind(this, data), 0);
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        setTimeout(this.eventHandlers[eventName][i].bind(this, data), 0);
       }
     },
 
