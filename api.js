@@ -55,6 +55,11 @@
     this.language   = options.language || 'en';
     this.noQueue    = options.noQueue === true;
 
+    // If we're using sails.io, add something to add the event handlers
+    if (this.io) {
+      this.eventHandlers = {};
+    }
+
     // We use a queue when noQueue is omitted from options
     if (!this.noQueue) {
         this.initQueue();
@@ -330,6 +335,91 @@
   };
 
   Api.prototype = {
+
+    /**
+     *  HQ Events
+     */
+
+    Events: {
+      NOTIFICATIONS: 'notifications',
+      CUSTOMER     : 'user',
+      MESSAGES     : 'message'
+    },
+
+    on: function (event, func) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (typeof func !== 'function') {
+        throw 'Not a valid function';
+      }
+
+      // If the event is not yet subscribed to, add it, and listen for it
+      if (!this.eventHandlers[event]) {
+        this.io.socket.on(event, this.trigger.bind(this, event));
+
+        this.eventHandlers[event] = [func];
+        return;
+      }
+
+      // First check if it exists
+      for (var i = 0; i < this.eventHandlers[event].length; i++) {
+        if (this.eventHandlers[event][i] === func) {
+          return;
+        }
+      }
+
+      // Add it
+      this.eventHandlers[event].push(func);
+    },
+
+    off: function (event, func) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (typeof func !== 'function') {
+        throw 'Not a valid function';
+      }
+
+      // event is not subscribed to
+      if (!this.eventHandlers[event]) {
+        return;
+      }
+
+      // Check if it exists
+      for (var i = 0; i < this.eventHandlers[event].length; i++) {
+        if (this.eventHandlers[event][i] === func) {
+          this.eventHandlers.splice(i, 1);
+          break;
+        }
+      }
+
+      // If there are no more listeners, unsubscribe
+      if (this.eventHandlers[event].length === 0) {
+        this.socket.off(event);
+        delete this.eventHandlers[event];
+      }
+    },
+
+    trigger: function (event, data) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      // event is not subscribed to
+      if (!this.eventHandlers[event]) {
+        return;
+      }
+
+      for (var i = 0; i < this.eventHandlers[event].length; i++) {
+        setTimeout(this.eventHandlers[event][i].bind(this, data), 0);
+      }
+    },
 
     /**
      *  Queue stuff
