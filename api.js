@@ -223,7 +223,8 @@
       },
       reply: function (to, hash, content, callback) {
         return this.post('message/' + hash, { to: to, message: { content: content } }, callback)
-      }
+      },
+      unread: GENERATE_GET
     },
     follow: {
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
