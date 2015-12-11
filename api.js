@@ -55,6 +55,11 @@
     this.language   = options.language || 'en';
     this.noQueue    = options.noQueue === true;
 
+    // If we're using sails.io, add something to add the event handlers
+    if (this.io) {
+      this.eventHandlers = {};
+    }
+
     // We use a queue when noQueue is omitted from options
     if (!this.noQueue) {
         this.initQueue();
@@ -221,7 +226,8 @@
       },
       reply: function (to, hash, content, callback) {
         return this.post('message/' + hash, { to: to, message: { content: content } }, callback)
-      }
+      },
+      unread: GENERATE_GET
     },
     follow: {
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
@@ -333,6 +339,91 @@
   };
 
   Api.prototype = {
+
+    /**
+     *  HQ Events
+     */
+
+    Events: {
+      NOTIFICATIONS: 'notifications',
+      CUSTOMER     : 'user',
+      MESSAGES     : 'message'
+    },
+
+    on: function (eventName, func) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (typeof func !== 'function') {
+        throw 'Not a valid function';
+      }
+
+      // If the event is not yet subscribed to, add it, and listen for it
+      if (!this.eventHandlers[eventName]) {
+        this.io.socket.on(eventName, this.trigger.bind(this, eventName));
+
+        this.eventHandlers[eventName] = [func];
+        return;
+      }
+
+      // First check if it exists
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        if (this.eventHandlers[eventName][i] === func) {
+          return;
+        }
+      }
+
+      // Add it
+      this.eventHandlers[eventName].push(func);
+    },
+
+    off: function (eventName, func) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (typeof func !== 'function') {
+        throw 'Not a valid function';
+      }
+
+      // event is not subscribed to
+      if (!this.eventHandlers[eventName]) {
+        return;
+      }
+
+      // Check if it exists
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        if (this.eventHandlers[eventName][i] === func) {
+          this.eventHandlers.splice(i, 1);
+          break;
+        }
+      }
+
+      // If there are no more listeners, unsubscribe
+      if (this.eventHandlers[eventName].length === 0) {
+        this.socket.off(eventName);
+        delete this.eventHandlers[eventName];
+      }
+    },
+
+    trigger: function (eventName, data) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      // event is not subscribed to
+      if (!this.eventHandlers[eventName]) {
+        return;
+      }
+
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        setTimeout(this.eventHandlers[eventName][i].bind(this, data), 0);
+      }
+    },
 
     /**
      *  Queue stuff
