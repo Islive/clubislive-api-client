@@ -260,12 +260,15 @@
       update          : [GENERATE_POST, 'media/update'],
       fetchOwn        : [GENERATE_GET, 'media'],
       fetchBought     : [GENERATE_GET, 'media/bought'],
-      fetchByFollowers: function (userId, amountMedia, callback) {
+      fetchByFollowers: function (userId, limit, callback) {
+        if (!callback) {
+          callback = limit;
+          limit    = undefined;
+        }
+
         var params = {};
-        if (typeof amountMedia === 'function') {
-          callback = amountMedia;
-        } else if (amountMedia) {
-          params.amount = amountMedia;
+        if (limit) {
+          params.amount = limit;
         }
 
         return this.get('media/following/' + userId, params, callback);
