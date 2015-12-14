@@ -262,8 +262,8 @@
       fetchBought     : [GENERATE_GET, 'media/bought'],
       fetchByFollowers: function (userId, limit, callback) {
         if (!callback) {
-          callback    = limit;
-          amountMedia = undefined;
+          callback = limit;
+          limit    = undefined;
         }
 
         var params = {};
