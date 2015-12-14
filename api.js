@@ -256,11 +256,21 @@
       }
     },
     media: {
-      create         : [GENERATE_POST, 'media'],
-      update         : [GENERATE_POST, 'media/update'],
-      fetchOwn       : [GENERATE_GET, 'media'],
-      fetchBought    : [GENERATE_GET, 'media/bought'],
-      fetchByType    : function (type, page, callback) {
+      create          : [GENERATE_POST, 'media'],
+      update          : [GENERATE_POST, 'media/update'],
+      fetchOwn        : [GENERATE_GET, 'media'],
+      fetchBought     : [GENERATE_GET, 'media/bought'],
+      fetchByFollowers: function (userId, amountMedia, callback) {
+        var params = {};
+        if (typeof amountMedia === 'function') {
+          callback = amountMedia;
+        } else if (amountMedia) {
+          params.amount = amountMedia;
+        }
+
+        return this.get('media/following/' + userId, params, callback);
+      },
+      fetchByType  : function (type, page, callback) {
         if (!callback) {
           callback = page;
           page     = 1;

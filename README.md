@@ -87,6 +87,7 @@ If any error is encounterd, **error** will be set
   * **update** (object mediaInfo, function callback)
   * **fetchOwn** (function callback)
   * **fetchBought** (function callback)
+  * **fetchByFollowers** (number userId, [*number amount*], function callback)
   * **fetchByType** (string type, [*number page*], function callback)
   * **fetchByUsername** (string username, function callback)
   * **fetchAlbum** (string username, number albumId, function callback)
