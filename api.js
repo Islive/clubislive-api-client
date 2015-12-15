@@ -306,7 +306,7 @@
       setVIP: function (status, userId, callback) {
         return this.get('chat/vip/' + status + '/' + userId, callback);
       },
-      setFreeChat: function (status, callback) {
+      setFreechat: function (status, callback) {
         return this.get('chat/freechat/' + status, callback);
       },
       start: function (username, callback) {
@@ -328,7 +328,7 @@
         }
 
         if (userId) {
-          return this.get('chat/keepalive/' + userId, callback);
+          return this.get('chat/keepalive/' + userId, { skipQueue: true }, callback);
         }
 
         return this.get('chat/keepalive', callback);
