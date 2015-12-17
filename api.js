@@ -219,15 +219,29 @@
           page = 1;
         }
 
-        return this.get('message/inbox', { page: page }, callback)
+        return this.get('message/inbox', { page: page }, callback);
       },
       compose: function (to, title, content, callback) {
-        return this.post('message', { to: to, message: { title: title, content: content } }, callback)
+        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
       },
       reply: function (to, hash, content, callback) {
-        return this.post('message/' + hash, { to: to, message: { content: content } }, callback)
+        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
       },
-      unread: GENERATE_GET
+      unread  : GENERATE_GET,
+      markRead: function (hash, messageId, callback) {
+        if (!callback) {
+          callback  = messageId;
+          messageId = undefined;
+        }
+
+        var url = 'message/read/' + hash;
+
+        if (messageId) {
+          url += '/' + messageId;
+        }
+
+        return this.get(url, callback);
+      }
     },
     follow: {
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
