@@ -70,6 +70,7 @@ If any error is encounterd, **error** will be set
   * **inbox** ([*number page*], function callback)
   * **compose** (string to, string title, string content, function callback)
   * **reply** (string to, string hash, string content, function callback)
+  * **markRead** (string hash, [*number messsageId*], function callback)
 
 * follow
   * **isFollowing** (number userId, function callback)
