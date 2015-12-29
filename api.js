@@ -287,13 +287,30 @@
 
         return this.get('media/following/' + userId, params, callback);
       },
-      fetchByType  : function (type, page, callback) {
-        if (!callback) {
+      fetchAll       : function (type, page, gender, callback) {
+        if (typeof page === 'function') {
           callback = page;
+          gender   = null;
           page     = 1;
         }
 
-        return this.get('media/all/' + type, { page: page }, callback);
+        if (typeof gender === 'function') {
+          callback = gender;
+          gender   = null;
+        }
+
+        if (isNaN(page)) {
+          gender = page;
+          page   = 1;
+        }
+
+        var searchOptions = { page: page };
+
+        if (gender) {
+          searchOptions.gender = gender;
+        }
+
+        return this.get('media/all/' + type, searchOptions, callback);
       },
       fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
       fetchAlbum     : function (username, albumId, callback) {
