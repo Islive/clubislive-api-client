@@ -183,6 +183,9 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
+      loginByHash   : function (userId, hash, callback) {
+        return this.post('user/login/' + userId, { hash: hash }, callback);
+      },
       forgotPassword: function (role, username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
