@@ -323,17 +323,28 @@
       remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/']
     },
     activity: {
-      load: function (username, callback) {
-        if (!callback) {
-          callback = username;
-          username = undefined;
+      load: function (userId, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          options  = null;
+          userId = undefined;
         }
 
-        if (!username) {
-          return this.get('activity', callback);
+        if (typeof options === 'function') {
+          callback = options;
+          options  = null;
         }
 
-        return this.get('activity/' + username, callback);
+        if (userId && typeof userId === 'object') {
+          options  = userId;
+          userId = undefined;
+        }
+
+        if (!userId) {
+          return this.get('activity', options, callback);
+        }
+
+        return this.get('activity/' + userId, options, callback);
       }
     },
     chat: {

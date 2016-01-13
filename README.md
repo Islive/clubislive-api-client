@@ -97,7 +97,7 @@ If any error is encounterd, **error** will be set
   * **remove** (number mediaId, function callback)
 
 * activity
-  * **load** ([*string username*], function callback)
+  * **load** ([*number userId*], [*object options*], function callback)
 
 * chat
   * **setVIP** (string status, number userId, function callback)
