@@ -39,7 +39,7 @@ If any error is encounterd, **error** will be set
   * **register** (object form, function callback)
   * **login** (string username, string password, function callback)
   * **search** ([*object searchparams*], [*number page*], function callback)
-  * **searchByUsername** (string username, function callback)
+  * **searchByUsername** (string username, [*object options*], function callback)
   * **update** (object form, function callback)
   * **forgotPassword** (string username, string email, function callback)
 
