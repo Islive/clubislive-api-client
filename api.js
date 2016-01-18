@@ -151,7 +151,14 @@
 
         return this.get('performer/search', searchOptions, callback);
       },
-      searchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/search/'],
+      searchByUsername: function (username, options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = {};
+        }
+
+        return this.get('performer/search/' + username, options, callback);
+      },
       update          : GENERATE_POST,
       forgotPassword  : function (username, email, callback) {
         return this.user.forgotPassword('performer', username, email, callback);
