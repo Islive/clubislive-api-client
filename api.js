@@ -277,6 +277,12 @@
         extraOptions.bundle = bundleId;
 
         return this.get('payment/start', extraOptions, callback);
+      },
+      getRedeemInfo: function (bundleId, callback) {
+        return this.get('payment/redeem', { bundle: bundleId }, callback);
+      },
+      redeemCode: function (bundleId, code, callback) {
+        return this.post('payment/redeem', { bundle: bundleId, redeem: code }, callback);
       }
     },
     media: {
