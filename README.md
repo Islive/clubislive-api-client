@@ -100,6 +100,7 @@ If any error is encounterd, **error** will be set
 
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
+  * **loadFollowed** ([*object options*], function callback)
 
 * chat
   * **setVIP** (string status, number userId, function callback)

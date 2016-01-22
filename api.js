@@ -358,6 +358,14 @@
         }
 
         return this.get('activity/' + userId, options, callback);
+      },
+      loadFollowed: function (options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = null;
+        }
+
+        return this.get('activity/followed', options, callback);
       }
     },
     chat: {
