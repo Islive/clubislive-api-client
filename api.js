@@ -195,12 +195,12 @@
           username = null;
         }
 
-        if (username.indexOf('@') > -1) {
+        if (typeof username === 'string' && username.indexOf('@') > -1) {
           email    = username;
           username = null;
         }
 
-        if (email.indexOf('@') === -1) {
+        if (typeof email === 'string' && email.indexOf('@') === -1) {
           username = email;
           email    = null;
         }
