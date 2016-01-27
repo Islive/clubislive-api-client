@@ -159,10 +159,7 @@
 
         return this.get('performer/search/' + username, options, callback);
       },
-      update          : GENERATE_POST,
-      forgotPassword  : function (username, email, callback) {
-        return this.user.forgotPassword('performer', username, email, callback);
-      }
+      update          : GENERATE_POST
     },
     customer: {
       register      : [GENERATE_POST, 'customer'],
@@ -171,9 +168,6 @@
       },
       fetchOwn      : [GENERATE_GET, 'customer'],
       update        : GENERATE_POST,
-      forgotPassword: function (username, email, callback) {
-        return this.user.forgotPassword('user', username, email, callback);
-      },
       tip           : function (userId, amount, callback) {
         return this.post('customer/tip/' + userId, { amount: amount}, callback);
       }
@@ -190,24 +184,34 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      loginByHash   : function (userId, hash, callback) {
-        return this.post('user/login/' + userId, { hash: hash }, callback);
+      loginByHash   : function (hash, callback) {
+        return this.post('user/login/' + hash, callback);
       },
-      forgotPassword: function (role, username, email, callback) {
+      forgotPassword: function (username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
           callback = email;
           email    = username;
-          username = role;
-          role     = 'user';
+          username = null;
         }
-        return this.post('user/forgot-password', { role: role, username: username, email: email }, callback);
+
+        if (username.indexOf('@') > -1) {
+          email    = username;
+          username = null;
+        }
+
+        if (email.indexOf('@') === -1) {
+          username = email;
+          email    = null;
+        }
+
+        return this.post('user/forgot-password', { username: username, email: email }, callback);
       },
-      verifyEmail: function (userId, hash, callback) {
-        return this.post('user/verify-email', {id: userId, hash: hash}, callback);
+      verifyEmail: function (hash, callback) {
+        return this.post('user/verify-email', { hash: hash }, callback);
       },
-      resetPassword: function (hash, id, password, callback) {
-        return this.post('user/reset-password', { hash: hash, id: id, password: password }, callback);
+      resetPassword: function (hash, password, callback) {
+        return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email']
     },
