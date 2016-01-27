@@ -41,23 +41,21 @@ If any error is encounterd, **error** will be set
   * **search** ([*object searchparams*], [*number page*], function callback)
   * **searchByUsername** (string username, [*object options*], function callback)
   * **update** (object form, function callback)
-  * **forgotPassword** (string username, string email, function callback)
 
 * customer
   * **register** (object form, function callback)
   * **login** (string username, string password, function callback)
   * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
-  * **forgotPassword** (string username, string email, function callback)
   * **tip** (number userId, number amount, function callback)
 
 * user
   * **checkUsername** (string username, function callback)
   * **login** ([*string role*], string username, string password, function callback)
-  * **loginByHash** (number userId, string hash, function callback)
-  * **forgotPassword** ([*string role*], string username, string email, function callback)
-  * **resetPassword** (string hash, number id, string password, function callback)
-  * **verifyEmail** (number userId, string hash, function callback)
+  * **loginByHash** (string hash, function callback)
+  * **forgotPassword** ([*string username*], [*string email*], function callback)
+  * **resetPassword** (string hash, string password, function callback)
+  * **verifyEmail** (string hash, function callback)
   * **resendValidationMail** (function callback)
 
 * agenda
