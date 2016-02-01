@@ -285,8 +285,18 @@
       getRedeemInfo: function (bundleId, callback) {
         return this.get('payment/redeem', { bundle: bundleId }, callback);
       },
-      redeemCode: function (bundleId, code, callback) {
-        return this.post('payment/redeem', { bundle: bundleId, redeem: code }, callback);
+      redeemCode: function (bundleId, code, options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = {};
+        }
+
+        options = options || {};
+
+        options.bundle = bundleId;
+        options.redeem = code;
+
+        return this.post('payment/redeem', options, callback);
       }
     },
     media: {
