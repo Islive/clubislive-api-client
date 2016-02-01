@@ -82,7 +82,7 @@ If any error is encounterd, **error** will be set
   * **getAssortiment** (string assortimentName, [*object extraParameters*], function callback)
   * **createSession** (object paymentData, function callback)
   * **getRedeemInfo** (number bundleId, function callback)
-  * **redeemCode** (number bundleId, string code, function callback)
+  * **redeemCode** (number bundleId, string code, [*object options*], function callback)
 
 * media
   * **create** (object mediaInfo, function callback)
