@@ -347,7 +347,15 @@
         return this.get('media/' + username + '/' + albumId, callback);
       },
       checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
-      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/']
+      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
+      search         : function (filters, callback) {
+        if (!callback) {
+          callback = filters;
+          filters  = null;
+        }
+
+        return this.get('media/search', filters, callback);
+      }
     },
     activity: {
       load: function (userId, options, callback) {
