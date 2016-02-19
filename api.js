@@ -170,6 +170,9 @@
       update        : GENERATE_POST,
       tip           : function (userId, amount, callback) {
         return this.post('customer/tip/' + userId, { amount: amount}, callback);
+      },
+      remove        : function (callback) {
+        return this.post('customer/delete', callback);
       }
     },
     user: {
