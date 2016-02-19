@@ -49,6 +49,7 @@ If any error is encounterd, **error** will be set
   * **update** (object form, function callback)
   * **tip** (number userId, number amount, function callback)
   * **remove** (function callback)
+  * **upload** (string type, string image, function callback)
 
 * user
   * **checkUsername** (string username, function callback)

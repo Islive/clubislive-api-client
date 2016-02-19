@@ -173,6 +173,9 @@
       },
       remove        : function (callback) {
         return this.post('customer/delete', callback);
+      },
+      upload        : function (type, image, callback) {
+        return this.post('customer/upload', {type: type, image: image}, callback);
       }
     },
     user: {
