@@ -168,8 +168,25 @@
       },
       fetchOwn      : [GENERATE_GET, 'customer'],
       update        : GENERATE_POST,
-      tip           : function (userId, amount, callback) {
-        return this.post('customer/tip/' + userId, { amount: amount}, callback);
+      tip           : function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        }
+
+        if (!callback) {
+          callback = options;
+          options  = false;
+        }
+
+        if (options && options.type) {
+          params.type = options.type || false;
+        }
+
+        if (options && options.name) {
+          params.name = options.name || false;
+        }
+
+        return this.post('customer/tip/' + userId, params, callback);
       },
       remove        : function (callback) {
         return this.post('customer/delete', callback);

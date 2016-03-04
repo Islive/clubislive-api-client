@@ -47,7 +47,7 @@ If any error is encounterd, **error** will be set
   * **login** (string username, string password, function callback)
   * **fetchOwn** (object params, function callback)
   * **update** (object form, function callback)
-  * **tip** (number userId, number amount, function callback)
+  * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
   * **upload** (string type, string image, function callback)
 
