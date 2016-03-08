@@ -369,6 +369,7 @@
       fetchAlbum     : function (username, albumId, callback) {
         return this.get('media/' + username + '/' + albumId, callback);
       },
+      viewAlbum      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
       checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
       remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
       search         : function (filters, callback) {
