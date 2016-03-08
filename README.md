@@ -98,6 +98,7 @@ If any error is encounterd, **error** will be set
   * **checkAccess** (number mediaId, function callback)
   * **remove** (number mediaId, function callback)
   * **search** ([*object filters*], function callback)
+  * **viewAlbum** (number albumId, function callback)
 
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
