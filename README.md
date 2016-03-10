@@ -111,3 +111,6 @@ If any error is encounterd, **error** will be set
   * **keepAlive** ([*number userId*], function callback)
   * **kick** (string username, function callback)
   * **end** ([*string username*], function callback)
+
+* rules
+  * **promotion** (function callback)

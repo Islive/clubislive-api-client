@@ -460,6 +460,11 @@
 
         return this.get('chat/end', callback);
       }
+    },
+    rules : {
+      promotion: function (callback) {
+        return this.get('rules/promotion', callback);
+      }
     }
   };
 
