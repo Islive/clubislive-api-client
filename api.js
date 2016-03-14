@@ -379,6 +379,9 @@
         }
 
         return this.get('media/search', filters, callback);
+      },
+      buy: function (mediaId, callback) {
+        return this.post('media/buy', { media: mediaId }, callback);
       }
     },
     activity: {
