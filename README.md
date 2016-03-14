@@ -99,6 +99,7 @@ If any error is encounterd, **error** will be set
   * **remove** (number mediaId, function callback)
   * **search** ([*object filters*], function callback)
   * **viewAlbum** (number albumId, function callback)
+  * **buy** (number mediaId, function callback)
 
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
