@@ -61,7 +61,7 @@ If any error is encounterd, **error** will be set
   * **resendValidationMail** (function callback)
 
 * agenda
-  * **fetchSchedule** (string username, function callback)
+  * **fetchSchedule** (string username | string date, function callback)
 
 * news
   * **fetch** (function callback)
@@ -104,6 +104,7 @@ If any error is encounterd, **error** will be set
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
   * **loadFollowed** ([*object options*], function callback)
+  * **loadUser** (number userId | string username, [*number page*], function callback)
 
 * chat
   * **setVIP** (string status, number userId, function callback)
