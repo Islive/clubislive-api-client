@@ -416,15 +416,13 @@
 
         return this.get('activity/followed', options, callback);
       },
-      loadUser: function (user, page, callback) {
+      loadUser: function (user, options, callback) {
         if (!callback) {
-          callback = page;
-          page     = null;
+          callback = options;
+          otions   = null;
         }
 
-        page = isNaN(page) || !page ? 1 : page;
-
-        return this.get('activity/all/' + user, { page: page }, callback);
+        return this.get('activity/all/' + user, options, callback);
       }
     },
     chat: {
