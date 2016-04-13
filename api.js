@@ -62,7 +62,8 @@
 
     // We use a queue when noQueue is omitted from options
     if (!this.noQueue) {
-        this.initQueue();
+      this.concurrentCalls = options.concurrentCalls || 1;
+      this.initQueue();
     }
 
     // Loop through all api methods
@@ -600,14 +601,12 @@
 
       this.requestQueue.push([method, url, params, callback]);
 
-      if (this.requestsRunning === 0) {
-        this.startQueue();
-      }
+      this.startQueue();
     },
 
     // Start the queue async
     startQueue: function () {
-      if (this.requestsRunning > 0 || this.requestQueue.length === 0) {
+      if (this.requestsRunning >= this.concurrentCalls || this.requestQueue.length === 0) {
         return;
       }
 
@@ -616,7 +615,7 @@
 
     // Process a queue item and advance to the next
     processQueue: function () {
-      if (this.requestQueue.length === 0 || this.requestsRunning > 0) {
+      if (this.requestQueue.length === 0 || this.requestsRunning >= this.concurrentCalls) {
         return;
       }
 
