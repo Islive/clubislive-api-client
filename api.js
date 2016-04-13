@@ -615,7 +615,7 @@
 
     // Process a queue item and advance to the next
     processQueue: function () {
-      if (this.requestQueue.length === 0 || this.requestsRunning > 0) {
+      if (this.requestQueue.length === 0 || this.requestsRunning >= this.concurrentCalls) {
         return;
       }
 
