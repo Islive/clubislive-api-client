@@ -188,7 +188,7 @@
       tip           : function (userId, amount, options, callback) {
         var params = {
           amount: amount
-        }
+        };
 
         if (!callback) {
           callback = options;
@@ -227,7 +227,7 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      loginByHash   : function (hash, callback) {
+      loginByHash: function (hash, callback) {
         return this.post('user/login/' + hash, callback);
       },
       forgotPassword: function (username, email, callback) {
@@ -258,7 +258,30 @@
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
       uploadSnapshot: [GENERATE_POST, 'user/snapshot'],
-      findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/']
+      findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
+      tip: function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        };
+
+        if (!callback) {
+          callback = options;
+          options  = false;
+        }
+
+        if (options && options.type) {
+          params.type = options.type || false;
+        }
+
+        if (options && options.name) {
+          params.name = options.name || false;
+        }
+
+        return this.post('user/tip/' + userId, params, callback);
+      },
+      remove: function (callback) {
+        return this.post('user/delete', callback);
+      }
     },
     agenda: {
       fetchSchedule: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']

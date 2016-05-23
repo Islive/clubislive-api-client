@@ -64,6 +64,8 @@ If any error is encounterd, **error** will be set
   * **resendValidationMail** (function callback)
   * **findByUsername** (string username, function callback)
   * **uploadSnapshot** (object data, function callback)
+  * **tip** (number userId, number amount, [*object options*], function callback)
+  * **remove** (function callback)
 
 * agenda
   * **fetchSchedule** (string username | string date, function callback)
