@@ -257,7 +257,22 @@
         return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
-      uploadSnapshot: [GENERATE_POST, 'user/snapshot'],
+      uploadSnapshot: function (snapshot, type, callback) {
+        if (!callback) {
+          callback = type;
+          type     = null;
+        }
+
+        var params = {
+          snapshot: snapshot
+        };
+
+        if (type) {
+          params.type = type;
+        }
+
+        return this.post('user/snapshot', params, callback);
+      },
       findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
       find          : function (searchOptions, page, callback) {
         if (!callback) {
