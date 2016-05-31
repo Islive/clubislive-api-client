@@ -368,10 +368,13 @@
       fetchAll         : [GENERATE_GET, 'follow/all'],
       fetchAllFollowers: function (userId, callback) {
         if (!callback) {
-          return this.get('follow');
+          callback = userId;
+          userId   = undefined;
+
+          return this.get('follow', callback);
         }
 
-        return this.get('follow/' + userId);
+        return this.get('follow/' + userId, callback);
       },
       follow           : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
