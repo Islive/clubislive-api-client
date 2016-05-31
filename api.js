@@ -371,10 +371,10 @@
           callback = userId;
           userId   = undefined;
 
-          return this.get('follow', callback);
+          return this.get('followers', callback);
         }
 
-        return this.get('follow/' + userId, callback);
+        return this.get('followers/' + userId, callback);
       },
       follow           : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
