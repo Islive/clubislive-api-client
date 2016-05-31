@@ -259,6 +259,29 @@
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
       uploadSnapshot: [GENERATE_POST, 'user/snapshot'],
       findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
+      find          : function (searchOptions, page, callback) {
+        if (!callback) {
+          callback = page;
+          if (typeof searchOptions === 'object') {
+            page = 1;
+          } else {
+            page          = searchOptions;
+            searchOptions = {};
+          }
+        }
+
+        if (typeof searchOptions !== 'object') {
+          searchOptions = {};
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        searchOptions.page = page;
+
+        return this.get('user/find', searchOptions, callback);
+      },
       tip: function (userId, amount, options, callback) {
         var params = {
           amount: amount
@@ -328,7 +351,13 @@
     follow: {
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
       fetchAll         : [GENERATE_GET, 'follow/all'],
-      fetchAllFollowers: [GENERATE_GET, 'followers'],
+      fetchAllFollowers: function (userId, callback) {
+        if (!callback) {
+          return this.get('follow');
+        }
+
+        return this.get('follow/' + userId);
+      },
       follow           : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
       },
