@@ -57,7 +57,23 @@
 
     // If we're using sails.io, add something to add the event handlers
     if (this.io) {
+      if (this.io.socket) {
+        this.connected = true;
+        this.io.socket.on('disconnect', function () {
+          this.connected = false;
+          this.handleSocketDisconnect();
+        }.bind(this));
+        this.io.socket.on('connected', function () {
+          this.connected = true;
+        }.bind(this));
+      }
+
       this.eventHandlers = {};
+
+      // When a queue is used, keep in mind that requests made when the socket is disconnected will never fire a callback
+      if (!this.noQueue) {
+        // TODO
+      }
     }
 
     // We use a queue when noQueue is omitted from options
@@ -172,7 +188,7 @@
       tip           : function (userId, amount, options, callback) {
         var params = {
           amount: amount
-        }
+        };
 
         if (!callback) {
           callback = options;
@@ -197,8 +213,11 @@
       }
     },
     user: {
-      checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      login         : function (role, username, password, callback) {
+      register: [GENERATE_POST, 'user'],
+      fetchOwn: [GENERATE_GET, 'user'],
+      update: GENERATE_POST,
+      checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
+      login: function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
           callback = password;
@@ -208,7 +227,7 @@
         }
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      loginByHash   : function (hash, callback) {
+      loginByHash: function (hash, callback) {
         return this.post('user/login/' + hash, callback);
       },
       forgotPassword: function (username, email, callback) {
@@ -237,7 +256,32 @@
       resetPassword: function (hash, password, callback) {
         return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
-      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email']
+      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
+      uploadSnapshot: [GENERATE_POST, 'user/snapshot'],
+      findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
+      tip: function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        };
+
+        if (!callback) {
+          callback = options;
+          options  = false;
+        }
+
+        if (options && options.type) {
+          params.type = options.type || false;
+        }
+
+        if (options && options.name) {
+          params.name = options.name || false;
+        }
+
+        return this.post('user/tip/' + userId, params, callback);
+      },
+      remove: function (callback) {
+        return this.post('user/delete', callback);
+      }
     },
     agenda: {
       fetchSchedule: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
@@ -492,6 +536,34 @@
       MESSAGES     : 'message'
     },
 
+    handleSocketDisconnect: function () {
+      if (this.noQueue) {
+        return;
+      }
+
+      // If we get here, remove all running and queued requests and call their callback with an error
+
+      function failRequest (data) {
+        if (!(data instanceof Array)) {
+          return;
+        }
+
+        data[3] = data[3] || function () {};
+
+        data[3]('socket disconnected', null);
+      }
+
+      // First all running requests
+      while (this.requestsRunning.length > 0) {
+        failRequest(this.requestsRunning.shift());
+      }
+
+      // Now all queued requests
+      while (this.requestQueue.length > 0) {
+        failRequest(this.requestQueue.shift());
+      }
+    },
+
     on: function (eventName, func) {
       if (!this.eventHandlers) {
         // events not initialized, just return
@@ -576,7 +648,7 @@
       this.doRequest       = this.request;
       this.request         = this.addToQueue;
       this.requestQueue    = [];
-      this.requestsRunning = 0;
+      this.requestsRunning = [];
     },
 
     addToQueue: function (method, url, params, callback) {
@@ -587,11 +659,18 @@
 
       params = params || {};
 
+      // If the socket is disconnected, just call the callback with an error since it will never happen
+      if (this.io && this.io.socket && !this.connected) {
+        return callback('socket disconnected', null);
+      }
+
+      var requestArray = [method, url, params, callback];
+
       if (params.skipQueue) {
         delete params.skipQueue;
-        this.requestsRunning++;
+        this.requestsRunning.push(requestArray);
         return this.doRequest(method, url, params, function (error, result) {
-          this.requestsRunning--;
+          this.removeFromRunningRequests(requestArray);
           setTimeout(function () {
             callback(error, result);
           }, 0);
@@ -599,14 +678,23 @@
         }.bind(this));
       }
 
-      this.requestQueue.push([method, url, params, callback]);
+      this.requestQueue.push(requestArray);
 
       this.startQueue();
     },
 
+    removeFromRunningRequests: function (obj) {
+      for (var i = 0; i < this.requestsRunning.length; i++) {
+        if (this.requestsRunning[i] == obj) {
+          this.requestsRunning.splice(i,1);
+          return;
+        }
+      }
+    },
+
     // Start the queue async
     startQueue: function () {
-      if (this.requestsRunning >= this.concurrentCalls || this.requestQueue.length === 0) {
+      if (this.requestsRunning.length >= this.concurrentCalls || this.requestQueue.length === 0) {
         return;
       }
 
@@ -615,18 +703,18 @@
 
     // Process a queue item and advance to the next
     processQueue: function () {
-      if (this.requestQueue.length === 0 || this.requestsRunning >= this.concurrentCalls) {
+      if (this.requestQueue.length === 0 || this.requestsRunning.length >= this.concurrentCalls) {
         return;
       }
 
-      this.requestsRunning++;
-
       var currentRequest = this.requestQueue.shift();
+
+      this.requestsRunning.push(currentRequest);
 
       currentRequest[3] = currentRequest[3] || function () {};
 
       this.doRequest.call(this, currentRequest[0], currentRequest[1], currentRequest[2], function (error, result) {
-        this.requestsRunning--;
+        this.removeFromRunningRequests(currentRequest);
         setTimeout(function () {
           currentRequest[3](error, result);
         }, 0);
@@ -737,6 +825,11 @@
 
       // Do we have a sails.io instance? if we do, let it handle the request and bail out;
       if (this.io && this.io.socket) {
+        // If the socket is disconnected, just call the callback with an error since it will never get into the callback
+        if (!this.connected) {
+          return callback('scoket disconnected', null);
+        }
+
         if (!params['x-apikey']) {
           params['x-apikey'] = this.apiKey;
         }

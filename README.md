@@ -45,13 +45,16 @@ If any error is encounterd, **error** will be set
 * customer
   * **register** (object form, function callback)
   * **login** (string username, string password, function callback)
-  * **fetchOwn** (object params, function callback)
+  * **fetchOwn** (function callback)
   * **update** (object form, function callback)
   * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
   * **upload** (string type, string image, function callback)
 
 * user
+  * **register** (object form, function callback)
+  * **fetchOwn** (function callback)
+  * **update** (object form, function callback)
   * **checkUsername** (string username, function callback)
   * **login** ([*string role*], string username, string password, function callback)
   * **loginByHash** (string hash, function callback)
@@ -59,6 +62,10 @@ If any error is encounterd, **error** will be set
   * **resetPassword** (string hash, string password, function callback)
   * **verifyEmail** (string hash, function callback)
   * **resendValidationMail** (function callback)
+  * **findByUsername** (string username, function callback)
+  * **uploadSnapshot** (object data, function callback)
+  * **tip** (number userId, number amount, [*object options*], function callback)
+  * **remove** (function callback)
 
 * agenda
   * **fetchSchedule** (string username | string date, function callback)
