@@ -83,7 +83,7 @@ If any error is encounterd, **error** will be set
 * follow
   * **isFollowing** (number userId, function callback)
   * **fetchAll** (function callback)
-  * **fetchFollowers** (function callback)
+  * **fetchAllFollowers** ([*number userId*], function callback)
   * **follow** (number userId, function callback)
   * **unfollow** (number userId, function callback)
 
