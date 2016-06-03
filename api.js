@@ -376,6 +376,16 @@
 
         return this.get('followers/' + userId, callback);
       },
+      fetchAllFollowed: function (userId, callback) {
+        if (!callback) {
+          callback = userId;
+          userId   = undefined;
+
+          return this.get('follows', callback);
+        }
+
+        return this.get('follows/' + userId, callback);
+      },
       follow           : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
       },
