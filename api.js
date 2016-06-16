@@ -66,6 +66,9 @@
         this.io.socket.on('connected', function () {
           this.connected = true;
         }.bind(this));
+        this.io.socket.on('reconnect', function () {
+          this.connected = true;
+        }.bind(this));
       }
 
       this.eventHandlers = {};
