@@ -942,7 +942,7 @@
 
         if (error == null && c.status != 200) {
           error = c.status;
-          response = {
+          response = response || {
             status      : c.status,
             responseText: c.responseText
           };
