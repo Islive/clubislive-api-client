@@ -108,6 +108,8 @@ If any error is encounterd, **error** will be set
   * **search** ([*object filters*], function callback)
   * **viewAlbum** (number albumId, function callback)
   * **buy** (number mediaId, function callback)
+  * **rate** (number mediaId, number score, function callback)
+  * **fetchOwnRating** (number mediaId, function callback)
 
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
