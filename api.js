@@ -576,7 +576,8 @@
         }
 
         return this.get('chat/end', callback);
-      }
+      },
+      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
     },
     rules : {
       promotion: function (callback) {
