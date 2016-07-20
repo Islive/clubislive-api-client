@@ -125,3 +125,6 @@ If any error is encounterd, **error** will be set
 
 * rules
   * **promotion** (function callback)
+
+* abuse
+  * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
