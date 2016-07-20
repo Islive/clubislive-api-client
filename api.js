@@ -629,10 +629,10 @@
         return this.get('posts/replies/' + postId, options, callback);
       },
       compose: function (body, callback) {
-        return this.post('post', { body: body }, callback)
+        return this.post('post', { body: body }, callback);
       },
       reply: function (postId, body, callback) {
-        return this.post('post/reply/' + postId, { body: body }, callback)
+        return this.post('post/reply/' + postId, { body: body }, callback);
       }
     }
   };
