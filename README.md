@@ -125,3 +125,9 @@ If any error is encounterd, **error** will be set
 
 * rules
   * **promotion** (function callback)
+
+* post
+  * **fetch** ([*number userId*], [*object options*], function callback)
+  * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
+  * **compose** (string body, function callback)
+  * **reply** (number postId, string body, function callback)
