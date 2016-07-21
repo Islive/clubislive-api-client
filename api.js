@@ -646,7 +646,8 @@
     Events: {
       NOTIFICATIONS: 'notifications',
       CUSTOMER     : 'user',
-      MESSAGES     : 'message'
+      MESSAGES     : 'message',
+      POST         : 'post'
     },
 
     handleSocketDisconnect: function () {
