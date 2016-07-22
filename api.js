@@ -227,8 +227,9 @@
           callback = password;
           password = username;
           username = role;
-          role     = 'user';
+          role     = undefined;
         }
+
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
       loginByHash: function (hash, callback) {
