@@ -220,6 +220,7 @@
       fetchOwn: [GENERATE_GET, 'user'],
       update: GENERATE_POST,
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
+      earnings: [GENERATE_GET, 'user/earnings'],      
       login: function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
@@ -579,7 +580,8 @@
         }
 
         return this.get('chat/end', callback);
-      }
+      },
+      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
     },
     rules : {
       promotion: function (callback) {
@@ -946,7 +948,7 @@
 
         if (error == null && c.status != 200) {
           error = c.status;
-          response = {
+          response = response || {
             status      : c.status,
             responseText: c.responseText
           };
