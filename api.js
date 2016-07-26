@@ -489,7 +489,11 @@
       },
       buy: function (mediaId, callback) {
         return this.post('media/buy', { media: mediaId }, callback);
-      }
+      },
+      rate: function (mediaId, score, callback) {
+        return this.post('/media/rating/'+ mediaId, { score: score }, callback);
+      },
+      fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
     },
     activity: {
       load: function (userId, options, callback) {
@@ -656,6 +660,9 @@
         }
 
         return this.post('post/reply/' + postId, postData, callback);
+      },
+      rate: function (postId, score, callback) {
+        return this.post('/post/rating/'+ postId, { score: score }, callback);
       },
       delete: function (postId, callback) {
         return this.post('post/delete/' + postId, callback);
