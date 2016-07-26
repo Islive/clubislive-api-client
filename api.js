@@ -628,11 +628,36 @@
 
         return this.get('posts/replies/' + postId, options, callback);
       },
-      compose: function (body, callback) {
-        return this.post('post', { body: body }, callback);
+      compose: function (body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post', postData, callback);
       },
-      reply: function (postId, body, callback) {
-        return this.post('post/reply/' + postId, { body: body }, callback);
+      reply: function (postId, body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post/reply/' + postId, postData, callback);
+      },
+      delete: function (postId, callback) {
+        return this.post('post/delete/' + postId, callback);
       }
     }
   };
