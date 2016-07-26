@@ -660,6 +660,9 @@
 
         return this.post('post/reply/' + postId, postData, callback);
       },
+      rate: function (postId, score, callback) {
+        return this.post('/post/rating/'+ postId, { score: score }, callback);
+      },
       delete: function (postId, callback) {
         return this.post('post/delete/' + postId, callback);
       }
