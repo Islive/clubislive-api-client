@@ -587,6 +587,82 @@
       promotion: function (callback) {
         return this.get('rules/promotion', callback);
       }
+    },
+    post: {
+      fetch: function (userId, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          options  = undefined;
+          userId   = undefined;
+        } else if (typeof userId === 'object') {
+          callback = options;
+          options  = userId;
+          userId   = undefined;
+        }
+
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        if (!userId) {
+          return this.get('posts', options, callback);
+        }
+
+        return this.get('posts/user/' + userId, options, callback);
+      },
+      fetchReplies: function (postId, lowerThanPostId, options, callback) {
+        if (typeof lowerThanPostId === 'function') {
+          callback        = lowerThanPostId;
+          options         = undefined;
+          lowerThanPostId = undefined;
+        } else if (typeof lowerThanPostId === 'object') {
+          callback        = options;
+          options         = lowerThanPostId;
+          lowerThanPostId = undefined;
+        }
+
+        options = options || {};
+
+        if (lowerThanPostId) {
+          options.lowestId = lowerThanPostId;
+        }
+
+        return this.get('posts/replies/' + postId, options, callback);
+      },
+      compose: function (body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post', postData, callback);
+      },
+      reply: function (postId, body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post/reply/' + postId, postData, callback);
+      },
+      delete: function (postId, callback) {
+        return this.post('post/delete/' + postId, callback);
+      }
     }
   };
 
@@ -599,7 +675,8 @@
     Events: {
       NOTIFICATIONS: 'notifications',
       CUSTOMER     : 'user',
-      MESSAGES     : 'message'
+      MESSAGES     : 'message',
+      POST         : 'post'
     },
 
     handleSocketDisconnect: function () {
