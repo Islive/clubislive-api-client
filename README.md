@@ -129,8 +129,9 @@ If any error is encounterd, **error** will be set
 * post
   * **fetch** ([*number userId*], [*object options*], function callback)
   * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
-  * **compose** (string body, function callback)
-  * **reply** (number postId, string body, function callback)
+  * **compose** (string body, [*binaryString attachment*], function callback)
+  * **reply** (number postId, string body, [*binaryString attachment*], function callback)
+  * **delete** (number postId, function callback)
 
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
