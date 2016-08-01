@@ -135,6 +135,7 @@ If any error is encounterd, **error** will be set
   * **compose** (string body, [*binaryString attachment*], function callback)
   * **reply** (number postId, string body, [*binaryString attachment*], function callback)
   * **delete** (number postId, function callback)
+  * **rate** (number postId, number score, function callback)
 
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
