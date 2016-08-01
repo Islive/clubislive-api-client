@@ -614,6 +614,22 @@
 
         return this.get('posts/user/' + userId, options, callback);
       },
+      fetchSelection: function (postIds, options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        if (postIds instanceof Array) {
+          options.postIds = postIds;
+
+          return this.get('posts/selection', options, callback);
+        }
+
+        return this.get('post/' + postIds, options, callback);
+      },
       fetchReplies: function (postId, lowerThanPostId, options, callback) {
         if (typeof lowerThanPostId === 'function') {
           callback        = lowerThanPostId;
