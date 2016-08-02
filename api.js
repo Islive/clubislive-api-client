@@ -324,6 +324,9 @@
       },
       remove: function (callback) {
         return this.post('user/delete', callback);
+      },
+      autocomplete: function (query, callback) {
+        return this.get('user/autocomplete', { q: query }, callback);
       }
     },
     agenda: {
