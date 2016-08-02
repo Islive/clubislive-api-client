@@ -227,8 +227,9 @@
           callback = password;
           password = username;
           username = role;
-          role     = 'user';
+          role     = undefined;
         }
+
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
       loginByHash: function (hash, callback) {
@@ -488,7 +489,11 @@
       },
       buy: function (mediaId, callback) {
         return this.post('media/buy', { media: mediaId }, callback);
-      }
+      },
+      rate: function (mediaId, score, callback) {
+        return this.post('/media/rating/'+ mediaId, { score: score }, callback);
+      },
+      fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
     },
     activity: {
       load: function (userId, options, callback) {
@@ -583,6 +588,123 @@
       promotion: function (callback) {
         return this.get('rules/promotion', callback);
       }
+    },
+    post: {
+      fetch: function (userId, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          options  = undefined;
+          userId   = undefined;
+        } else if (typeof userId === 'object') {
+          callback = options;
+          options  = userId;
+          userId   = undefined;
+        }
+
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        if (!userId) {
+          return this.get('posts', options, callback);
+        }
+
+        return this.get('posts/user/' + userId, options, callback);
+      },
+      fetchSelection: function (postIds, options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        if (postIds instanceof Array) {
+          options.postIds = postIds;
+
+          return this.get('posts/selection', options, callback);
+        }
+
+        return this.get('post/' + postIds, options, callback);
+      },
+      fetchReplies: function (postId, lowerThanPostId, options, callback) {
+        if (typeof lowerThanPostId === 'function') {
+          callback        = lowerThanPostId;
+          options         = undefined;
+          lowerThanPostId = undefined;
+        } else if (typeof lowerThanPostId === 'object') {
+          callback        = options;
+          options         = lowerThanPostId;
+          lowerThanPostId = undefined;
+        }
+
+        options = options || {};
+
+        if (lowerThanPostId) {
+          options.lowestId = lowerThanPostId;
+        }
+
+        return this.get('posts/replies/' + postId, options, callback);
+      },
+      compose: function (body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post', postData, callback);
+      },
+      reply: function (postId, body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post/reply/' + postId, postData, callback);
+      },
+      rate: function (postId, score, callback) {
+        return this.post('/post/rating/'+ postId, { score: score }, callback);
+      },
+      delete: function (postId, callback) {
+        return this.post('post/delete/' + postId, callback);
+      }
+    },
+    abuse: {
+      report: function (suspectUserId, section, identifier, reason, callback) {
+        if (typeof identifier === 'function') {
+          callback   = identifier;
+          reason     = section;
+          identifier = undefined;
+          section    = undefined;
+        }
+
+        var reportData = {
+          suspect: suspectUserId,
+          reason : reason
+        };
+
+        if (section) {
+          reportData.foreignKey = identifier;
+          return this.post('abuse/report/' + section, reportData, callback);
+        }
+
+        return this.post('abuse/report', reportData, callback);
+      }
     }
   };
 
@@ -595,7 +717,8 @@
     Events: {
       NOTIFICATIONS: 'notifications',
       CUSTOMER     : 'user',
-      MESSAGES     : 'message'
+      MESSAGES     : 'message',
+      POST         : 'post'
     },
 
     handleSocketDisconnect: function () {

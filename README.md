@@ -108,6 +108,8 @@ If any error is encounterd, **error** will be set
   * **search** ([*object filters*], function callback)
   * **viewAlbum** (number albumId, function callback)
   * **buy** (number mediaId, function callback)
+  * **rate** (number mediaId, number score, function callback)
+  * **fetchOwnRating** (number mediaId, function callback)
 
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
@@ -125,3 +127,15 @@ If any error is encounterd, **error** will be set
 
 * rules
   * **promotion** (function callback)
+
+* post
+  * **fetch** ([*number userId*], [*object options*], function callback)
+  * **fetchSelection** (number postId | array postIds, [*object options*], function callback)
+  * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
+  * **compose** (string body, [*binaryString attachment*], function callback)
+  * **reply** (number postId, string body, [*binaryString attachment*], function callback)
+  * **delete** (number postId, function callback)
+  * **rate** (number postId, number score, function callback)
+
+* abuse
+  * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
