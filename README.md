@@ -66,6 +66,7 @@ If any error is encounterd, **error** will be set
   * **uploadSnapshot** (string snapshot, [*string type*], function callback)
   * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
+  * **autocomplete** (string query, function callback)
 
 * agenda
   * **fetchSchedule** (string username | string date, function callback)
