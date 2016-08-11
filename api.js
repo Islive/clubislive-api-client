@@ -496,7 +496,8 @@
       fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
     },
     activity: {
-      fetch: [GENERATE_GET, 'activities'],
+      fetch   : [GENERATE_GET, 'activities'],
+      fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
       load: function (userId, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
@@ -716,28 +717,8 @@
      */
 
     Events: {
-      // this one should be renamed, it receives updates about your user record
       CUSTOMER     : 'user',
-
-      // events tied to activities
-      ONLINE                  : 'online',
-      BIRTHDAY                : 'birthday',
-      FREECHAT                : 'freechat',
-      ABUSE                   : 'abuse',
-      POST                    : 'post',
-      REPLY                   : 'reply',
-      MENTIONED               : 'mentioned',
-      FOLLOW                  : 'follow',
-      MEDIA                   : 'media',
-      MEDIA_APPROVED          : 'media_approved',
-      MESSAGE                 : 'message',
-      RATING                  : 'rating',
-      PROFILE                 : 'profile',
-      PUBLIC                  : 'public',
-      USER_REGISTERED         : 'user_registered',
-      USER_VERIFIED_EMAIL     : 'user_verified_email',
-      USER_APPROVED           : 'user_approved',
-      USER_RESEND_VERIFY_EMAIL: 'user_resend_verify_email'
+      ACTIVITY     : 'activity'
     },
 
     handleSocketDisconnect: function () {
