@@ -724,6 +724,23 @@
       ACTIVITY     : 'activity'
     },
 
+    Activities: {
+      ONLINE        : 'online',
+      BIRTHDAY      : 'birthday',
+      FREECHAT      : 'freechat',
+      ABUSE         : 'abuse',
+      POST          : 'post',
+      REPLY         : 'reply',
+      MENTIONED     : 'mentioned',
+      FOLLOW        : 'follow',
+      MEDIA         : 'media',
+      MEDIA_APPROVED: 'media_approved',
+      MESSAGE       : 'message',
+      RATING        : 'rating',
+      PROFILE       : 'profile',
+      PUBLIC        : 'public'
+    },
+
     handleSocketDisconnect: function () {
       if (this.noQueue) {
         return;
