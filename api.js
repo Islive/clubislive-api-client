@@ -499,6 +499,8 @@
       fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
     },
     activity: {
+      fetch   : [GENERATE_GET, 'activities'],
+      fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
       load: function (userId, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
@@ -718,10 +720,8 @@
      */
 
     Events: {
-      NOTIFICATIONS: 'notifications',
       CUSTOMER     : 'user',
-      MESSAGES     : 'message',
-      POST         : 'post'
+      ACTIVITY     : 'activity'
     },
 
     handleSocketDisconnect: function () {
@@ -758,6 +758,14 @@
         return;
       }
 
+      if (eventName instanceof Array) {
+        eventName.map(function (singleEventName) {
+          this.on(singleEventName, func);
+        });
+
+        return;
+      }
+
       if (typeof func !== 'function') {
         throw 'Not a valid function';
       }
@@ -784,6 +792,14 @@
     off: function (eventName, func) {
       if (!this.eventHandlers) {
         // events not initialized, just return
+        return;
+      }
+
+      if (eventName instanceof Array) {
+        eventName.map(function (singleEventName) {
+          this.off(singleEventName, func);
+        });
+
         return;
       }
 
@@ -814,6 +830,14 @@
     trigger: function (eventName, data) {
       if (!this.eventHandlers) {
         // events not initialized, just return
+        return;
+      }
+
+      if (eventName instanceof Array) {
+        eventName.map(function (singleEventName) {
+          this.trigger(singleEventName, data);
+        });
+
         return;
       }
 
