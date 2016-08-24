@@ -220,7 +220,8 @@
       fetchOwn: [GENERATE_GET, 'user'],
       update: GENERATE_POST,
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      earnings: [GENERATE_GET, 'user/earnings'],      
+      earnings: [GENERATE_GET, 'user/earnings'],
+      trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
       login: function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
