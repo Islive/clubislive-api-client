@@ -500,6 +500,7 @@
       fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
     },
     activity: {
+      news   : [GENERATE_GET, '/activities/news'],
       fetch   : [GENERATE_GET, 'activities'],
       fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
       load: function (userId, options, callback) {
