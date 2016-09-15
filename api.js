@@ -17,6 +17,42 @@
       GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
       GENERATE_POST                     = 'GENERATE_POST';
 
+  // Shim for window.localStorage, using cookies
+  // https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
+  if (!window.localStorage) {
+    window.localStorage        = {
+      getItem       : function (sKey) {
+        if (!sKey || !this.hasOwnProperty(sKey)) {
+          return null;
+        }
+        return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+      },
+      key           : function (nKeyId) {
+        return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]);
+      },
+      setItem       : function (sKey, sValue) {
+        if (!sKey) {
+          return;
+        }
+        document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+        this.length     = document.cookie.match(/\=/g).length;
+      },
+      length        : 0,
+      removeItem    : function (sKey) {
+        if (!sKey || !this.hasOwnProperty(sKey)) {
+          return;
+        }
+        document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        this.length--;
+      },
+      hasOwnProperty: function (sKey) {
+        return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+      }
+    };
+    window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
+  }
+
+
   function Api(apiKey, options) {
     // When this function is called without the new keyword, return a new copy of Api
     if (!(this instanceof Api)) {
@@ -715,6 +751,55 @@
     }
   };
 
+  var cachedRoutes = {
+    'get': {
+      '/user/find/(a-zA-Z0-9)': function(urlParts, params) {
+        // Use everything for the hash
+        return [urlParts, orderObject(params)];
+      }
+    },
+    'get-expires': {
+      '/user/find/(a-zA-Z0-9)': 300000 // 300s / 5m
+    }
+  };
+
+  // Returns an ordered version of it's input
+  function orderObject(source) {
+    var output = {};
+    Object.keys(source).sort().forEach(function(key) {
+      output[key] = source[key];
+    });
+    return output;
+  }
+
+  function qhash(input) {
+    switch(typeof input) {
+      case 'string':
+        // do nothing
+        break;
+      case 'object':
+        input = orderObject(input);
+      default:
+        input = JSON.stringify(input);
+        break;
+    }
+
+    if(crypto) {
+      return crypto.createHash('sha256').update(input).digest('base64');
+    }
+
+    // Fallback hash function
+    // http://stackoverflow.com/a/7616484/2928176
+    var hash = 0, i, chr, len;
+    if (input.length === 0) return hash;
+    for (i = 0, len = input.length; i < len; i++) {
+      chr  = input.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return ''+hash;
+  }
+
   Api.prototype = {
 
     /**
@@ -1022,6 +1107,8 @@
         throw new Error('Invalid method ' + method);
       }
 
+      var lcMethod = method.toLowerCase();
+
       if (typeof params !== 'object') {
         throw new Error('Params is not an object');
       }
@@ -1042,6 +1129,30 @@
 
       if (!params.token && this.token) {
         params.token = this.token;
+      }
+
+      if (cachedRoutes[lcMethod]) {
+        var i;
+        for(i in cachedRoutes[lcMethod]) {
+          if (!cachedRoutes[lcMethod].hasOwnProperty(i)) continue;
+          var regexp = new RegExp(i);
+          var urlParts = regexp.exec(url);                       // Disect the url
+          if (!urlParts) continue;                               // No Match
+          var hashSource = cachedRoutes[i](urlParts, params);    // Let the config decide what to cache
+          if (!hashSource) continue;                             // Not caching
+          var cacheRoute = i;
+          var hash = 'ClubIsLiveApiClient-' + qhash(hashSource); // Build the hash
+          var data = window.localStorage.getItem(hash);          // Get string version of data
+          if (data) {
+            data = JSON.parse(data);
+            if (data.expires > (new Date()).getTime()) {
+              return callback(data.error, data.response);        // Return if we have cached data
+            } else {
+              window.localStorage.removeItem(hash);              // Or remove expired data
+            }
+          }
+          break; // out of for loop
+        }
       }
 
       // Remove skipQueue if present, because the queue is not enabled if it's still here
@@ -1119,6 +1230,13 @@
           };
         }
 
+        if(hash&&cacheRoute) {
+          window.localStorage.setItem(hash, JSON.stringify({
+            expires : (new Date()).getTime() + (cachedRoutes[lcMethod+'-expires'][cacheRoute] || 300000), // Default to 5 minutes
+            error   : error,
+            response: response
+          }))
+        }
         callback(error, response);
       };
 
