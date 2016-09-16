@@ -1156,13 +1156,16 @@
         var urlParts = action.route.exec(url);
         if (!urlParts) return;
 
-        // Generate hash (and last option to non-caching behavior)
+        // Generate hash source (and last option to non-caching behavior)
         var hashSource = action.generateHash(urlParts, params);
         if (!hashSource) return;
+        hashSource = [action.route.source, hashSource];
 
+        // Store action & actually hash the damn thing
         cacheAction = action;
         hash = 'ClubIsLiveApiClient-' + qhash(hashSource);
 
+        // Check if we have data
         var data = window.localStorage.getItem(hash);
         if (data) {
           try {
@@ -1171,6 +1174,7 @@
             console.warn('Invalid cache data for', action.route);
             return;
           }
+          // Return or expire
           if (data.expires > (new Date()).getTime()) {
             callback(data.error, data.response);
             cancelRequest = true;
