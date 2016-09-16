@@ -17,6 +17,11 @@
       GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
       GENERATE_POST                     = 'GENERATE_POST';
 
+  // Generic regexes to be compiled up front
+  var genericRegexes = {
+    allEqualSigns: /=+/g
+  };
+
   // Shim for window.localStorage, using cookies
   // https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
   if (!window.localStorage) {
@@ -751,17 +756,17 @@
     }
   };
 
-  var cachedRoutes = {
-    'get': {
-      '/user/find/(a-zA-Z0-9)': function(urlParts, params) {
+  var cachedRoutes = [
+    {
+      'method': 'get',
+      'route': /\/user\/find\/(a-zA-Z0-9)/,
+      'ttl': 300000, // 300s / 5m
+      'generateHash': function(urlParts, params) {
         // Use everything for the hash
         return [urlParts, orderObject(params)];
       }
-    },
-    'get-expires': {
-      '/user/find/(a-zA-Z0-9)': 300000 // 300s / 5m
     }
-  };
+  ];
 
   // Returns an ordered version of it's input
   function orderObject(source) {
@@ -784,8 +789,12 @@
         break;
     }
 
-    if(crypto) {
-      return crypto.createHash('sha256').update(input).digest('base64');
+    // Base64 version
+    // Simple but effective
+    if (window.btoa) {
+      var encodedData = window.btoa(input).replace(genericRegexes.allEqualSigns, '');
+      while(encodedData.length<256) encodedData += encodedData;
+      return encodedData.substr(0,256);
     }
 
     // Fallback hash function
@@ -1131,29 +1140,47 @@
         params.token = this.token;
       }
 
-      if (cachedRoutes[lcMethod]) {
-        var i;
-        for(i in cachedRoutes[lcMethod]) {
-          if (!cachedRoutes[lcMethod].hasOwnProperty(i)) continue;
-          var regexp = new RegExp(i);
-          var urlParts = regexp.exec(url);                       // Disect the url
-          if (!urlParts) continue;                               // No Match
-          var hashSource = cachedRoutes[i](urlParts, params);    // Let the config decide what to cache
-          if (!hashSource) continue;                             // Not caching
-          var cacheRoute = i;
-          var hash = 'ClubIsLiveApiClient-' + qhash(hashSource); // Build the hash
-          var data = window.localStorage.getItem(hash);          // Get string version of data
-          if (data) {
+      // Let's see if we should cache this route
+      var cancelRequest = false,
+          hash          = null,
+          cacheAction   = null;
+      cachedRoutes.forEach(function(action) {
+
+        // Some other route must've matched
+        if (cancelRequest) return;
+
+        // Some filters to cancel caching
+        if (action.method.toLowerCase()!=lcMethod) return;
+
+        // Test if the action wants the current url
+        var urlParts = action.route.exec(url);
+        if (!urlParts) return;
+
+        // Generate hash (and last option to non-caching behavior)
+        var hashSource = action.generateHash(urlParts, params);
+        if (!hashSource) return;
+
+        cacheAction = action;
+        hash = 'ClubIsLiveApiClient-' + qhash(hashSource);
+
+        var data = window.localStorage.getItem(hash);
+        if (data) {
+          try {
             data = JSON.parse(data);
-            if (data.expires > (new Date()).getTime()) {
-              return callback(data.error, data.response);        // Return if we have cached data
-            } else {
-              window.localStorage.removeItem(hash);              // Or remove expired data
-            }
+          } catch(e) {
+            console.warn('Invalid cache data for', action.route);
+            return;
           }
-          break; // out of for loop
+          if (data.expires > (new Date()).getTime()) {
+            callback(data.error, data.response);
+            cancelRequest = true;
+          } else {
+            window.localStorage.removeItem(hash);
+          }
         }
-      }
+      });
+      // We've used cache & called the callback already. Let's stop now
+      if (cancelRequest) return;
 
       // Remove skipQueue if present, because the queue is not enabled if it's still here
       if (params.skipQueue) {
@@ -1232,7 +1259,7 @@
 
         if(hash&&cacheRoute) {
           window.localStorage.setItem(hash, JSON.stringify({
-            expires : (new Date()).getTime() + (cachedRoutes[lcMethod+'-expires'][cacheRoute] || 300000), // Default to 5 minutes
+            expires : (new Date()).getTime() + (cacheAction && cacheAction.ttl || 300000),
             error   : error,
             response: response
           }))
