@@ -1257,7 +1257,7 @@
           };
         }
 
-        if(hash&&cacheRoute) {
+        if(hash&&cacheAction) {
           window.localStorage.setItem(hash, JSON.stringify({
             expires : (new Date()).getTime() + (cacheAction && cacheAction.ttl || 300000),
             error   : error,
