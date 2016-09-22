@@ -723,7 +723,8 @@
 
     Events: {
       CUSTOMER     : 'user',
-      ACTIVITY     : 'activity'
+      ACTIVITY     : 'activity',
+      NEWS         : 'news'
     },
 
     Activities: {
