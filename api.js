@@ -148,8 +148,6 @@
         return this.user.login('performer', username, password, callback);
       },
       fetchOwn        : [GENERATE_GET, 'performer'],
-      matches         : [GENERATE_GET, 'user/matches'],
-      ignore          : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/suggested-customers/ignore/'],
       search          : function (searchOptions, page, callback) {
         if (!callback) {
           callback = page;
@@ -224,6 +222,8 @@
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
       earnings: [GENERATE_GET, 'user/earnings'],
       trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
+      matches: [GENERATE_GET, 'user/matches'],
+      ignore: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
       login: function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
