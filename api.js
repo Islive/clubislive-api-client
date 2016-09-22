@@ -148,6 +148,8 @@
         return this.user.login('performer', username, password, callback);
       },
       fetchOwn        : [GENERATE_GET, 'performer'],
+      matches         : [GENERATE_GET, 'user/matches'],
+      ignore          : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/suggested-customers/ignore/'],
       search          : function (searchOptions, page, callback) {
         if (!callback) {
           callback = page;
