@@ -222,6 +222,8 @@
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
       earnings: [GENERATE_GET, 'user/earnings'],
       trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
+      matches: GENERATE_GET,
+      ignore: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
       login: function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
