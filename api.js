@@ -436,7 +436,16 @@
     media: {
       create          : [GENERATE_POST, 'media'],
       update          : [GENERATE_POST, 'media/update'],
-      fetchOwn        : [GENERATE_GET, 'media'],
+      fetchOwn        : function (albumId, callback) {
+        if (!callback) {
+          callback = albumId;
+          albumId  = undefined;
+        }
+
+        var params = albumId ? { albumId: albumId } : null;
+
+        return this.get('media', params, callback);
+      },
       fetchBought     : [GENERATE_GET, 'media/bought'],
       fetchByFollowers: function (userId, limit, callback) {
         if (!callback) {
