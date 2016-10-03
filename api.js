@@ -438,7 +438,36 @@
     media: {
       create          : [GENERATE_POST, 'media'],
       update          : [GENERATE_POST, 'media/update'],
-      fetchOwn        : [GENERATE_GET, 'media'],
+      fetchOwn        : function (albumId, includeDeleted, callback) {
+        if (typeof albumId === 'function') {
+          callback       = albumId;
+          includeDeleted = undefined;
+          albumId        = undefined;
+        }
+
+        if (typeof includeDeleted === 'function') {
+          callback = includeDeleted;
+
+          if (typeof albumId === 'boolean') {
+            includeDeleted = albumId;
+            albumId        = undefined;
+          } else {
+            includeDeleted = undefined;
+          }
+        }
+
+        var params = {};
+
+        if (albumId) {
+          params.albumId = albumId;
+        }
+
+        if (includeDeleted) {
+          params.includeDeleted = true;
+        }
+
+        return this.get('media', params, callback);
+      },
       fetchBought     : [GENERATE_GET, 'media/bought'],
       fetchByFollowers: function (userId, limit, callback) {
         if (!callback) {
