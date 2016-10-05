@@ -772,6 +772,7 @@
       MESSAGE       : 'message',
       RATING        : 'rating',
       PROFILE       : 'profile',
+      SNAPSHOT      : 'snapshot',
       PUBLIC        : 'public'
     },
 
