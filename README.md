@@ -63,7 +63,7 @@ If any error is encounterd, **error** will be set
   * **verifyEmail** (string hash, function callback)
   * **resendValidationMail** (function callback)
   * **findByUsername** (string username, function callback)
-  * **uploadSnapshot** (string snapshot, [*string type*], function callback)
+  * **uploadSnapshot** (string snapshot, [*string type*], [*object options*], function callback)
   * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
   * **autocomplete** (string query, function callback)
