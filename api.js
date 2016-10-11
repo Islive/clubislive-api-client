@@ -265,15 +265,25 @@
         return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
-      uploadSnapshot: function (snapshot, type, callback) {
-        if (!callback) {
+      uploadSnapshot: function (snapshot, type, params, callback) {
+        if (typeof type === 'function') {
           callback = type;
+          params   = null;
           type     = null;
+        } else if (typeof params === 'function') {
+          callback = params;
+
+          if (typeof type === 'string') {
+            params = null
+          } else {
+            params = type;
+            type   = null;
+          }
         }
 
-        var params = {
-          snapshot: snapshot
-        };
+        params = params || {};
+
+        params.snapshot = snapshot;
 
         if (type) {
           params.type = type;
