@@ -391,9 +391,6 @@
         return this.get('conversation/' + userId, options, callback);
       },
       send  : function (userId, options, callback) {
-        if (!userId || !options) {
-          return false;
-        }
         return this.post('conversation/' + userId, options, callback);
       }
     },
