@@ -384,6 +384,19 @@
         return this.get(url, callback);
       }
     },
+    conversation: {
+      read  : GENERATE_GET_APPEND_PARAM1_TO_URL,
+      unread: GENERATE_GET,
+      fetch : function (userId, options, callback) {
+        return this.get('conversation/' + userId, options, callback);
+      },
+      send  : function (userId, options, callback) {
+        if (!userId || !options) {
+          return false;
+        }
+        return this.post('conversation/' + userId, options, callback);
+      }
+    },
     follow: {
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
       fetchAll         : [GENERATE_GET, 'follow/all'],
