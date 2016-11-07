@@ -80,6 +80,12 @@ If any error is encounterd, **error** will be set
   * **compose** (string to, string title, string content, function callback)
   * **reply** (string to, string hash, string content, function callback)
   * **markRead** (string hash, [*number messsageId*], function callback)
+  
+* conversation
+  * **markAsRead** (number userId, function callback)
+  * **fetchUnread** (function callback)
+  * **fetch** (number userId, [*number page*], [*object options*], function callback)
+  * **send** (number userId, string message, function callback)
 
 * follow
   * **isFollowing** (number userId, function callback)

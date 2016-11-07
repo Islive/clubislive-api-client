@@ -385,13 +385,34 @@
       }
     },
     conversation: {
-      read  : GENERATE_GET_APPEND_PARAM1_TO_URL,
-      unread: GENERATE_GET,
-      fetch : function (userId, options, callback) {
+      markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
+
+      fetchUnread : [GENERATE_GET, 'conversation/unread'],
+
+      fetch : function (userId, page, options, callback) {
+        if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+          options  = undefined;
+        } else if (typeof options === 'function') {
+          callback = options;
+          if (typeof page === 'object') {
+            options = page;
+            page    = undefined;
+          } else {
+            options = undefined;
+          }
+        }
+
+        page    = page || 1;
+        options = options || {};
+
+        options.page = page;
+
         return this.get('conversation/' + userId, options, callback);
       },
-      send  : function (userId, options, callback) {
-        return this.post('conversation/' + userId, options, callback);
+      send  : function (userId, message, callback) {
+        return this.post('conversation/' + userId, { message: message }, callback);
       }
     },
     follow: {
