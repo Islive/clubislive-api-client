@@ -411,8 +411,12 @@
 
         return this.get('conversation/' + userId, options, callback);
       },
-      send  : function (userId, message, callback) {
-        return this.post('conversation/' + userId, { message: message }, callback);
+      send  : function (userId, message, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback = attachment;
+          attachment = null;
+        }
+        return this.post('conversation/' + userId, { message: message, attachment: attachment }, callback);
       }
     },
     follow: {
