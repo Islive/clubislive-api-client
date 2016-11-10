@@ -418,15 +418,31 @@
     follow: {
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
       fetchAll         : [GENERATE_GET, 'follow/all'],
-      fetchAllFollowers: function (userId, callback) {
-        if (!callback) {
-          callback = userId;
-          userId   = undefined;
+      fetchAllFollowers: function (userId, page, options, callback) {
+        if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+        } elseif (typeof options === callback) {
+          callback = options;
+          options  = undefined;
 
-          return this.get('followers', callback);
+          if (typeof page === 'object') {
+            options = page;
+            page    = undefined;
+          }
         }
 
-        return this.get('followers/' + userId, callback);
+        options = options || {};
+
+        if (page) {
+          options.page = page;
+        }
+
+        if (!userId) {
+          return this.get('followers', options, callback);
+        }
+
+        return this.get('followers/' + userId, options, callback);
       },
       fetchAllFollowed: function (userId, callback) {
         if (!callback) {
