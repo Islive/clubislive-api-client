@@ -419,10 +419,13 @@
       isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
       fetchAll         : [GENERATE_GET, 'follow/all'],
       fetchAllFollowers: function (userId, page, options, callback) {
-        if (typeof page === 'function') {
+        if (typeof userId === 'function') {
+          callback = userId;
+          userId   = null;
+        } else if (typeof page === 'function') {
           callback = page;
           page     = undefined;
-        } elseif (typeof options === callback) {
+        } else if (typeof options === callback) {
           callback = options;
           options  = undefined;
 
