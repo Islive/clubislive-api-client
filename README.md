@@ -86,7 +86,7 @@ If any error is encounterd, **error** will be set
   * **fetchUnread** (function callback)
   * **fetch** (number userId, [*number page*], [*object params*], function callback)
   * **fetchAll** ([*number page*], [*number limit*], function callback)
-  * **send** (number userId, string message, [*string attachment*], function callback)
+  * **send** (number userId, string message, [*binaryString attachment*], function callback)
 
 * follow
   * **isFollowing** (number userId, function callback)
