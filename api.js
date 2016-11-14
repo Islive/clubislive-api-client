@@ -865,6 +865,7 @@
       MESSAGE       : 'message',
       RATING        : 'rating',
       PROFILE       : 'profile',
+      PROFILE_BANNER: 'profile_banner',
       SNAPSHOT      : 'snapshot',
       PUBLIC        : 'public'
     },
