@@ -84,8 +84,9 @@ If any error is encounterd, **error** will be set
 * conversation
   * **markAsRead** (number userId, function callback)
   * **fetchUnread** (function callback)
-  * **fetch** (number userId, [*number page*], [*object options*], function callback)
-  * **send** (number userId, string message, function callback)
+  * **fetch** (number userId, [*number page*], [*object params*], function callback)
+  * **fetchAll** ([*number page*], [*number limit*], function callback)
+  * **send** (number userId, string message, [*binaryString attachment*], function callback)
 
 * follow
   * **isFollowing** (number userId, function callback)

@@ -389,30 +389,57 @@
 
       fetchUnread : [GENERATE_GET, 'conversation/unread'],
 
-      fetch : function (userId, page, options, callback) {
+      fetch : function (userId, page, params, callback) {
         if (typeof page === 'function') {
           callback = page;
           page     = undefined;
-          options  = undefined;
-        } else if (typeof options === 'function') {
-          callback = options;
+          params  = undefined;
+        } else if (typeof params === 'function') {
+          callback = params;
           if (typeof page === 'object') {
-            options = page;
+            params = page;
             page    = undefined;
           } else {
-            options = undefined;
+            params = undefined;
           }
         }
 
         page    = page || 1;
-        options = options || {};
+        params = params || {};
 
-        options.page = page;
+        params.page = page;
 
-        return this.get('conversation/' + userId, options, callback);
+        return this.get('conversation/' + userId, params, callback);
       },
-      send  : function (userId, message, callback) {
-        return this.post('conversation/' + userId, { message: message }, callback);
+
+      fetchAll: function (page, limit, callback) {
+        if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+        } else if (typeof limit === 'function') {
+          callback = limit;
+          limit    = undefined;
+        }
+
+        page  = page  || 1;
+        limit = limit || 30;
+
+        return this.get('conversation/all', { page : page, limit: limit }, callback);
+      },
+
+      send  : function (userId, message, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback = attachment;
+          attachment = null;
+        }
+
+        var data = { message: message };
+
+        if (attachment) {
+          data.attachment = attachment;
+        }
+
+        return this.post('conversation/' + userId, data, callback);
       }
     },
     follow: {
