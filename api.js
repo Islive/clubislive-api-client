@@ -291,6 +291,12 @@
 
         return this.post('user/snapshot', params, callback);
       },
+      setProfileCover: function (attachment, callback) {
+        return this.post('attachment/profile', { attachment: attachment }, callback);
+      },
+      removeProfileCover: function (callback) {
+        return this.get('attachment/remove/profile', callback);
+      },
       findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
       find          : function (searchOptions, page, callback) {
         if (!callback) {
@@ -859,6 +865,7 @@
       MESSAGE       : 'message',
       RATING        : 'rating',
       PROFILE       : 'profile',
+      PROFILE_COVER : 'profile_cover',
       SNAPSHOT      : 'snapshot',
       PUBLIC        : 'public'
     },
