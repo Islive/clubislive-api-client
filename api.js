@@ -480,15 +480,34 @@
 
         return this.get('followers/' + userId, options, callback);
       },
-      fetchAllFollowed: function (userId, callback) {
-        if (!callback) {
+      fetchAllFollowed: function (userId, page, options, callback) {
+        if (typeof userId === 'function') {
           callback = userId;
-          userId   = undefined;
+          userId   = null;
+        } else if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+        } else if (typeof options === callback) {
+          callback = options;
+          options  = undefined;
 
-          return this.get('follows', callback);
+          if (typeof page === 'object') {
+            options = page;
+            page    = undefined;
+          }
         }
 
-        return this.get('follows/' + userId, callback);
+        options = options || {};
+
+        if (page) {
+          options.page = page;
+        }
+
+        if (!userId) {
+          return this.get('follows', options, callback);
+        }
+
+        return this.get('follows/' + userId, options, callback);
       },
       follow           : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
