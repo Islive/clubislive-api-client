@@ -94,7 +94,7 @@ If any error is encounterd, **error** will be set
   * **isFollowing** (number userId, function callback)
   * **fetchAll** (function callback)
   * **fetchAllFollowers** ([*number userId*], [*number page*], [*object options*], function callback) **Note:** *if you want to omit **userId** but use **page**, supply **null** as **userId***
-  * **fetchAllFollowed** ([*number userId*], function callback)
+  * **fetchAllFollowed** ([*number userId*], [*number page*], [*object options*], function callback)
   * **follow** (number userId, function callback)
   * **unfollow** (number userId, function callback)
 
