@@ -142,27 +142,24 @@
 
   var apiMethods = {
     global: {
-      search: function (query, limit, callback) {
+      search: function (query, options, callback) {
         if (typeof query === 'function') {
           callback = query;
           query    = null;
         }
 
-        if (typeof limit === 'function') {
-          callback = limit;
-          limit    = null;
+        if (typeof options === 'function') {
+          callback = options;
+          options  = {};
         }
 
-        var searchOptions = {};
+        options = options || {};
+
         if (query) {
-          searchOptions.q = query;
+          options.q = query;
         }
 
-        if (limit) {
-          searchOptions.limit = limit;
-        }
-
-        return this.get('/search', searchOptions, callback);
+        return this.get('/search', options, callback);
       }
     },
     performer: {
