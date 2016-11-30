@@ -143,21 +143,14 @@
   var apiMethods = {
     global: {
       search: function (query, options, callback) {
-        if (typeof query === 'function') {
-          callback = query;
-          query    = null;
-        }
-
         if (typeof options === 'function') {
           callback = options;
-          options  = null;
+          options  = undefined;
         }
 
         options = options || {};
 
-        if (query) {
-          options.q = query;
-        }
+        options.q = query;
 
         return this.get('/search', options, callback);
       }
