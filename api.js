@@ -141,6 +141,20 @@
   }
 
   var apiMethods = {
+    global: {
+      search: function (query, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        options.q = query;
+
+        return this.get('/search', options, callback);
+      }
+    },
     performer: {
       checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
       register        : [GENERATE_POST, 'performer'],

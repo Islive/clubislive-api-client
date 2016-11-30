@@ -34,6 +34,9 @@ If any error is encounterd, **error** will be set
   * **formValues** (formelement formElement)
   * **convertObjectToForm** (formelement formElement, object object)
 
+* global
+  * **search** (string query, [*object options*], function callback)
+  
 * performer
   * **checkUsername** (string username, function callback)
   * **register** (object form, function callback)
