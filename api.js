@@ -141,6 +141,30 @@
   }
 
   var apiMethods = {
+    global: {
+      search: function (query, limit, callback) {
+        if (typeof query === 'function') {
+          callback = query;
+          query    = null;
+        }
+
+        if (typeof limit === 'function') {
+          callback = limit;
+          limit    = null;
+        }
+
+        var searchOptions = {};
+        if (query) {
+          searchOptions.q = query;
+        }
+
+        if (limit) {
+          searchOptions.limit = limit;
+        }
+
+        return this.get('/search', searchOptions, callback);
+      }
+    },
     performer: {
       checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
       register        : [GENERATE_POST, 'performer'],
