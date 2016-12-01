@@ -894,8 +894,8 @@
     },
 
     Activities: {
-      ONLINE        : 'online',
       OFFLINE       : 'offline',
+      ONLINE        : 'online',
       INCHAT        : 'inchat',
       INFREECHAT    : 'infreechat',
       INVIP         : 'invip',
