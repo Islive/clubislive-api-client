@@ -884,8 +884,21 @@
       NEWS         : 'news'
     },
 
+    EOnlineStatus: {
+      OFFLINE   : 0,
+      ONLINE    : 1,
+      INCHAT    : 2,
+      INFREECHAT: 4,
+      INVIP     : 8
+    },
+
     Activities: {
       ONLINE        : 'online',
+      OFFLINE       : 'offline',
+      INCHAT        : 'inchat',
+      INFREECHAT    : 'infreechat',
+      INVIP         : 'invip',
+      CHAT_OFF      : 'chat_off',
       BIRTHDAY      : 'birthday',
       FREECHAT      : 'freechat',
       ABUSE         : 'abuse',
