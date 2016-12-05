@@ -65,6 +65,8 @@ If any error is encounterd, **error** will be set
   * **resetPassword** (string hash, string password, function callback)
   * **verifyEmail** (string hash, function callback)
   * **resendValidationMail** (function callback)
+  * **online** (function callback)
+  * **matches** (function callback)
   * **setProfileCover** (binaryString attachment, function callback)
   * **removeProfileCover** (function callback)
   * **findByUsername** (string username, function callback)

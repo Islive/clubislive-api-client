@@ -236,7 +236,6 @@
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
       earnings: [GENERATE_GET, 'user/earnings'],
       trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
-      matches: GENERATE_GET,
       ignore: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
       login: function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
@@ -279,6 +278,8 @@
         return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
       resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
+      online: GENERATE_GET,
+      matches: GENERATE_GET,
       uploadSnapshot: function (snapshot, type, params, callback) {
         if (typeof type === 'function') {
           callback = type;
@@ -884,8 +885,21 @@
       NEWS         : 'news'
     },
 
+    EOnlineStatus: {
+      OFFLINE   : 0,
+      ONLINE    : 1,
+      INCHAT    : 2,
+      INFREECHAT: 4,
+      INVIP     : 8
+    },
+
     Activities: {
+      OFFLINE       : 'offline',
       ONLINE        : 'online',
+      INCHAT        : 'inchat',
+      INFREECHAT    : 'infreechat',
+      INVIP         : 'invip',
+      CHAT_OFF      : 'chat_off',
       BIRTHDAY      : 'birthday',
       FREECHAT      : 'freechat',
       ABUSE         : 'abuse',
