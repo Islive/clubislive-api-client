@@ -234,6 +234,7 @@
       fetchOwn: [GENERATE_GET, 'user'],
       update: GENERATE_POST,
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
+      checkEmail: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
       earnings: [GENERATE_GET, 'user/earnings'],
       trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
       ignore: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
