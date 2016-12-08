@@ -111,6 +111,7 @@ If any error is encounterd, **error** will be set
 
 * media
   * **create** (object mediaInfo, function callback)
+  * **moderate** (function callback)
   * **update** (object mediaInfo, function callback)
   * **fetchOwn** (function callback)
   * **fetchBought** (function callback)
