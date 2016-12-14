@@ -59,6 +59,7 @@ If any error is encounterd, **error** will be set
   * **fetchOwn** (function callback)
   * **update** (object form, function callback)
   * **checkUsername** (string username, function callback)
+  * **checkEmail** (string email, function callback)
   * **login** ([*string role*], string username, string password, function callback)
   * **loginByHash** (string hash, function callback)
   * **forgotPassword** ([*string username*], [*string email*], function callback)
