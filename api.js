@@ -565,6 +565,7 @@
     },
     media: {
       create          : [GENERATE_POST, 'media'],
+      moderate        : GENERATE_GET,
       update          : [GENERATE_POST, 'media/update'],
       fetchOwn        : function (albumId, includeDeleted, callback) {
         if (typeof albumId === 'function') {
