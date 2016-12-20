@@ -847,6 +847,14 @@
       rate: function (postId, score, callback) {
         return this.post('/post/rating/'+ postId, { score: score }, callback);
       },
+      liked: function (type, id, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options = null;
+        }
+
+        return this.get('/rating/users/'+ type +'/' + id, options, callback);
+      },
       delete: function (postId, callback) {
         return this.post('post/delete/' + postId, callback);
       }
