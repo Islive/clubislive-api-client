@@ -153,7 +153,7 @@ If any error is encounterd, **error** will be set
   * **reply** (number postId, string body, [*binaryString attachment*], function callback)
   * **delete** (number postId, function callback)
   * **rate** (number postId, number score, function callback)
-  * **liked** (string type, number id, [*object options*], function callback)
+  * **fetchLikers** (string section, number identifier, [*object options*], function callback)
 
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
