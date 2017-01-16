@@ -659,6 +659,24 @@
       },
       fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
     },
+    shop: {
+      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop'],
+      buy: function (itemId, receiverId, message, callback) {
+        if (typeof message === 'function') {
+          callback = message;
+          message   = null;
+        }
+
+        var data = {
+          media   : itemId,
+          receiver: receiverId,
+          meta    : {
+            message: message
+          }
+        };
+        return this.post('media/buy', data, callback);
+      }
+    },
     activity: {
       news   : [GENERATE_GET, '/activities/news'],
       fetch   : [GENERATE_GET, 'activities'],

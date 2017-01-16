@@ -127,6 +127,10 @@ If any error is encounterd, **error** will be set
   * **buy** (number mediaId, function callback)
   * **rate** (number mediaId, number score, function callback)
   * **fetchOwnRating** (number mediaId, function callback)
+  
+* shop
+  * **fetch** (number mediaId, function callback)
+  * **buy** (number mediaId, number receiverId, string message, function callback)
 
 * activity
   * **load** ([*number userId*], [*object options*], function callback)
