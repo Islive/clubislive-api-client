@@ -24,7 +24,7 @@
 
   // Shim for window.localStorage, using cookies
   // https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
-  if (!window.localStorage) {
+  if (!window.hasOwnProperty("localStorage")) {
     window.localStorage        = {
       getItem       : function (sKey) {
         if (!sKey || !this.hasOwnProperty(sKey)) {
@@ -1177,14 +1177,12 @@
           // Return or expire
           if (data.expires > (new Date()).getTime()) {
             callback(data.error, data.response);
-            cancelRequest = true;
+            return;
           } else {
             window.localStorage.removeItem(hash);
           }
         }
       });
-      // We've used cache & called the callback already. Let's stop now
-      if (cancelRequest) return;
 
       // Remove skipQueue if present, because the queue is not enabled if it's still here
       if (params.skipQueue) {
