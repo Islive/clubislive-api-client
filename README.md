@@ -158,6 +158,8 @@ If any error is encounterd, **error** will be set
   * **delete** (number postId, function callback)
   * **rate** (number postId, number score, function callback)
   * **fetchLikers** (string section, number identifier, [*object options*], function callback)
+  * **pin** (number postId, [*bool onNewsPage*], function callback)
+  * **unpin** (number postId, [*bool onNewsPage*], function callback)
 
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
