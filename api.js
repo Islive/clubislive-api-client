@@ -875,6 +875,34 @@
       },
       delete: function (postId, callback) {
         return this.post('post/delete/' + postId, callback);
+      },
+      pin: function (postId, onNewsPage, callback) {
+        var pinUrl = 'post/pin/';
+
+        if (typeof onNewsPage === 'function') {
+          callback   = onNewsPage;
+          onNewsPage = undefined;
+        }
+
+        if (onNewsPage) {
+          pinUrl += 'news/';
+        }
+
+        return this.get(pinUrl + postId, callback);
+      },
+      unpin: function (postId, onNewsPage, callback) {
+        var unpinUrl = 'post/unpin/';
+
+        if (typeof onNewsPage === 'function') {
+          callback   = onNewsPage;
+          onNewsPage = undefined;
+        }
+
+        if (onNewsPage) {
+          unpinUrl += 'news/';
+        }
+
+        return this.get(unpinUrl + postId, callback);
       }
     },
     abuse: {
