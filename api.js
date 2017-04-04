@@ -193,7 +193,9 @@
 
         return this.get('performer/search/' + username, options, callback);
       },
-      update          : GENERATE_POST
+      update          : GENERATE_POST,
+      fetchQuickTips  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
+      setQuickTips    : [GENERATE_POST, '/performer/quicktips']
     },
     customer: {
       register      : [GENERATE_POST, 'customer'],
