@@ -153,6 +153,13 @@
         options.q = query;
 
         return this.get('/search', options, callback);
+      },
+      birthdays: function (options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+        return this.get('/birthdays', options, callback);
       }
     },
     performer: {

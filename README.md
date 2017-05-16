@@ -36,6 +36,7 @@ If any error is encounterd, **error** will be set
 
 * global
   * **search** (string query, [*object options*], function callback)
+  * **birthdays** ([*object options*], function callback)
   
 * performer
   * **checkUsername** (string username, function callback)
