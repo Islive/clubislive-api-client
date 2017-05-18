@@ -36,7 +36,6 @@ If any error is encounterd, **error** will be set
 
 * global
   * **search** (string query, [*object options*], function callback)
-  * **birthdays** ([*object options*], function callback)
   
 * performer
   * **checkUsername** (string username, function callback)
@@ -76,6 +75,7 @@ If any error is encounterd, **error** will be set
   * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
   * **autocomplete** (string query, function callback)
+  * **birthdays** ([*object options*], function callback)
 
 * agenda
   * **fetchSchedule** (string username | string date, function callback)
