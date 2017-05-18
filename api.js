@@ -364,6 +364,13 @@
       },
       autocomplete: function (query, callback) {
         return this.get('user/autocomplete', { q: query }, callback);
+      },
+      birthdays: function (options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+        return this.get('/user/birthdays', options, callback);
       }
     },
     agenda: {

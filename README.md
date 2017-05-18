@@ -75,6 +75,7 @@ If any error is encounterd, **error** will be set
   * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
   * **autocomplete** (string query, function callback)
+  * **birthdays** ([*object options*], function callback)
 
 * agenda
   * **fetchSchedule** (string username | string date, function callback)
