@@ -688,19 +688,15 @@
     },
     activity: {
       news    : [GENERATE_GET, '/activities/news'],
-      history : function (event, type, startingId, callback) {
-        if (typeof startingId === 'function') {
-          callback   = startingId;
-          startingId = 0;
+      history : function (event, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = {};
         }
 
-        var filter = {
-          event     : event,
-          type      : type,
-          startingId: startingId
-        };
+        options.event = event;
 
-        return this.get('/activities/history', filter, callback);
+        return this.get('/activities/history', options, callback);
       },
       fetch   : [GENERATE_GET, 'activities'],
       fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
