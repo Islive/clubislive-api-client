@@ -134,6 +134,7 @@ If any error is encounterd, **error** will be set
   * **buy** (number mediaId, number receiverId, string message, function callback)
 
 * activity
+  * **history** (string event, string type, [*number startingId*], function callback)
   * **load** ([*number userId*], [*object options*], function callback)
   * **loadFollowed** ([*object options*], function callback)
   * **loadUser** (number userId | string username, [*number page*], function callback)

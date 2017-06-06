@@ -687,7 +687,21 @@
       }
     },
     activity: {
-      news   : [GENERATE_GET, '/activities/news'],
+      news    : [GENERATE_GET, '/activities/news'],
+      history : function (event, type, startingId, callback) {
+        if (typeof startingId === 'function') {
+          callback   = startingId;
+          startingId = 0;
+        }
+
+        var filter = {
+          event     : event,
+          type      : type,
+          startingId: startingId
+        };
+
+        return this.get('/activities/history', filter, callback);
+      },
       fetch   : [GENERATE_GET, 'activities'],
       fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
       load: function (userId, options, callback) {
