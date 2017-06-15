@@ -786,7 +786,13 @@
 
         return this.get('chat/end', callback);
       },
-      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
+      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings'],
+      showStart: function(duration, callback) {
+        return this.get('chat/show/start', { duration: duration }, callback);
+      },
+      showEnd: function(callback) {
+        return this.get('chat/show/end', callback);
+      }
     },
     rules : {
       promotion: function (callback) {
