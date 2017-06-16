@@ -792,6 +792,9 @@
       },
       showEnd: function(callback) {
         return this.get('chat/show/end', callback);
+      },
+      addUserToShow: function(userId, callback) {
+        return this.get('/chat/show/add', { userId: userId }, callback);
       }
     },
     rules : {
