@@ -741,6 +741,18 @@
       }
     },
     chat: {
+      startShow: function (request, callback) {
+        return this.post(`chat/show/start`, request, callback);
+      },
+			getShow: function (mediaId, callback) {
+				return this.get(`chat/show/get/${mediaId}`, callback);
+			},
+			addUserToShow: function (request, callback) {
+				return this.get(`chat/show/add/${request.mediaId}/${request.credits}`, callback);
+			},
+			endShow: function (mediaId, callback) {
+				return this.get(`chat/show/end/${mediaId}`, callback);
+			},
       setVIP: function (status, userId, callback) {
         return this.get('chat/vip/' + status + '/' + userId, callback);
       },
@@ -786,16 +798,7 @@
 
         return this.get('chat/end', callback);
       },
-      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings'],
-      showStart: function(duration, callback) {
-        return this.get('chat/show/start', { duration: duration }, callback);
-      },
-      showEnd: function(callback) {
-        return this.get('chat/show/end', callback);
-      },
-      addUserToShow: function(userId, callback) {
-        return this.get('/chat/show/add', { userId: userId }, callback);
-      }
+      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
     },
     rules : {
       promotion: function (callback) {
