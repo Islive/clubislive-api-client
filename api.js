@@ -924,6 +924,21 @@
         return this.get(unpinUrl + postId, callback);
       }
     },
+    hotornot: {
+      upload: function (attachment, callback) {
+        return this.post('hotornot', { attachment: attachment }, callback);
+      },
+      fetch: function (options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = {};
+        }
+
+        options = options || {};
+
+        return this.get('hotornot', options, callback);
+      }
+    },
     abuse: {
       report: function (suspectUserId, section, identifier, reason, callback) {
         if (typeof identifier === 'function') {
