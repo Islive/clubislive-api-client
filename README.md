@@ -163,5 +163,9 @@ If any error is encounterd, **error** will be set
   * **pin** (number postId, [*bool onNewsPage*], function callback)
   * **unpin** (number postId, [*bool onNewsPage*], function callback)
 
+* hotornot
+  * **fetch** ([*object options*], function callback)
+  * **upload** (binaryString attachment, function callback)
+
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
