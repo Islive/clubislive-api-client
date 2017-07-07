@@ -55,6 +55,8 @@
     this.language   = options.language || 'en';
     this.noQueue    = options.noQueue === true;
 
+    this.logTime    = localStorage.getItem('api-log-times') || false;
+
     // If we're using sails.io, add something to add the event handlers
     if (this.io) {
       if (this.io.socket) {
@@ -1173,6 +1175,28 @@
         }.bind(this));
       }
 
+      for (var i=0; i < this.requestQueue.length; i++) {
+        var qitem = this.requestQueue[i];
+
+        if (
+          requestArray[0] == qitem[0] &&
+          requestArray[1] == qitem[1] &&
+          JSON.stringify(requestArray[2]) == JSON.stringify(qitem[2])
+        ) {
+          if (this.logTime) {
+            console.warn(name, 'Duplicated queue item', requestArray[0], requestArray[1], JSON.stringify(requestArray[2]));
+          }
+          // Callback juggling
+          if (!(this.requestQueue[i][3] instanceof Array)) {
+            this.requestQueue[i][3] = [this.requestQueue[i][3]];
+          }
+
+          this.requestQueue[i][3].push(requestArray[3]);
+
+          return;
+        }
+      }
+
       this.requestQueue.push(requestArray);
 
       this.startQueue();
@@ -1202,17 +1226,29 @@
         return;
       }
 
-      var currentRequest = this.requestQueue.shift();
+      var currentRequest = this.requestQueue.shift(),
+          self           = this;
 
       this.requestsRunning.push(currentRequest);
 
       currentRequest[3] = currentRequest[3] || function () {};
 
+      if (currentRequest[3] instanceof Array) {
+        var callbacks = currentRequest[3];
+
+        currentRequest[3] = function(error, result) {
+          if (self.logTime) {
+          console.info('Multiple processes wants their call back.', callbacks.length);
+          }
+          callbacks.forEach(function(cb) {
+            cb(error, result)
+          });
+        };
+      }
+
       this.doRequest.call(this, currentRequest[0], currentRequest[1], currentRequest[2], function (error, result) {
         this.removeFromRunningRequests(currentRequest);
-        setTimeout(function () {
-          currentRequest[3](error, result);
-        }, 0);
+        currentRequest[3](error, result);
         this.startQueue();
       }.bind(this));
     },
@@ -1259,7 +1295,11 @@
       return str.join('&');
     },
 
-    ioCallback: function (response, JWR, callback) {
+    ioCallback: function (response, JWR, callback, url, startDate) {
+      if (this.logTime) {
+        console.info('('+ url +') Response Time:' + (new Date().getTime() - startDate.getTime()) + ' MS');
+      }
+
       if (JWR.statusCode !== 200) {
         return callback(JWR.statusCode, response);
       }
@@ -1329,13 +1369,15 @@
           params['x-apikey'] = this.apiKey;
         }
 
+        var now = new Date();
+
         if (method === 'GET') {
           this.io.socket.get(url, params, function (response, JWR) {
-            return this.ioCallback(response, JWR, callback);
+            return this.ioCallback(response, JWR, callback, url, now);
           }.bind(this));
         } else if (method === 'POST') {
           this.io.socket.post(url, params, function (response, JWR) {
-            return this.ioCallback(response, JWR, callback);
+            return this.ioCallback(response, JWR, callback, url, now);
           }.bind(this));
         } else {
           throw 'method ' + method + ' not supported';
