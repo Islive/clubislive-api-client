@@ -5,7 +5,7 @@ This is a quick reference, for the full documentation go to [API for clubislive]
 ## notes
 
 ### debug
- * Requst Timers
+ * Request Timers
    * start: `localStorage.setItem('api-log-times',1)` in the browser console to activate timers.
    * stop: `localStorage.removeItem('api-log-times')` in the browser console to deactivate timers.
 
