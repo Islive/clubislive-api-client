@@ -788,6 +788,18 @@
 
         return this.get('chat/end', callback);
       },
+			startShow: function(requestObject, callback) {
+				return this.post('chat/show/start', requestObject, callback);
+			},
+			endShow: function(mediaId, callback) {
+				return this.post('chat/show/end', { mediaId: mediaId }, callback);
+			},
+			getShow: function(mediaId, callback) {
+				return this.get('chat/show/get/' + mediaId, callback);
+			},
+			addUserToShow: function(requestObject, callback) {
+				return this.post('chat/show/add', requestObject, callback);
+			},
       latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
     },
     rules : {
