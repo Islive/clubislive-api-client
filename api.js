@@ -341,6 +341,11 @@
 
         return this.get('user/find', searchOptions, callback);
       },
+      suggestedFuddies : function (options, callback) {
+        options = options || {};
+
+        return this.get('user/suggested/fuddies', options, callback);
+      },
       tip: function (userId, amount, options, callback) {
         var params = {
           amount: amount
@@ -740,6 +745,11 @@
         }
 
         return this.get('activity/all/' + user, options, callback);
+      },
+      daily : function (options, callback) {
+        options = options || {};
+
+        return this.get('activity/daily', options, callback);
       }
     },
     chat: {
@@ -866,6 +876,11 @@
         }
 
         return this.get('posts/replies/' + postId, options, callback);
+      },
+      fetchSuggested: function (options, callback) {
+        options = options || {};
+
+        return this.get('post/suggested', options, callback);
       },
       compose: function (body, attachment, callback) {
         if (typeof attachment === 'function') {

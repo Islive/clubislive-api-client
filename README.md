@@ -41,7 +41,7 @@ If any error is encounterd, **error** will be set
 
 * global
   * **search** (string query, [*object options*], function callback)
-  
+
 * performer
   * **checkUsername** (string username, function callback)
   * **register** (object form, function callback)
@@ -77,6 +77,7 @@ If any error is encounterd, **error** will be set
   * **removeProfileCover** (function callback)
   * **findByUsername** (string username, function callback)
   * **uploadSnapshot** (string snapshot, [*string type*], [*object options*], function callback)
+  * **suggestedFuddies** ([*object options*], function callback)
   * **tip** (number userId, number amount, [*object options*], function callback)
   * **remove** (function callback)
   * **autocomplete** (string query, function callback)
@@ -94,7 +95,7 @@ If any error is encounterd, **error** will be set
   * **compose** (string to, string title, string content, function callback)
   * **reply** (string to, string hash, string content, function callback)
   * **markRead** (string hash, [*number messsageId*], function callback)
-  
+
 * conversation
   * **markAsRead** (number userId, function callback)
   * **fetchUnread** (function callback)
@@ -133,7 +134,7 @@ If any error is encounterd, **error** will be set
   * **buy** (number mediaId, function callback)
   * **rate** (number mediaId, number score, function callback)
   * **fetchOwnRating** (number mediaId, function callback)
-  
+
 * shop
   * **fetch** (number mediaId, function callback)
   * **buy** (number mediaId, number receiverId, string message, function callback)
@@ -143,6 +144,7 @@ If any error is encounterd, **error** will be set
   * **load** ([*number userId*], [*object options*], function callback)
   * **loadFollowed** ([*object options*], function callback)
   * **loadUser** (number userId | string username, [*number page*], function callback)
+  * **daily** ([*object options*], function callback)
 
 * chat
   * **setVIP** (string status, number userId, function callback)
@@ -160,6 +162,7 @@ If any error is encounterd, **error** will be set
   * **fetch** ([*number userId*], [*object options*], function callback)
   * **fetchSelection** (number postId | array postIds, [*object options*], function callback)
   * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
+  * **fetchSuggested** ([*object options*], function callback)
   * **compose** (string body, [*binaryString attachment*], function callback)
   * **reply** (number postId, string body, [*binaryString attachment*], function callback)
   * **delete** (number postId, function callback)
