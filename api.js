@@ -309,7 +309,7 @@
           params.type = type;
         }
 
-        return this.post('user/snapshot', params, callback);
+        return this.post('user/storage/snapshot', params, callback);
       },
       setProfileCover: function (attachment, callback) {
         return this.post('attachment/profile', { attachment: attachment }, callback);
