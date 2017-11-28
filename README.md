@@ -126,6 +126,7 @@ If any error is encounterd, **error** will be set
   * **fetchByFollowers** (number userId, [*number limit*], function callback)
   * **fetchAll** (string type, [*string gender*], [*number page*], function callback)
   * **fetchByUsername** (string username, function callback)
+  * **pending** (function callback)
   * **fetchAlbum** (string username, number albumId, function callback)
   * **checkAccess** (number mediaId, function callback)
   * **remove** (number mediaId, function callback)
