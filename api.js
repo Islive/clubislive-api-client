@@ -653,6 +653,7 @@
         return this.get('media/all/' + type, searchOptions, callback);
       },
       fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      pending        : GENERATE_GET,
       fetchAlbum     : function (username, albumId, callback) {
         return this.get('media/' + username + '/' + albumId, callback);
       },
