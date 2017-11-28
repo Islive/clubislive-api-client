@@ -819,6 +819,7 @@
       }
     },
     post: {
+      all: [GENERATE_GET, 'posts/all'],
       fetch: function (userId, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
@@ -967,7 +968,9 @@
         options = options || {};
 
         return this.get('hotornot', options, callback);
-      }
+      },
+      topPosts: [GENERATE_GET, '/hotornot/top/posts'],
+      topUsers: [GENERATE_GET, '/hotornot/top/users']
     },
     abuse: {
       report: function (suspectUserId, section, identifier, reason, callback) {
