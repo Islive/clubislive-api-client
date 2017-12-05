@@ -759,6 +759,9 @@
       setFreechat: function (status, callback) {
         return this.get('chat/freechat/' + status, callback);
       },
+      setCyberToy: function (type, status, callback) {
+        return this.get('chat/toy/'+ type +'/' + status, callback);
+      },
       start: function (username, callback) {
         if (!callback) {
           callback = username;
