@@ -309,7 +309,7 @@
           params.type = type;
         }
 
-        return this.post('user/snapshot', params, callback);
+        return this.post('user/storage/snapshot', params, callback);
       },
       setProfileCover: function (attachment, callback) {
         return this.post('attachment/profile', { attachment: attachment }, callback);
@@ -653,6 +653,7 @@
         return this.get('media/all/' + type, searchOptions, callback);
       },
       fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      pending        : GENERATE_GET,
       fetchAlbum     : function (username, albumId, callback) {
         return this.get('media/' + username + '/' + albumId, callback);
       },
@@ -818,6 +819,7 @@
       }
     },
     post: {
+      all: [GENERATE_GET, 'posts/all'],
       fetch: function (userId, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
@@ -966,7 +968,9 @@
         options = options || {};
 
         return this.get('hotornot', options, callback);
-      }
+      },
+      topPosts: [GENERATE_GET, '/hotornot/top/posts'],
+      topUsers: [GENERATE_GET, '/hotornot/top/users']
     },
     abuse: {
       report: function (suspectUserId, section, identifier, reason, callback) {

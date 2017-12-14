@@ -126,6 +126,7 @@ If any error is encounterd, **error** will be set
   * **fetchByFollowers** (number userId, [*number limit*], function callback)
   * **fetchAll** (string type, [*string gender*], [*number page*], function callback)
   * **fetchByUsername** (string username, function callback)
+  * **pending** (function callback)
   * **fetchAlbum** (string username, number albumId, function callback)
   * **checkAccess** (number mediaId, function callback)
   * **remove** (number mediaId, function callback)
@@ -159,6 +160,7 @@ If any error is encounterd, **error** will be set
   * **promotion** (function callback)
 
 * post
+  * **all** ([*object options*], function callback)
   * **fetch** ([*number userId*], [*object options*], function callback)
   * **fetchSelection** (number postId | array postIds, [*object options*], function callback)
   * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
@@ -174,6 +176,9 @@ If any error is encounterd, **error** will be set
 * hotornot
   * **fetch** ([*object options*], function callback)
   * **upload** (binaryString attachment, function callback)
+  * **topPosts** ([*object options*], function callback)
+  * **topUsers** ([*object options*], function callback)
+    
 
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
