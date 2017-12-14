@@ -150,6 +150,7 @@ If any error is encounterd, **error** will be set
 * chat
   * **setVIP** (string status, number userId, function callback)
   * **setFreechat** (string status, function callback)
+  * **setCyberToy** (string type, string status, function callback)
   * **start** ([*string username*], function callback)
   * **keepAlive** ([*number userId*], function callback)
   * **kick** (string username, function callback)
