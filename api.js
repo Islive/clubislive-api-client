@@ -1040,7 +1040,8 @@
       PROFILE       : 'profile',
       PROFILE_COVER : 'profile_cover',
       SNAPSHOT      : 'snapshot',
-      PUBLIC        : 'public'
+      PUBLIC        : 'public',
+      BADGE         : 'user_badge'
     },
 
     handleSocketDisconnect: function () {
