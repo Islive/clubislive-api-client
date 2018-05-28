@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "repository": "https://github.com/Islive/clubislive-api-client",
   "homepage": "https://github.com/Islive/clubislive-api-client",
-  "author": "Dave Derichs <dave@islivebv.nl>",
+  "author": "Mark Spier <mspier@islivebv.nl>",
   "description": "An interface to the clubIslive api",
   "main": "api.js",
   "dependencies": {},
