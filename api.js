@@ -1487,7 +1487,7 @@
         for (var i in inputs) {
           var input = inputs[i];
 
-          if (input.tagName !== 'INPUT') {
+          if ( ['INPUT','SELECT'].indexOf(input.tagName) < 0 ) {
             continue;
           }
 
