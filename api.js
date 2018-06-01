@@ -17,6 +17,47 @@
       GENERATE_GET_APPEND_PARAM1_TO_URL = 'GENERATE_GET_APPEND_PARAM1_TO_URL',
       GENERATE_POST                     = 'GENERATE_POST';
 
+  // Generic regexes to be compiled up front
+  var genericRegexes = {
+    allEqualSigns: /=+/g
+  };
+
+  // Shim for window.localStorage, using cookies
+  // https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
+  if (!window.hasOwnProperty("localStorage")) {
+    window.localStorage        = {
+      getItem       : function (sKey) {
+        if (!sKey || !this.hasOwnProperty(sKey)) {
+          return null;
+        }
+        return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+      },
+      key           : function (nKeyId) {
+        return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]);
+      },
+      setItem       : function (sKey, sValue) {
+        if (!sKey) {
+          return;
+        }
+        document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+        this.length     = document.cookie.match(/\=/g).length;
+      },
+      length        : 0,
+      removeItem    : function (sKey) {
+        if (!sKey || !this.hasOwnProperty(sKey)) {
+          return;
+        }
+        document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        this.length--;
+      },
+      hasOwnProperty: function (sKey) {
+        return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+      }
+    };
+    window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
+  }
+
+
   function Api(apiKey, options) {
     // When this function is called without the new keyword, return a new copy of Api
     if (!(this instanceof Api)) {
@@ -999,6 +1040,59 @@
     }
   };
 
+  var cachedRoutes = [
+    {
+      'method': 'get',
+      'route': /\/user\/find\/(a-zA-Z0-9)/,
+      'ttl': 300000, // 300s / 5m
+      'generateHash': function(urlParts, params) {
+        // Use everything for the hash
+        return [urlParts, orderObject(params)];
+      }
+    }
+  ];
+
+  // Returns an ordered version of it's input
+  function orderObject(source) {
+    var output = {};
+    Object.keys(source).sort().forEach(function(key) {
+      output[key] = source[key];
+    });
+    return output;
+  }
+
+  function qhash(input) {
+    switch(typeof input) {
+      case 'string':
+        // do nothing
+        break;
+      case 'object':
+        input = orderObject(input);
+      default:
+        input = JSON.stringify(input);
+        break;
+    }
+
+    // Base64 version
+    // Simple but effective
+    if (window.btoa) {
+      var encodedData = window.btoa(input).replace(genericRegexes.allEqualSigns, '');
+      while(encodedData.length<256) encodedData += encodedData;
+      return encodedData.substr(0,256);
+    }
+
+    // Fallback hash function
+    // http://stackoverflow.com/a/7616484/2928176
+    var hash = 0, i, chr, len;
+    if (input.length === 0) return hash;
+    for (i = 0, len = input.length; i < len; i++) {
+      chr  = input.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return ''+hash;
+  }
+
   Api.prototype = {
 
     /**
@@ -1361,6 +1455,8 @@
         throw new Error('Invalid method ' + method);
       }
 
+      var lcMethod = method.toLowerCase();
+
       if (typeof params !== 'object') {
         throw new Error('Params is not an object');
       }
@@ -1382,6 +1478,50 @@
       if (!params.token && this.token) {
         params.token = this.token;
       }
+
+      // Let's see if we should cache this route
+      var cancelRequest = false,
+          hash          = null,
+          cacheAction   = null;
+      cachedRoutes.forEach(function(action) {
+
+        // Some other route must've matched
+        if (cancelRequest) return;
+
+        // Some filters to cancel caching
+        if (action.method.toLowerCase()!=lcMethod) return;
+
+        // Test if the action wants the current url
+        var urlParts = action.route.exec(url);
+        if (!urlParts) return;
+
+        // Generate hash source (and last option to non-caching behavior)
+        var hashSource = action.generateHash(urlParts, params);
+        if (!hashSource) return;
+        hashSource = [action.route.source, hashSource];
+
+        // Store action & actually hash the damn thing
+        cacheAction = action;
+        hash = 'ClubIsLiveApiClient-' + qhash(hashSource);
+
+        // Check if we have data
+        var data = window.localStorage.getItem(hash);
+        if (data) {
+          try {
+            data = JSON.parse(data);
+          } catch(e) {
+            console.warn('Invalid cache data for', action.route);
+            return;
+          }
+          // Return or expire
+          if (data.expires > (new Date()).getTime()) {
+            callback(data.error, data.response);
+            return;
+          } else {
+            window.localStorage.removeItem(hash);
+          }
+        }
+      });
 
       // Remove skipQueue if present, because the queue is not enabled if it's still here
       if (params.skipQueue) {
@@ -1460,6 +1600,13 @@
           };
         }
 
+        if(hash&&cacheAction) {
+          window.localStorage.setItem(hash, JSON.stringify({
+            expires : (new Date()).getTime() + (cacheAction && cacheAction.ttl || 300000),
+            error   : error,
+            response: response
+          }))
+        }
         callback(error, response);
       };
 
