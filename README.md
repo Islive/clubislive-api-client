@@ -36,8 +36,20 @@ If any error is encounterd, **error** will be set
 ## exposed functions
 
 * *global*
-  * **formValues** (formelement formElement)
   * **convertObjectToForm** (formelement formElement, object object)
+  * **formValues** (formelement formElement)
+
+* agenda
+  * **fetchSchedule** (string username | string date, function callback)
+
+* customer
+  * **fetchOwn** (function callback)
+  * **login** (string username, string password, function callback)
+  * **register** (object form, function callback)
+  * **remove** (function callback)
+  * **tip** (number userId, number amount, [*object options*], function callback)
+  * **update** (object form, function callback)
+  * **upload** (string type, string image, function callback)
 
 * global
   * **search** (string query, [*object options*], function callback)
@@ -50,135 +62,123 @@ If any error is encounterd, **error** will be set
   * **searchByUsername** (string username, [*object options*], function callback)
   * **update** (object form, function callback)
 
-* customer
-  * **register** (object form, function callback)
-  * **login** (string username, string password, function callback)
-  * **fetchOwn** (function callback)
-  * **update** (object form, function callback)
-  * **tip** (number userId, number amount, [*object options*], function callback)
-  * **remove** (function callback)
-  * **upload** (string type, string image, function callback)
-
 * user
-  * **register** (object form, function callback)
-  * **fetchOwn** (function callback)
-  * **update** (object form, function callback)
-  * **checkUsername** (string username, function callback)
-  * **checkEmail** (string email, function callback)
-  * **login** ([*string role*], string username, string password, function callback)
-  * **loginByHash** (string hash, function callback)
-  * **forgotPassword** ([*string username*], [*string email*], function callback)
-  * **resetPassword** (string hash, string password, function callback)
-  * **verifyEmail** (string hash, function callback)
-  * **resendValidationMail** (function callback)
-  * **online** (function callback)
-  * **matches** (function callback)
-  * **setProfileCover** (binaryString attachment, function callback)
-  * **removeProfileCover** (function callback)
-  * **findByUsername** (string username, function callback)
-  * **uploadSnapshot** (string snapshot, [*string type*], [*object options*], function callback)
-  * **suggestedFuddies** ([*object options*], function callback)
-  * **tip** (number userId, number amount, [*object options*], function callback)
-  * **remove** (function callback)
   * **autocomplete** (string query, function callback)
   * **birthdays** ([*object options*], function callback)
-
-* agenda
-  * **fetchSchedule** (string username | string date, function callback)
+  * **checkEmail** (string email, function callback)
+  * **checkUsername** (string username, function callback)
+  * **fetchOwn** (function callback)
+  * **findByUsername** (string username, function callback)
+  * **forgotPassword** ([*string username*], [*string email*], function callback)
+  * **login** ([*string role*], string username, string password, function callback)
+  * **loginByHash** (string hash, function callback)
+  * **matches** (function callback)
+  * **online** (function callback)
+  * **register** (object form, function callback)
+  * **remove** (function callback)
+  * **removeProfileCover** (function callback)
+  * **resendValidationMail** (function callback)
+  * **resetPassword** (string hash, string password, function callback)
+  * **setProfileCover** (binaryString attachment, function callback)
+  * **suggestedFuddies** ([*object options*], function callback)
+  * **tip** (number userId, number amount, [*object options*], function callback)
+  * **update** (object form, function callback)
+  * **uploadSnapshot** (string snapshot, [*string type*], [*object options*], function callback)
+  * **verifyEmail** (string hash, function callback)
 
 * news
   * **fetch** (function callback)
 
 * message
+  * **compose** (string to, string title, string content, function callback)
   * **fetchByUsername** (string username, object params, function callback)
   * **inbox** ([*number page*], function callback)
-  * **compose** (string to, string title, string content, function callback)
-  * **reply** (string to, string hash, string content, function callback)
   * **markRead** (string hash, [*number messsageId*], function callback)
+  * **reply** (string to, string hash, string content, function callback)
 
 * conversation
-  * **markAsRead** (number userId, function callback)
-  * **fetchUnread** (function callback)
   * **fetch** (number userId, [*number page*], [*object params*], function callback)
   * **fetchAll** ([*number page*], [*number limit*], function callback)
+  * **fetchUnread** (function callback)
+  * **markAsRead** (number userId, function callback)
   * **send** (number userId, string message, [*binaryString attachment*], function callback)
 
 * follow
-  * **isFollowing** (number userId, function callback)
   * **fetchAll** (function callback)
-  * **fetchAllFollowers** ([*number userId*], [*number page*], [*object options*], function callback) **Note:** *if you want to omit **userId** but use **page**, supply **null** as **userId***
   * **fetchAllFollowed** ([*number userId*], [*number page*], [*object options*], function callback)
+  * **fetchAllFollowers** ([*number userId*], [*number page*], [*object options*], function callback) **Note:** *if you want to omit **userId** but use **page**, supply **null** as **userId***
   * **follow** (number userId, function callback)
+  * **isFollowing** (number userId, function callback)
   * **unfollow** (number userId, function callback)
 
 * payment
-  * **getAssortiment** (string assortimentName, [*object extraParameters*], function callback)
   * **createSession** (object paymentData, function callback)
+  * **getAssortiment** (string assortimentName, [*object extraParameters*], function callback)
   * **getRedeemInfo** (number bundleId, function callback)
   * **redeemCode** (number bundleId, string code, [*object options*], function callback)
 
 * media
+  * **buy** (number mediaId, function callback)
+  * **checkAccess** (number mediaId, function callback)
   * **create** (object mediaInfo, function callback)
-  * **moderate** (function callback)
-  * **update** (object mediaInfo, function callback)
-  * **fetchOwn** (function callback)
+  * **fetchAlbum** (string username, number albumId, function callback)
+  * **fetchAll** (string type, [*string gender*], [*number page*], function callback)
   * **fetchBought** (function callback)
   * **fetchByFollowers** (number userId, [*number limit*], function callback)
-  * **fetchAll** (string type, [*string gender*], [*number page*], function callback)
   * **fetchByUsername** (string username, function callback)
+  * **fetchOwn** (function callback)
+  * **fetchOwnRating** (number mediaId, function callback)
+  * **moderate** (function callback)
   * **pending** (function callback)
-  * **fetchAlbum** (string username, number albumId, function callback)
-  * **checkAccess** (number mediaId, function callback)
+  * **rate** (number mediaId, number score, function callback)
   * **remove** (number mediaId, function callback)
   * **search** ([*object filters*], function callback)
+  * **update** (object mediaInfo, function callback)
   * **viewAlbum** (number albumId, function callback)
-  * **buy** (number mediaId, function callback)
-  * **rate** (number mediaId, number score, function callback)
-  * **fetchOwnRating** (number mediaId, function callback)
 
 * shop
-  * **fetch** (number mediaId, function callback)
   * **buy** (number mediaId, number receiverId, string message, function callback)
+  * **fetch** (number mediaId, function callback)
 
 * activity
+  * **daily** ([*object options*], function callback)
   * **history** (string event, [*object options*], function callback)
   * **load** ([*number userId*], [*object options*], function callback)
   * **loadFollowed** ([*object options*], function callback)
   * **loadUser** (number userId | string username, [*number page*], function callback)
-  * **daily** ([*object options*], function callback)
 
 * chat
-  * **setVIP** (string status, number userId, function callback)
-  * **setFreechat** (string status, function callback)
-  * **setCyberToy** (string type, string status, function callback)
-  * **start** ([*string username*], function callback)
+  * **end** ([*string username*], function callback)
   * **keepAlive** ([*number userId*], function callback)
   * **kick** (string username, function callback)
-  * **end** ([*string username*], function callback)
   * **latestEarnings** (function callback)
+  * **setCyberToy** (string type, string status, function callback)
+  * **setFreechat** (string status, function callback)
+  * **setVIP** (string status, number userId, function callback)
+  * **start** ([*string username*], function callback)
 
 * rules
   * **promotion** (function callback)
 
 * post
   * **all** ([*object options*], function callback)
-  * **fetch** ([*number userId*], [*object options*], function callback)
-  * **fetchSelection** (number postId | array postIds, [*object options*], function callback)
-  * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
-  * **fetchSuggested** ([*object options*], function callback)
   * **compose** (string body, [*binaryString attachment*], function callback)
-  * **reply** (number postId, string body, [*binaryString attachment*], function callback)
   * **delete** (number postId, function callback)
-  * **rate** (number postId, number score, function callback)
+  * **fetch** ([*number userId*], [*object options*], function callback)
   * **fetchLikers** (string section, number identifier, [*object options*], function callback)
+  * **fetchReplies** (number postId, [*number lowerThanPostId*], [*object options*], function callback)
+  * **fetchSelection** (number postId | array postIds, [*object options*], function callback)
+  * **fetchSuggested** ([*object options*], function callback)
   * **pin** (number postId, [*bool onNewsPage*], function callback)
+  * **rate** (number postId, number score, function callback)
+  * **reply** (number postId, string body, [*binaryString attachment*], function callback)
   * **unpin** (number postId, [*bool onNewsPage*], function callback)
 
 * hotornot
   * **fetch** ([*object options*], function callback)
-  * **upload** (binaryString attachment, function callback)
   * **topPosts** ([*object options*], function callback)
   * **topUsers** ([*object options*], function callback)
+  * **upload** (binaryString attachment, function callback)
     
 
 * abuse
