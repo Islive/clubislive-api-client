@@ -450,19 +450,13 @@
         return this.get('conversation/' + userId, params, callback);
       },
 
-      fetchAll: function (page, limit, callback) {
-        if (typeof page === 'function') {
-          callback = page;
-          page     = undefined;
-        } else if (typeof limit === 'function') {
-          callback = limit;
-          limit    = undefined;
+      fetchAll: function (params, callback) {
+        if (typeof params === 'function') {
+          callback = params;
+          params   = {};
         }
 
-        page  = page  || 1;
-        limit = limit || 30;
-
-        return this.get('conversation/all', { page : page, limit: limit }, callback);
+        return this.get('conversation/all', params, callback);
       },
 
       send  : function (userId, message, attachment, callback) {
@@ -1041,8 +1035,7 @@
       PROFILE         : 'profile',
       PROFILE_COVER   : 'profile_cover',
       SNAPSHOT        : 'snapshot',
-      PUBLIC          : 'public',
-      BADGE           : 'user_badge'
+      PUBLIC          : 'public'
     },
 
     handleSocketDisconnect: function () {
