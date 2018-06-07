@@ -423,6 +423,7 @@
       }
     },
     conversation: {
+      archive     : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
       markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
 
       fetchUnread : [GENERATE_GET, 'conversation/unread'],
