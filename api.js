@@ -1042,7 +1042,8 @@
       PROFILE_COVER   : 'profile_cover',
       SNAPSHOT        : 'snapshot',
       PUBLIC          : 'public',
-      BADGE           : 'user_badge'
+      BADGE           : 'user_badge',
+      PREMIUM_PAYMENT : 'premium_payment'
     },
 
     handleSocketDisconnect: function () {
