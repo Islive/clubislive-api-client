@@ -97,6 +97,7 @@ If any error is encounterd, **error** will be set
   * **markRead** (string hash, [*number messsageId*], function callback)
 
 * conversation
+  * **archive** (number userId, function callback)
   * **markAsRead** (number userId, function callback)
   * **fetchUnread** (function callback)
   * **fetch** (number userId, [*number page*], [*object params*], function callback)
