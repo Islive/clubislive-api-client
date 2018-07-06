@@ -98,8 +98,8 @@
         if (typeof apiMethods[objectName][methodName] === 'string' || (typeof apiMethods[objectName][methodName] === 'object' && apiMethods[objectName][methodName] instanceof Array)) {
           // We are gonna generate a function
           this[objectName][methodName] = function(objectName, methodName) {
-            var params       = Array.prototype.slice.call(arguments, 2),
-                routeDetails = [];
+            let params = Array.prototype.slice.call(arguments, 2);
+            let routeDetails = [];
 
             if (typeof apiMethods[objectName][methodName] === 'string') {
               // We need to generate the route from the objectname + methodname
@@ -144,23 +144,8 @@
 
   // ENTRYPOINTS
   var apiMethods = {
-    global: {
-      search        : function (query, options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options  = undefined;
-        }
-
-        options = options || {};
-
-        options.q = query;
-
-        return this.get('/search', options, callback);
-      }
-    },
-
     abuse: {
-      report        : function (suspectUserId, section, identifier, reason, callback) {
+      report : function (suspectUserId, section, identifier, reason, callback) {
         if (typeof identifier === 'function') {
           callback   = identifier;
           reason     = section;
@@ -168,7 +153,7 @@
           section    = undefined;
         }
 
-        var reportData = {
+        const reportData = {
           suspect: suspectUserId,
           reason : reason
         };
@@ -183,13 +168,13 @@
     },
 
     activity: {
-      daily         : function (options, callback) {
+      daily : function (options, callback) {
         options = options || {};
         return this.get('activity/daily', options, callback);
       },
-      fetch         : [GENERATE_GET, 'activities'],
-      fetchOne      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
-      history       : function (event, options, callback) {
+      fetch    : [GENERATE_GET, 'activities'],
+      fetchOne : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
+      history : function (event, options, callback) {
         if (typeof options === 'function') {
           callback = options;
           options  = {};
@@ -197,7 +182,7 @@
         options.event = event;
         return this.get('/activities/history', options, callback);
       },
-      load          : function (userId, options, callback) {
+      load : function (userId, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
           options  = null;
@@ -220,7 +205,7 @@
 
         return this.get('activity/' + userId, options, callback);
       },
-      loadFollowed  : function (options, callback) {
+      loadFollowed : function (options, callback) {
         if (!callback) {
           callback = options;
           options  = null;
@@ -228,7 +213,7 @@
 
         return this.get('activity/followed', options, callback);
       },
-      loadUser      : function (user, options, callback) {
+      loadUser : function (user, options, callback) {
         if (!callback) {
           callback = options;
           otions   = null;
@@ -236,7 +221,7 @@
 
         return this.get('activity/all/' + user, options, callback);
       },
-      news          : [GENERATE_GET, '/activities/news']
+      news : [GENERATE_GET, '/activities/news']
     },
 
     agenda: {
@@ -247,7 +232,7 @@
 			addUserToShow : function(requestObject, callback) {
 				return this.post('chat/show/add', requestObject, callback);
 			},
-      end           : function (username, callback) {
+      end : function (username, callback) {
         if (!callback) {
           callback = username;
           username = undefined;
@@ -259,13 +244,13 @@
 
         return this.get('chat/end', callback);
       },
-			endShow       : function(mediaId, callback) {
+			endShow : function(mediaId, callback) {
 				return this.post('chat/show/end', { mediaId: mediaId }, callback);
 			},
-			getShow       : function(mediaId, callback) {
+			getShow : function(mediaId, callback) {
 				return this.get('chat/show/get/' + mediaId, callback);
 			},
-      keepAlive     : function (userId, callback) {
+      keepAlive : function (userId, callback) {
         if (!callback) {
           callback = userId;
           userId = undefined;
@@ -277,21 +262,21 @@
 
         return this.get('chat/keepalive', callback);
       },
-      kick          : function (username, callback) {
+      kick : function (username, callback) {
         return this.get('chat/kick/' + username, callback);
       },
-      latestEarnings: [GENERATE_GET, 'chat/latest-earnings'],
+      latestEarnings : [GENERATE_GET, 'chat/latest-earnings'],
 
-      setCyberToy   : function (type, status, callback) {
+      setCyberToy : function (type, status, callback) {
         return this.get('chat/toy/'+ type +'/' + status, callback);
       },
-      setFreechat   : function (status, callback) {
+      setFreechat : function (status, callback) {
         return this.get('chat/freechat/' + status, callback);
       },
-      setVIP        : function (status, userId, callback) {
+      setVIP : function (status, userId, callback) {
         return this.get('chat/vip/' + status + '/' + userId, callback);
       },
-      start         : function (username, callback) {
+      start : function (username, callback) {
         if (!callback) {
           callback = username;
           username = undefined;
@@ -303,14 +288,14 @@
 
         return this.get('chat/start', callback);
       },
-			startShow     : function(requestObject, callback) {
+			startShow : function(requestObject, callback) {
 				return this.post('chat/show/start', requestObject, callback);
 			}
     },
 
     conversation: {
-      archive       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
-      fetch         : function (userId, page, params, callback) {
+      archive : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
+      fetch : function (userId, page, params, callback) {
         if (typeof page === 'function') {
           callback = page;
           page     = undefined;
@@ -332,7 +317,7 @@
         
         return this.get('conversation/' + userId, params, callback);
       },
-      fetchAll      : function (params, callback) {
+      fetchAll : function (params, callback) {
         if (typeof params === 'function') {
           callback = params;
           params   = {};
@@ -340,15 +325,15 @@
         
         return this.get('conversation/all', params, callback);
       },
-      fetchUnread   : [GENERATE_GET, 'conversation/unread'],
-      markAsRead    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
-      send          : function (userId, message, attachment, callback) {
+      fetchUnread : [GENERATE_GET, 'conversation/unread'],
+      markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
+      send : function (userId, message, attachment, callback) {
         if (typeof attachment === 'function') {
           callback = attachment;
           attachment = null;
         }
 
-        var data = { message: message };
+        const data = { message: message };
 
         if (attachment) {
           data.attachment = attachment;
@@ -359,16 +344,16 @@
     },
 
     customer: {
-      fetchOwn      : [GENERATE_GET, 'customer'],
-      login         : function (username, password, callback) {
+      fetchOwn : [GENERATE_GET, 'customer'],
+      login : function (username, password, callback) {
         return this.user.login('user', username, password, callback);
       },
-      register      : [GENERATE_POST, 'customer'],
-      remove        : function (callback) {
+      register : [GENERATE_POST, 'customer'],
+      remove : function (callback) {
         return this.post('customer/delete', callback);
       },
-      tip           : function (userId, amount, options, callback) {
-        var params = {
+      tip : function (userId, amount, options, callback) {
+        const params = {
           amount: amount
         };
         
@@ -387,15 +372,15 @@
         
         return this.post('customer/tip/' + userId, params, callback);
       },
-      update        : GENERATE_POST,
-      upload        : function (type, image, callback) {
+      update : GENERATE_POST,
+      upload : function (type, image, callback) {
         return this.post('customer/upload', {type: type, image: image}, callback);
       }
     },
 
     follow: {
-      fetchAll            : [GENERATE_GET, 'follow/all'],
-      fetchAllFollowed    : function (userId, page, options, callback) {
+      fetchAll : [GENERATE_GET, 'follow/all'],
+      fetchAllFollowed : function (userId, page, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
           userId   = null;
@@ -424,7 +409,7 @@
 
         return this.get('follows/' + userId, options, callback);
       },
-      fetchAllFollowers   : function (userId, page, options, callback) {
+      fetchAllFollowers : function (userId, page, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
           userId   = null;
@@ -453,15 +438,30 @@
 
         return this.get('followers/' + userId, options, callback);
       },
-      follow              : function (userId, callback) {
+      follow : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
       },
-      isFollowing         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
-      unfollow            : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
+      isFollowing : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
+      unfollow    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
+    },
+
+    global: {
+      search : function (query, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        options.q = query;
+
+        return this.get('/search', options, callback);
+      }
     },
 
     hotornot: {
-      fetch         : function (options, callback) {
+      fetch : function (options, callback) {
         if (typeof options === 'function') {
           callback = options;
           options  = {};
@@ -471,26 +471,23 @@
 
         return this.get('hotornot', options, callback);
       },
-      topPosts      : [GENERATE_GET, '/hotornot/top/posts'],
-      topUsers      : [GENERATE_GET, '/hotornot/top/users'],
-      upload        : function (attachment, callback) {
+      topPosts : [GENERATE_GET, '/hotornot/top/posts'],
+      topUsers : [GENERATE_GET, '/hotornot/top/users'],
+      upload : function (attachment, callback) {
         return this.post('hotornot', { attachment: attachment }, callback);
       }
     },
 
     media: {
-      buy             : function (mediaId, callback) {
+      buy : function (mediaId, callback) {
         return this.post('media/buy', { media: mediaId }, callback);
       },
-      create          : [GENERATE_POST, 'media'],
-      checkAccess     : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
-
-      moderate        : GENERATE_GET,
-      update          : [GENERATE_POST, 'media/update'],
-      fetchAlbum      : function (username, albumId, callback) {
+      create      : [GENERATE_POST, 'media'],
+      checkAccess : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
+      fetchAlbum : function (username, albumId, callback) {
         return this.get('media/' + username + '/' + albumId, callback);
       },
-      fetchAll        : function (type, page, gender, callback) {
+      fetchAll : function (type, page, gender, callback) {
         if (typeof page === 'function') {
           callback = page;
           gender   = null;
@@ -507,7 +504,7 @@
           page   = 1;
         }
 
-        var searchOptions = { page: page };
+        const searchOptions = { page: page };
 
         if (gender) {
           searchOptions.gender = gender;
@@ -522,15 +519,14 @@
           limit    = undefined;
         }
 
-        var params = {};
-        if (limit) {
-          params.amount = limit;
-        }
+        const params = {};
+
+        if (limit) params.amount = limit;
 
         return this.get('media/following/' + userId, params, callback);
       },
-      fetchByUsername  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
-      fetchOwn         : function (albumId, includeDeleted, callback) {
+      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      fetchOwn : function (albumId, includeDeleted, callback) {
         if (typeof albumId === 'function') {
           callback       = albumId;
           includeDeleted = undefined;
@@ -548,7 +544,7 @@
           }
         }
 
-        var params = {};
+        const params = {};
 
         if (albumId) {
           params.albumId = albumId;
@@ -560,9 +556,10 @@
 
         return this.get('media', params, callback);
       },
-      fetchOwnRating : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/'],
+      fetchOwnRating : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/rating/'],
+      moderate       : GENERATE_GET,
       pending        : GENERATE_GET,
-      rate           : function (mediaId, score, callback) {
+      rate : function (mediaId, score, callback) {
         return this.post('/media/rating/'+ mediaId, { score: score }, callback);
       },
       remove : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
@@ -574,8 +571,12 @@
         
         return this.get('media/search', filters, callback);
       },
+      update          : [GENERATE_POST, 'media/update'],
       viewAlbum       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
-      viewAttachments : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'attachment/fetch/']
+      //viewAttachments : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/attachments/']
+      viewAttachments : function (data, callback) {
+        return this.get('/media/attachments', data, callback);
+      },
     },
 
     message: {
@@ -583,7 +584,7 @@
         return this.post('message', { to: to, message: { title: title, content: content } }, callback);
       },
       fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
-      inbox           : function (page, callback) {
+      inbox : function (page, callback) {
         if (!callback) {
           callback = page;
           page     = 1;
@@ -599,7 +600,7 @@
           messageId = undefined;
         }
 
-        var url = 'message/read/' + hash;
+        let url = 'message/read/' + hash;
 
         if (messageId) {
           url += '/' + messageId;
@@ -614,11 +615,11 @@
     },
 
     news: {
-      fetch           : [GENERATE_GET, 'news']
+      fetch : [GENERATE_GET, 'news']
     },
 
     payment: {
-      createSession   : function (bundleId, extraOptions, callback) {
+      createSession : function (bundleId, extraOptions, callback) {
         if (!callback) {
           callback     = extraOptions;
           extraOptions = undefined;
@@ -632,11 +633,11 @@
         
         return this.get('payment/start', extraOptions, callback);
       },
-      getAssortiment  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
-      getRedeemInfo   : function (bundleId, callback) {
+      getAssortiment : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
+      getRedeemInfo : function (bundleId, callback) {
         return this.get('payment/redeem', { bundle: bundleId }, callback);
       },
-      redeemCode      : function (bundleId, code, options, callback) {
+      redeemCode : function (bundleId, code, options, callback) {
         if (!callback) {
           callback = options;
           options  = {};
@@ -652,14 +653,14 @@
     },
 
     performer: {
-      checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
-      fetchOwn        : [GENERATE_GET, 'performer'],
-      fetchQuickTips  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
-      login           : function (username, password, callback) {
+      checkUsername  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
+      fetchOwn       : [GENERATE_GET, 'performer'],
+      fetchQuickTips : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
+      login : function (username, password, callback) {
         return this.user.login('performer', username, password, callback);
       },
-      register        : [GENERATE_POST, 'performer'],
-      search          : function (searchOptions, page, callback) {
+      register : [GENERATE_POST, 'performer'],
+      search : function (searchOptions, page, callback) {
         if (!callback) {
           callback = page;
           if (typeof searchOptions === 'object') {
@@ -690,19 +691,19 @@
 
         return this.get('performer/search/' + username, options, callback);
       },
-      setQuickTips    : [GENERATE_POST, '/performer/quicktips'],
-      update          : GENERATE_POST
+      setQuickTips : [GENERATE_POST, '/performer/quicktips'],
+      update       : GENERATE_POST
     },
 
     post: {
-      all             : [GENERATE_GET, 'posts/all'],
-      compose         : function (body, attachment, callback) {
+      all     : [GENERATE_GET, 'posts/all'],
+      compose : function (body, attachment, callback) {
         if (typeof attachment === 'function') {
           callback   = attachment;
           attachment = undefined;
         }
 
-        var postData = { body: body };
+        const postData = { body: body };
 
         if (attachment) {
           postData.attachment = attachment;
@@ -710,10 +711,10 @@
 
         return this.post('post', postData, callback);
       },
-      delete          : function (postId, callback) {
+      delete : function (postId, callback) {
         return this.post('post/delete/' + postId, callback);
       },
-      fetch           : function (userId, options, callback) {
+      fetch : function (userId, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
           options  = undefined;
@@ -737,7 +738,7 @@
 
         return this.get('posts/user/' + userId, options, callback);
       },
-      fetchLikers     : function (section, identifier, options, callback) {
+      fetchLikers : function (section, identifier, options, callback) {
         if (typeof options === 'function') {
           callback = options;
           options = null;
@@ -745,7 +746,7 @@
 
         return this.get('/rating/users/'+ section +'/' + identifier, options, callback);
       },
-      fetchReplies    : function (postId, lowerThanPostId, options, callback) {
+      fetchReplies : function (postId, lowerThanPostId, options, callback) {
         if (typeof lowerThanPostId === 'function') {
           callback        = lowerThanPostId;
           options         = undefined;
@@ -764,7 +765,7 @@
 
         return this.get('posts/replies/' + postId, options, callback);
       },
-      fetchSelection  : function (postIds, options, callback) {
+      fetchSelection : function (postIds, options, callback) {
         if (!callback) {
           callback = options;
           options  = undefined;
@@ -780,66 +781,60 @@
 
         return this.get('post/' + postIds, options, callback);
       },
-      fetchSuggested  : function (options, callback) {
+      fetchSuggested : function (options, callback) {
         options = options || {};
 
         return this.get('post/suggested', options, callback);
       },
-      pin             : function (postId, onNewsPage, callback) {
-        var pinUrl = 'post/pin/';
-
+      pin : function (postId, onNewsPage, callback) {
         if (typeof onNewsPage === 'function') {
           callback   = onNewsPage;
           onNewsPage = undefined;
         }
 
-        if (onNewsPage) {
-          pinUrl += 'news/';
-        }
+        let pinUrl = 'post/pin/';
+
+        if (onNewsPage) pinUrl += 'news/';
 
         return this.get(pinUrl + postId, callback);
       },
-      rate            : function (postId, score, callback) {
+      rate : function (postId, score, callback) {
         return this.post('/post/rating/'+ postId, { score: score }, callback);
       },
-      reply           : function (postId, body, attachment, callback) {
+      reply : function (postId, body, attachment, callback) {
         if (typeof attachment === 'function') {
           callback   = attachment;
           attachment = undefined;
         }
 
-        var postData = { body: body };
+        const postData = { body: body };
 
-        if (attachment) {
-          postData.attachment = attachment;
-        }
+        if (attachment) postData.attachment = attachment;
 
         return this.post('post/reply/' + postId, postData, callback);
       },
-      unpin           : function (postId, onNewsPage, callback) {
-        var unpinUrl = 'post/unpin/';
-
+      unpin : function (postId, onNewsPage, callback) {
         if (typeof onNewsPage === 'function') {
           callback   = onNewsPage;
           onNewsPage = undefined;
         }
 
-        if (onNewsPage) {
-          unpinUrl += 'news/';
-        }
+        let unpinUrl = 'post/unpin/';
+
+        if (onNewsPage) unpinUrl += 'news/';
 
         return this.get(unpinUrl + postId, callback);
-      }
+      },
     },
 
     rules: {
-      promotion       : function (callback) {
+      promotion : function (callback) {
         return this.get('rules/promotion', callback);
       }
     },
 
     shop: {
-      buy             : function (itemId, receiverId, message, callback) {
+      buy : function (itemId, receiverId, message, callback) {
         if (typeof message === 'function') {
           callback = message;
           message   = null;
@@ -854,25 +849,25 @@
         };
         return this.post('media/buy', data, callback);
       },
-      fetch           : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop']
+      fetch : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop']
     },
 
     user: {
-      autocomplete        : function (query, callback) {
+      autocomplete : function (query, callback) {
         return this.get('user/autocomplete', { q: query }, callback);
       },
-      birthdays           : function (options, callback) {
+      birthdays : function (options, callback) {
         if (typeof options === 'function') {
           callback = options;
           options  = undefined;
         }
         return this.get('/user/birthdays', options, callback);
       },
-      checkEmail          : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
-      checkUsername       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      earnings            : [GENERATE_GET, 'user/earnings'],
-      fetchOwn            : [GENERATE_GET, 'user'],
-      find                : function (searchOptions, page, callback) {
+      checkEmail    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
+      checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
+      earnings      : [GENERATE_GET, 'user/earnings'],
+      fetchOwn      : [GENERATE_GET, 'user'],
+      find : function (searchOptions, page, callback) {
         if (!callback) {
           callback = page;
           if (typeof searchOptions === 'object') {
@@ -895,8 +890,8 @@
 
         return this.get('user/find', searchOptions, callback);
       },
-      findByUsername      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
-      forgotPassword      : function (username, email, callback) {
+      findByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
+      forgotPassword : function (username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
           callback = email;
@@ -916,8 +911,8 @@
 
         return this.post('user/forgot-password', { username: username, email: email }, callback);
       },
-      ignore              : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
-      login               : function (role, username, password, callback) {
+      ignore : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
+      login : function (role, username, password, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
           callback = password;
@@ -928,32 +923,31 @@
 
         return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      loginByHash         : function (hash, callback) {
+      loginByHash : function (hash, callback) {
         return this.post('user/login/' + hash, callback);
       },
-      matches             : GENERATE_GET,
-      online              : GENERATE_GET,
-
-      register            : [GENERATE_POST, 'user'],
-      remove              : function (callback) {
+      matches  : GENERATE_GET,
+      online   : GENERATE_GET,
+      register : [GENERATE_POST, 'user'],
+      remove : function (callback) {
         return this.post('user/delete', callback);
       },
-      removeProfileCover  : function (callback) {
+      removeProfileCover : function (callback) {
         return this.get('attachment/remove/profile', callback);
       },
-      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
-      resetPassword       : function (hash, password, callback) {
+      resendValidationMail : [GENERATE_GET, 'user/resend-validate-email'],
+      resetPassword : function (hash, password, callback) {
         return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
-      setProfileCover     : function (attachment, callback) {
+      setProfileCover : function (attachment, callback) {
         return this.post('attachment/profile', { attachment: attachment }, callback);
       },
-      suggestedFuddies    : function (options, callback) {
+      suggestedFuddies : function (options, callback) {
         options = options || {};
 
         return this.get('user/suggested/fuddies', options, callback);
       },
-      tip                 : function (userId, amount, options, callback) {
+      tip : function (userId, amount, options, callback) {
         var params = {
           amount: amount
         };
@@ -973,9 +967,9 @@
 
         return this.post('user/tip/' + userId, params, callback);
       },
-      trackthisToken      : [GENERATE_GET, 'user/trackthis-token'],
-      update              : GENERATE_POST,
-      uploadSnapshot      : function (snapshot, type, params, callback) {
+      trackthisToken : [GENERATE_GET, 'user/trackthis-token'],
+      update         : GENERATE_POST,
+      uploadSnapshot : function (snapshot, type, params, callback) {
         if (typeof type === 'function') {
           callback = type;
           params   = null;
@@ -1001,7 +995,7 @@
 
         return this.post('user/storage/snapshot', params, callback);
       },
-      verifyEmail         : function (hash, callback) {
+      verifyEmail : function (hash, callback) {
         return this.post('user/verify-email', { hash: hash }, callback);
       }
     }
