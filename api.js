@@ -573,10 +573,10 @@
       },
       update          : [GENERATE_POST, 'media/update'],
       viewAlbum       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
-      //viewAttachments : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/attachments/']
       viewAttachments : function (data, callback) {
         return this.get('/media/attachments', data, callback);
       },
+      viewSnapshot    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
     },
 
     message: {
