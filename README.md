@@ -52,10 +52,6 @@ If any error is encounterd, **error** will be set
 * agenda
   * **fetchSchedule** (string username | string date, function callback)
 
-* attachments
-  * **fetch** (string username, function callback)
-  * **fetchAll** ([*object searchparams*], function callback)
-
 * chat
   * **end** ([*string username*], function callback)
   * **keepAlive** ([*number userId*], function callback)
@@ -67,6 +63,7 @@ If any error is encounterd, **error** will be set
   * **start** ([*string username*], function callback)
 
 * conversation
+  * **archive** (number userId, function callback)
   * **fetch** (number userId, [*number page*], [*object params*], function callback)
   * **fetchAll** ([*number page*], [*number limit*], function callback)
   * **fetchUnread** (function callback)
@@ -117,6 +114,7 @@ If any error is encounterd, **error** will be set
   * **search** ([*object filters*], function callback)
   * **update** (object mediaInfo, function callback)
   * **viewAlbum** (number albumId, function callback)
+  * **viewAttachments** (string username, function callback)
 
 * message
   * **compose** (string to, string title, string content, function callback)
@@ -136,8 +134,8 @@ If any error is encounterd, **error** will be set
 
 * performer
   * **checkUsername** (string username, function callback)
-  * **register** (object form, function callback)
   * **login** (string username, string password, function callback)
+  * **register** (object form, function callback)
   * **search** ([*object searchparams*], [*number page*], function callback)
   * **searchByUsername** (string username, [*object options*], function callback)
   * **update** (object form, function callback)
@@ -173,8 +171,8 @@ If any error is encounterd, **error** will be set
   * **forgotPassword** ([*string username*], [*string email*], function callback)
   * **login** ([*string role*], string username, string password, function callback)
   * **loginByHash** (string hash, function callback)
-  * **matches** (function callback)
   * **online** (function callback)
+  * **matches** (function callback)
   * **register** (object form, function callback)
   * **remove** (function callback)
   * **removeProfileCover** (function callback)
