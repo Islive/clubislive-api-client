@@ -98,8 +98,8 @@
         if (typeof apiMethods[objectName][methodName] === 'string' || (typeof apiMethods[objectName][methodName] === 'object' && apiMethods[objectName][methodName] instanceof Array)) {
           // We are gonna generate a function
           this[objectName][methodName] = function(objectName, methodName) {
-            let params = Array.prototype.slice.call(arguments, 2);
-            let routeDetails = [];
+            var params       = Array.prototype.slice.call(arguments, 2),
+                routeDetails = [];
 
             if (typeof apiMethods[objectName][methodName] === 'string') {
               // We need to generate the route from the objectname + methodname
@@ -142,308 +142,9 @@
     }
   }
 
-  // ENTRYPOINTS
   var apiMethods = {
-    abuse: {
-      report : function (suspectUserId, section, identifier, reason, callback) {
-        if (typeof identifier === 'function') {
-          callback   = identifier;
-          reason     = section;
-          identifier = undefined;
-          section    = undefined;
-        }
-
-        const reportData = {
-          suspect: suspectUserId,
-          reason : reason
-        };
-
-        if (section) {
-          reportData.foreignKey = identifier;
-          return this.post('abuse/report/' + section, reportData, callback);
-        }
-
-        return this.post('abuse/report', reportData, callback);
-      }
-    },
-
-    activity: {
-      daily : function (options, callback) {
-        options = options || {};
-        return this.get('activity/daily', options, callback);
-      },
-      fetch    : [GENERATE_GET, 'activities'],
-      fetchOne : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
-      history : function (event, options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options  = {};
-        }
-        options.event = event;
-        return this.get('/activities/history', options, callback);
-      },
-      load : function (userId, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          options  = null;
-          userId = undefined;
-        }
-        if (typeof options === 'function') {
-          callback = options;
-          options  = null;
-        }
-        if (userId && typeof userId === 'object') {
-          options  = userId;
-          userId = undefined;
-        }
-
-        if (!userId) {
-          return this.get('activity', options, callback);
-        }
-
-        return this.get('activity/' + userId, options, callback);
-      },
-      loadFollowed : function (options, callback) {
-        if (!callback) {
-          callback = options;
-          options  = null;
-        }
-
-        return this.get('activity/followed', options, callback);
-      },
-      loadUser : function (user, options, callback) {
-        if (!callback) {
-          callback = options;
-          otions   = null;
-        }
-
-        return this.get('activity/all/' + user, options, callback);
-      },
-      news : [GENERATE_GET, '/activities/news']
-    },
-
-    agenda: {
-      fetchSchedule : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
-    },
-
-    chat: {
-			addUserToShow : function(requestObject, callback) {
-				return this.post('chat/show/add', requestObject, callback);
-			},
-      end : function (username, callback) {
-        if (!callback) {
-          callback = username;
-          username = undefined;
-        }
-
-        if (username) {
-          return this.get('chat/end/' + username, callback);
-        }
-
-        return this.get('chat/end', callback);
-      },
-			endShow : function(mediaId, callback) {
-				return this.post('chat/show/end', { mediaId: mediaId }, callback);
-			},
-			getShow : function(mediaId, callback) {
-				return this.get('chat/show/get/' + mediaId, callback);
-			},
-      keepAlive : function (userId, callback) {
-        if (!callback) {
-          callback = userId;
-          userId = undefined;
-        }
-
-        if (userId) {
-          return this.get('chat/keepalive/' + userId, { skipQueue: true }, callback);
-        }
-
-        return this.get('chat/keepalive', callback);
-      },
-      kick : function (username, callback) {
-        return this.get('chat/kick/' + username, callback);
-      },
-      latestEarnings : [GENERATE_GET, 'chat/latest-earnings'],
-
-      setCyberToy : function (type, status, callback) {
-        return this.get('chat/toy/'+ type +'/' + status, callback);
-      },
-      setFreechat : function (status, callback) {
-        return this.get('chat/freechat/' + status, callback);
-      },
-      setVIP : function (status, userId, callback) {
-        return this.get('chat/vip/' + status + '/' + userId, callback);
-      },
-      start : function (username, callback) {
-        if (!callback) {
-          callback = username;
-          username = undefined;
-        }
-
-        if (username) {
-          return this.get('chat/start/' + username, callback);
-        }
-
-        return this.get('chat/start', callback);
-      },
-			startShow : function(requestObject, callback) {
-				return this.post('chat/show/start', requestObject, callback);
-			}
-    },
-
-    conversation: {
-      archive : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
-      fetch : function (userId, page, params, callback) {
-        if (typeof page === 'function') {
-          callback = page;
-          page     = undefined;
-          params  = undefined;
-        } else if (typeof params === 'function') {
-          callback = params;
-          if (typeof page === 'object') {
-            params = page;
-            page    = undefined;
-          } else {
-            params = undefined;
-          }
-        }
-        
-        page    = page || 1;
-        params = params || {};
-        
-        params.page = page;
-        
-        return this.get('conversation/' + userId, params, callback);
-      },
-      fetchAll : function (params, callback) {
-        if (typeof params === 'function') {
-          callback = params;
-          params   = {};
-        }
-        
-        return this.get('conversation/all', params, callback);
-      },
-      fetchUnread : [GENERATE_GET, 'conversation/unread'],
-      markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
-      send : function (userId, message, attachment, callback) {
-        if (typeof attachment === 'function') {
-          callback = attachment;
-          attachment = null;
-        }
-
-        const data = { message: message };
-
-        if (attachment) {
-          data.attachment = attachment;
-        }
-
-        return this.post('conversation/' + userId, data, callback);
-      }
-    },
-
-    customer: {
-      fetchOwn : [GENERATE_GET, 'customer'],
-      login : function (username, password, callback) {
-        return this.user.login('user', username, password, callback);
-      },
-      register : [GENERATE_POST, 'customer'],
-      remove : function (callback) {
-        return this.post('customer/delete', callback);
-      },
-      tip : function (userId, amount, options, callback) {
-        const params = {
-          amount: amount
-        };
-        
-        if (!callback) {
-          callback = options;
-          options  = false;
-        }
-        
-        if (options && options.type) {
-          params.type = options.type || false;
-        }
-        
-        if (options && options.name) {
-          params.name = options.name || false;
-        }
-        
-        return this.post('customer/tip/' + userId, params, callback);
-      },
-      update : GENERATE_POST,
-      upload : function (type, image, callback) {
-        return this.post('customer/upload', {type: type, image: image}, callback);
-      }
-    },
-
-    follow: {
-      fetchAll : [GENERATE_GET, 'follow/all'],
-      fetchAllFollowed : function (userId, page, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          userId   = null;
-        } else if (typeof page === 'function') {
-          callback = page;
-          page     = undefined;
-        } else if (typeof options === callback) {
-          callback = options;
-          options  = undefined;
-          
-          if (typeof page === 'object') {
-            options = page;
-            page    = undefined;
-          }
-        }
-        
-        options = options || {};
-        
-        if (page) {
-          options.page = page;
-        }
-        
-        if (!userId) {
-          return this.get('follows', options, callback);
-        }
-
-        return this.get('follows/' + userId, options, callback);
-      },
-      fetchAllFollowers : function (userId, page, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          userId   = null;
-        } else if (typeof page === 'function') {
-          callback = page;
-          page     = undefined;
-        } else if (typeof options === callback) {
-          callback = options;
-          options  = undefined;
-          
-          if (typeof page === 'object') {
-            options = page;
-            page    = undefined;
-          }
-        }
-        
-        options = options || {};
-        
-        if (page) {
-          options.page = page;
-        }
-        
-        if (!userId) {
-          return this.get('followers', options, callback);
-        }
-        return this.get('followers/' + userId, options, callback);
-      },
-      follow : function (userId, callback) {
-        return this.post('follow', { userId: userId }, callback);
-      },
-      isFollowing : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
-      unfollow    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
-    },
-
     global: {
-      search : function (query, options, callback) {
+      search: function (query, options, callback) {
         if (typeof options === 'function') {
           callback = options;
           options  = undefined;
@@ -456,208 +157,14 @@
         return this.get('/search', options, callback);
       }
     },
-
-    hotornot: {
-      fetch : function (options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options  = {};
-        }
-
-        options = options || {};
-
-        return this.get('hotornot', options, callback);
-      },
-      topPosts : [GENERATE_GET, '/hotornot/top/posts'],
-      topUsers : [GENERATE_GET, '/hotornot/top/users'],
-      upload : function (attachment, callback) {
-        return this.post('hotornot', { attachment: attachment }, callback);
-      }
-    },
-
-    media: {
-      buy : function (mediaId, callback) {
-        return this.post('media/buy', { media: mediaId }, callback);
-      },
-      create      : [GENERATE_POST, 'media'],
-      checkAccess : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
-      fetchAlbum : function (username, albumId, callback) {
-        return this.get('media/' + username + '/' + albumId, callback);
-      },
-      fetchAll : function (type, page, gender, callback) {
-        if (typeof page === 'function') {
-          callback = page;
-          gender   = null;
-          page     = 1;
-        }
-
-        if (typeof gender === 'function') {
-          callback = gender;
-          gender   = null;
-        }
-
-        if (isNaN(page)) {
-          gender = page;
-          page   = 1;
-        }
-
-        const searchOptions = { page: page };
-
-        if (gender) {
-          searchOptions.gender = gender;
-        }
-
-        return this.get('media/all/' + type, searchOptions, callback);
-      },
-      fetchBought      : [GENERATE_GET, 'media/bought'],
-      fetchByFollowers : function (userId, limit, callback) {
-        if (!callback) {
-          callback = limit;
-          limit    = undefined;
-        }
-
-        const params = {};
-
-        if (limit) params.amount = limit;
-
-        return this.get('media/following/' + userId, params, callback);
-      },
-      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
-      fetchOwn : function (albumId, includeDeleted, callback) {
-        if (typeof albumId === 'function') {
-          callback       = albumId;
-          includeDeleted = undefined;
-          albumId        = undefined;
-        }
-
-        if (typeof includeDeleted === 'function') {
-          callback = includeDeleted;
-
-          if (typeof albumId === 'boolean') {
-            includeDeleted = albumId;
-            albumId        = undefined;
-          } else {
-            includeDeleted = undefined;
-          }
-        }
-
-        const params = {};
-
-        if (albumId) {
-          params.albumId = albumId;
-        }
-
-        if (includeDeleted) {
-          params.includeDeleted = true;
-        }
-
-        return this.get('media', params, callback);
-      },
-      fetchOwnRating : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/rating/'],
-      moderate       : GENERATE_GET,
-      pending        : GENERATE_GET,
-      rate : function (mediaId, score, callback) {
-        return this.post('/media/rating/'+ mediaId, { score: score }, callback);
-      },
-      remove : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
-      search : function (filters, callback) {
-        if (!callback) {
-          callback  = messageId;
-          messageId = undefined;
-        }
-        
-        return this.get('media/search', filters, callback);
-      },
-      update          : [GENERATE_POST, 'media/update'],
-      viewAlbum       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
-      viewAttachments : function (data, callback) {
-        return this.get('/media/attachments', data, callback);
-      },
-      viewSnapshot    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
-    },
-
-    message: {
-      compose : function (to, title, content, callback) {
-        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
-      },
-      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
-      inbox : function (page, callback) {
-        if (!callback) {
-          callback = page;
-          page     = 1;
-        }
-
-        if (isNaN(page)) page = 1;
-
-        return this.get('message/inbox', { page: page }, callback);
-      },
-      markRead : function (hash, messageId, callback) {
-        if (!callback) {
-          callback  = messageId;
-          messageId = undefined;
-        }
-
-        let url = 'message/read/' + hash;
-
-        if (messageId) {
-          url += '/' + messageId;
-        }
-
-        return this.get(url, callback);
-      },
-      reply : function (to, hash, content, callback) {
-        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
-      },
-      unread : GENERATE_GET
-    },
-
-    news: {
-      fetch : [GENERATE_GET, 'news']
-    },
-
-    payment: {
-      createSession : function (bundleId, extraOptions, callback) {
-        if (!callback) {
-          callback     = extraOptions;
-          extraOptions = undefined;
-        }
-        
-        if (typeof extraOptions !== 'object') {
-          extraOptions = {};
-        }
-        
-        extraOptions.bundle = bundleId;
-        
-        return this.get('payment/start', extraOptions, callback);
-      },
-      getAssortiment : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
-      getRedeemInfo : function (bundleId, callback) {
-        return this.get('payment/redeem', { bundle: bundleId }, callback);
-      },
-      redeemCode : function (bundleId, code, options, callback) {
-        if (!callback) {
-          callback = options;
-          options  = {};
-        }
-
-        options = options || {};
-
-        options.bundle = bundleId;
-        options.redeem = code;
-
-        return this.post('payment/redeem', options, callback);
-      }
-    },
-
     performer: {
-      checkUsername  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
-      fetchOwn       : [GENERATE_GET, 'performer'],
-      fetchQuickTips : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
-      login : function (username, password, callback) {
+      checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
+      register        : [GENERATE_POST, 'performer'],
+      login           : function (username, password, callback) {
         return this.user.login('performer', username, password, callback);
       },
-      register : [GENERATE_POST, 'performer'],
-      search : function (searchOptions, page, callback) {
+      fetchOwn        : [GENERATE_GET, 'performer'],
+      search          : function (searchOptions, page, callback) {
         if (!callback) {
           callback = page;
           if (typeof searchOptions === 'object') {
@@ -688,207 +195,68 @@
 
         return this.get('performer/search/' + username, options, callback);
       },
-      setQuickTips : [GENERATE_POST, '/performer/quicktips'],
-      update       : GENERATE_POST
+      update          : GENERATE_POST,
+      fetchQuickTips  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
+      setQuickTips    : [GENERATE_POST, '/performer/quicktips']
     },
-
-    post: {
-      all     : [GENERATE_GET, 'posts/all'],
-      compose : function (body, attachment, callback) {
-        if (typeof attachment === 'function') {
-          callback   = attachment;
-          attachment = undefined;
-        }
-
-        const postData = { body: body };
-
-        if (attachment) {
-          postData.attachment = attachment;
-        }
-
-        return this.post('post', postData, callback);
+    customer: {
+      register      : [GENERATE_POST, 'customer'],
+      login         : function (username, password, callback) {
+        return this.user.login('user', username, password, callback);
       },
-      delete : function (postId, callback) {
-        return this.post('post/delete/' + postId, callback);
-      },
-      fetch : function (userId, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          options  = undefined;
-          userId   = undefined;
-        } else if (typeof userId === 'object') {
-          callback = options;
-          options  = userId;
-          userId   = undefined;
-        }
+      fetchOwn      : [GENERATE_GET, 'customer'],
+      update        : GENERATE_POST,
+      tip           : function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        };
 
-        if (typeof options === 'function') {
-          callback = options;
-          options  = undefined;
-        }
-
-        options = options || {};
-
-        if (!userId) {
-          return this.get('posts', options, callback);
-        }
-
-        return this.get('posts/user/' + userId, options, callback);
-      },
-      fetchLikers : function (section, identifier, options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options = null;
-        }
-
-        return this.get('/rating/users/'+ section +'/' + identifier, options, callback);
-      },
-      fetchReplies : function (postId, lowerThanPostId, options, callback) {
-        if (typeof lowerThanPostId === 'function') {
-          callback        = lowerThanPostId;
-          options         = undefined;
-          lowerThanPostId = undefined;
-        } else if (typeof lowerThanPostId === 'object') {
-          callback        = options;
-          options         = lowerThanPostId;
-          lowerThanPostId = undefined;
-        }
-
-        options = options || {};
-        
-        if (lowerThanPostId) {
-          options.lowestId = lowerThanPostId;
-        }
-        
-        return this.get('posts/replies/' + postId, options, callback);
-      },
-      fetchSelection : function (postIds, options, callback) {
         if (!callback) {
           callback = options;
-          options  = undefined;
+          options  = false;
         }
 
-        options = options || {};
-
-        if (postIds instanceof Array) {
-          options.postIds = postIds;
-
-          return this.get('posts/selection', options, callback);
+        if (options && options.type) {
+          params.type = options.type || false;
         }
 
-        return this.get('post/' + postIds, options, callback);
-      },
-      fetchSuggested : function (options, callback) {
-        options = options || {};
-
-        return this.get('post/suggested', options, callback);
-      },
-      pin : function (postId, onNewsPage, callback) {
-        if (typeof onNewsPage === 'function') {
-          callback   = onNewsPage;
-          onNewsPage = undefined;
+        if (options && options.name) {
+          params.name = options.name || false;
         }
 
-        let pinUrl = 'post/pin/';
-
-        if (onNewsPage) pinUrl += 'news/';
-
-        return this.get(pinUrl + postId, callback);
+        return this.post('customer/tip/' + userId, params, callback);
       },
-      rate : function (postId, score, callback) {
-        return this.post('/post/rating/'+ postId, { score: score }, callback);
+      remove        : function (callback) {
+        return this.post('customer/delete', callback);
       },
-      reply : function (postId, body, attachment, callback) {
-        if (typeof attachment === 'function') {
-          callback   = attachment;
-          attachment = undefined;
-        }
-
-        const postData = { body: body };
-
-        if (attachment) postData.attachment = attachment;
-
-        return this.post('post/reply/' + postId, postData, callback);
-      },
-      unpin : function (postId, onNewsPage, callback) {
-        if (typeof onNewsPage === 'function') {
-          callback   = onNewsPage;
-          onNewsPage = undefined;
-        }
-
-        let unpinUrl = 'post/unpin/';
-
-        if (onNewsPage) unpinUrl += 'news/';
-
-        return this.get(unpinUrl + postId, callback);
-      },
-    },
-
-    rules: {
-      promotion : function (callback) {
-        return this.get('rules/promotion', callback);
+      upload        : function (type, image, callback) {
+        return this.post('customer/upload', {type: type, image: image}, callback);
       }
     },
-
-    shop: {
-      buy : function (itemId, receiverId, message, callback) {
-        if (typeof message === 'function') {
-          callback = message;
-          message   = null;
-        }
-
-        var data = {
-          media   : itemId,
-          receiver: receiverId,
-          meta    : {
-            message: message
-          }
-        };
-        return this.post('media/buy', data, callback);
-      },
-      fetch : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop']
-    },
-
     user: {
-      autocomplete : function (query, callback) {
-        return this.get('user/autocomplete', { q: query }, callback);
-      },
-      birthdays : function (options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options  = undefined;
-        }
-        return this.get('/user/birthdays', options, callback);
-      },
-      checkEmail    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
-      checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      earnings      : [GENERATE_GET, 'user/earnings'],
-      fetchOwn      : [GENERATE_GET, 'user'],
-      find : function (searchOptions, page, callback) {
+      register: [GENERATE_POST, 'user'],
+      fetchOwn: [GENERATE_GET, 'user'],
+      update: GENERATE_POST,
+      checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
+      checkEmail: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
+      earnings: [GENERATE_GET, 'user/earnings'],
+      trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
+      ignore: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
+      login: function (role, username, password, callback) {
+        // Role is optional, defaults to 'user'
         if (!callback) {
-          callback = page;
-          if (typeof searchOptions === 'object') {
-            page = 1;
-          } else {
-            page          = searchOptions;
-            searchOptions = {};
-          }
+          callback = password;
+          password = username;
+          username = role;
+          role     = undefined;
         }
 
-        if (typeof searchOptions !== 'object') {
-          searchOptions = {};
-        }
-
-        if (isNaN(page)) {
-          page = 1;
-        }
-
-        searchOptions.page = page;
-
-        return this.get('user/find', searchOptions, callback);
+        return this.post('user/login', { role: role, username: username, password: password }, callback);
       },
-      findByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
-      forgotPassword : function (username, email, callback) {
+      loginByHash: function (hash, callback) {
+        return this.post('user/login/' + hash, callback);
+      },
+      forgotPassword: function (username, email, callback) {
         // Role is optional, defaults to 'user'
         if (!callback) {
           callback = email;
@@ -908,65 +276,16 @@
 
         return this.post('user/forgot-password', { username: username, email: email }, callback);
       },
-      ignore : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
-      login : function (role, username, password, callback) {
-        // Role is optional, defaults to 'user'
-        if (!callback) {
-          callback = password;
-          password = username;
-          username = role;
-          role     = undefined;
-        }
-
-        return this.post('user/login', { role: role, username: username, password: password }, callback);
+      verifyEmail: function (hash, callback) {
+        return this.post('user/verify-email', { hash: hash }, callback);
       },
-      loginByHash : function (hash, callback) {
-        return this.post('user/login/' + hash, callback);
-      },
-      matches  : GENERATE_GET,
-      online   : GENERATE_GET,
-      register : [GENERATE_POST, 'user'],
-      remove : function (callback) {
-        return this.post('user/delete', callback);
-      },
-      removeProfileCover : function (callback) {
-        return this.get('attachment/remove/profile', callback);
-      },
-      resendValidationMail : [GENERATE_GET, 'user/resend-validate-email'],
-      resetPassword : function (hash, password, callback) {
+      resetPassword: function (hash, password, callback) {
         return this.post('user/reset-password', { hash: hash, password: password }, callback);
       },
-      setProfileCover : function (attachment, callback) {
-        return this.post('attachment/profile', { attachment: attachment }, callback);
-      },
-      suggestedFuddies : function (options, callback) {
-        options = options || {};
-
-        return this.get('user/suggested/fuddies', options, callback);
-      },
-      tip : function (userId, amount, options, callback) {
-        var params = {
-          amount: amount
-        };
-
-        if (!callback) {
-          callback = options;
-          options  = false;
-        }
-
-        if (options && options.type) {
-          params.type = options.type || false;
-        }
-
-        if (options && options.name) {
-          params.name = options.name || false;
-        }
-
-        return this.post('user/tip/' + userId, params, callback);
-      },
-      trackthisToken : [GENERATE_GET, 'user/trackthis-token'],
-      update         : GENERATE_POST,
-      uploadSnapshot : function (snapshot, type, params, callback) {
+      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
+      online: GENERATE_GET,
+      matches: GENERATE_GET,
+      uploadSnapshot: function (snapshot, type, params, callback) {
         if (typeof type === 'function') {
           callback = type;
           params   = null;
@@ -992,24 +311,698 @@
 
         return this.post('user/storage/snapshot', params, callback);
       },
-      verifyEmail : function (hash, callback) {
-        return this.post('user/verify-email', { hash: hash }, callback);
-      }
+      setProfileCover: function (attachment, callback) {
+        return this.post('attachment/profile', { attachment: attachment }, callback);
+      },
+      removeProfileCover: function (callback) {
+        return this.get('attachment/remove/profile', callback);
+      },
+      findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
+      find          : function (searchOptions, page, callback) {
+        if (!callback) {
+          callback = page;
+          if (typeof searchOptions === 'object') {
+            page = 1;
+          } else {
+            page          = searchOptions;
+            searchOptions = {};
+          }
+        }
 
-      return vars;
+        if (typeof searchOptions !== 'object') {
+          searchOptions = {};
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        searchOptions.page = page;
+
+        return this.get('user/find', searchOptions, callback);
+      },
+      suggestedFuddies : function (options, callback) {
+        options = options || {};
+
+        return this.get('user/suggested/fuddies', options, callback);
+      },
+      tip: function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        };
+
+        if (!callback) {
+          callback = options;
+          options  = false;
+        }
+
+        if (options && options.type) {
+          params.type = options.type || false;
+        }
+
+        if (options && options.name) {
+          params.name = options.name || false;
+        }
+
+        return this.post('user/tip/' + userId, params, callback);
+      },
+      remove: function (callback) {
+        return this.post('user/delete', callback);
+      },
+      autocomplete: function (query, callback) {
+        return this.get('user/autocomplete', { q: query }, callback);
+      },
+      birthdays: function (options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+        return this.get('/user/birthdays', options, callback);
+      }
     },
+    agenda: {
+      fetchSchedule: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
+    },
+    news: {
+      fetch: [GENERATE_GET, 'news']
+    },
+    message: {
+      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
+      inbox: function (page, callback) {
+        if (!callback) {
+          callback = page;
+          page     = 1;
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        return this.get('message/inbox', { page: page }, callback);
+      },
+      compose: function (to, title, content, callback) {
+        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
+      },
+      reply: function (to, hash, content, callback) {
+        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
+      },
+      unread  : GENERATE_GET,
+      markRead: function (hash, messageId, callback) {
+        if (!callback) {
+          callback  = messageId;
+          messageId = undefined;
+        }
+
+        var url = 'message/read/' + hash;
+
+        if (messageId) {
+          url += '/' + messageId;
+        }
+
+        return this.get(url, callback);
+      }
+    },
+    conversation: {
+      archive     : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
+      markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
+
+      fetchUnread : [GENERATE_GET, 'conversation/unread'],
+
+      fetch : function (userId, page, params, callback) {
+        if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+          params  = undefined;
+        } else if (typeof params === 'function') {
+          callback = params;
+          if (typeof page === 'object') {
+            params = page;
+            page    = undefined;
+          } else {
+            params = undefined;
+          }
+        }
+
+        page    = page || 1;
+        params = params || {};
+
+        params.page = page;
+
+        return this.get('conversation/' + userId, params, callback);
+      },
+
+      fetchAll: function (params, callback) {
+        if (typeof params === 'function') {
+          callback = params;
+          params   = {};
+        }
+
+        return this.get('conversation/all', params, callback);
+      },
+
+      send  : function (userId, message, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback = attachment;
+          attachment = null;
+        }
+
+        var data = { message: message };
+
+        if (attachment) {
+          data.attachment = attachment;
+        }
+
+        return this.post('conversation/' + userId, data, callback);
+      }
+    },
+    follow: {
+      isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
+      fetchAll         : [GENERATE_GET, 'follow/all'],
+      fetchAllFollowers: function (userId, page, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          userId   = null;
+        } else if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+        } else if (typeof options === callback) {
+          callback = options;
+          options  = undefined;
+
+          if (typeof page === 'object') {
+            options = page;
+            page    = undefined;
+          }
+        }
+
+        options = options || {};
+
+        if (page) {
+          options.page = page;
+        }
+
+        if (!userId) {
+          return this.get('followers', options, callback);
+        }
+
+        return this.get('followers/' + userId, options, callback);
+      },
+      fetchAllFollowed: function (userId, page, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          userId   = null;
+        } else if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+        } else if (typeof options === callback) {
+          callback = options;
+          options  = undefined;
+
+          if (typeof page === 'object') {
+            options = page;
+            page    = undefined;
+          }
+        }
+
+        options = options || {};
+
+        if (page) {
+          options.page = page;
+        }
+
+        if (!userId) {
+          return this.get('follows', options, callback);
+        }
+
+        return this.get('follows/' + userId, options, callback);
+      },
+      follow           : function (userId, callback) {
+        return this.post('follow', { userId: userId }, callback);
+      },
+      unfollow: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
+    },
+    payment: {
+      getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
+      createSession : function (bundleId, extraOptions, callback) {
+        if (!callback) {
+          callback     = extraOptions;
+          extraOptions = undefined;
+        }
+
+        if (typeof extraOptions !== 'object') {
+          extraOptions = {};
+        }
+
+        extraOptions.bundle = bundleId;
+
+        return this.get('payment/start', extraOptions, callback);
+      },
+      getRedeemInfo: function (bundleId, callback) {
+        return this.get('payment/redeem', { bundle: bundleId }, callback);
+      },
+      redeemCode: function (bundleId, code, options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = {};
+        }
+
+        options = options || {};
+
+        options.bundle = bundleId;
+        options.redeem = code;
+
+        return this.post('payment/redeem', options, callback);
+      }
+    },
+    media: {
+      create          : [GENERATE_POST, 'media'],
+      moderate        : GENERATE_GET,
+      update          : [GENERATE_POST, 'media/update'],
+      fetchOwn        : function (albumId, includeDeleted, callback) {
+        if (typeof albumId === 'function') {
+          callback       = albumId;
+          includeDeleted = undefined;
+          albumId        = undefined;
+        }
+
+        if (typeof includeDeleted === 'function') {
+          callback = includeDeleted;
+
+          if (typeof albumId === 'boolean') {
+            includeDeleted = albumId;
+            albumId        = undefined;
+          } else {
+            includeDeleted = undefined;
+          }
+        }
+
+        var params = {};
+
+        if (albumId) {
+          params.albumId = albumId;
+        }
+
+        if (includeDeleted) {
+          params.includeDeleted = true;
+        }
+
+        return this.get('media', params, callback);
+      },
+      fetchBought     : [GENERATE_GET, 'media/bought'],
+      fetchByFollowers: function (userId, limit, callback) {
+        if (!callback) {
+          callback = limit;
+          limit    = undefined;
+        }
+
+        var params = {};
+        if (limit) {
+          params.amount = limit;
+        }
+
+        return this.get('media/following/' + userId, params, callback);
+      },
+      fetchAll       : function (type, page, gender, callback) {
+        if (typeof page === 'function') {
+          callback = page;
+          gender   = null;
+          page     = 1;
+        }
+
+        if (typeof gender === 'function') {
+          callback = gender;
+          gender   = null;
+        }
+
+        if (isNaN(page)) {
+          gender = page;
+          page   = 1;
+        }
+
+        var searchOptions = { page: page };
+
+        if (gender) {
+          searchOptions.gender = gender;
+        }
+
+        return this.get('media/all/' + type, searchOptions, callback);
+      },
+      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      pending        : GENERATE_GET,
+      fetchAlbum     : function (username, albumId, callback) {
+        return this.get('media/' + username + '/' + albumId, callback);
+      },
+      viewAlbum      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
+      checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
+      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
+      search         : function (filters, callback) {
+        if (!callback) {
+          callback = filters;
+          filters  = null;
+        }
+
+        return this.get('media/search', filters, callback);
+      },
+      buy: function (mediaId, callback) {
+        return this.post('media/buy', { media: mediaId }, callback);
+      },
+      rate: function (mediaId, score, callback) {
+        return this.post('/media/rating/'+ mediaId, { score: score }, callback);
+      },
+      fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/'],
+      viewAttachments : function (data, callback) {
+        return this.get('/media/attachments', data, callback);
+      },
+      viewSnapshot : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
+    },
+    shop: {
+      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop'],
+      buy: function (itemId, receiverId, message, callback) {
+        if (typeof message === 'function') {
+          callback = message;
+          message   = null;
+        }
+
+        var data = {
+          media   : itemId,
+          receiver: receiverId,
+          meta    : {
+            message: message
+          }
+        };
+        return this.post('media/buy', data, callback);
+      }
+    },
+    activity: {
+      news    : [GENERATE_GET, '/activities/news'],
+      history : function (event, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = {};
+        }
+
+        options.event = event;
+
+        return this.get('/activities/history', options, callback);
+      },
+      fetch   : [GENERATE_GET, 'activities'],
+      fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
+      load: function (userId, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          options  = null;
+          userId = undefined;
+        }
+
+        if (typeof options === 'function') {
+          callback = options;
+          options  = null;
+        }
+
+        if (userId && typeof userId === 'object') {
+          options  = userId;
+          userId = undefined;
+        }
+
+        if (!userId) {
+          return this.get('activity', options, callback);
+        }
+
+        return this.get('activity/' + userId, options, callback);
+      },
+      loadFollowed: function (options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = null;
+        }
+
+        return this.get('activity/followed', options, callback);
+      },
+      loadUser: function (user, options, callback) {
+        if (!callback) {
+          callback = options;
+          otions   = null;
+        }
+
+        return this.get('activity/all/' + user, options, callback);
+      },
+      daily : function (options, callback) {
+        options = options || {};
+
+        return this.get('activity/daily', options, callback);
+      }
+    },
+    chat: {
+      setVIP: function (status, userId, callback) {
+        return this.get('chat/vip/' + status + '/' + userId, callback);
+      },
+      setFreechat: function (status, callback) {
+        return this.get('chat/freechat/' + status, callback);
+      },
+      setCyberToy: function (type, status, callback) {
+        return this.get('chat/toy/'+ type +'/' + status, callback);
+      },
+      start: function (username, callback) {
+        if (!callback) {
+          callback = username;
+          username = undefined;
+        }
+
+        if (username) {
+          return this.get('chat/start/' + username, callback);
+        }
+
+        return this.get('chat/start', callback);
+      },
+      keepAlive: function (userId, callback) {
+        if (!callback) {
+          callback = userId;
+          userId = undefined;
+        }
+
+        if (userId) {
+          return this.get('chat/keepalive/' + userId, { skipQueue: true }, callback);
+        }
+
+        return this.get('chat/keepalive', callback);
+      },
+      kick: function (username, callback) {
+        return this.get('chat/kick/' + username, callback);
+      },
+      end: function (username, callback) {
+        if (!callback) {
+          callback = username;
+          username = undefined;
+        }
+
+        if (username) {
+          return this.get('chat/end/' + username, callback);
+        }
+
+        return this.get('chat/end', callback);
+      },
+			startShow: function(requestObject, callback) {
+				return this.post('chat/show/start', requestObject, callback);
+			},
+			endShow: function(mediaId, callback) {
+				return this.post('chat/show/end', { mediaId: mediaId }, callback);
+			},
+			getShow: function(mediaId, callback) {
+				return this.get('chat/show/get/' + mediaId, callback);
+			},
+			addUserToShow: function(requestObject, callback) {
+				return this.post('chat/show/add', requestObject, callback);
+			},
+      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
+    },
+    rules : {
+      promotion: function (callback) {
+        return this.get('rules/promotion', callback);
+      }
+    },
+    post: {
+      all: [GENERATE_GET, 'posts/all'],
+      fetch: function (userId, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          options  = undefined;
+          userId   = undefined;
+        } else if (typeof userId === 'object') {
+          callback = options;
+          options  = userId;
+          userId   = undefined;
+        }
+
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        if (!userId) {
+          return this.get('posts', options, callback);
+        }
+
+        return this.get('posts/user/' + userId, options, callback);
+      },
+      fetchSelection: function (postIds, options, callback) {
+        if (!callback) {
+          callback = options;
+          options  = undefined;
+        }
+
+        options = options || {};
+
+        if (postIds instanceof Array) {
+          options.postIds = postIds;
+
+          return this.get('posts/selection', options, callback);
+        }
+
+        return this.get('post/' + postIds, options, callback);
+      },
+      fetchReplies: function (postId, lowerThanPostId, options, callback) {
+        if (typeof lowerThanPostId === 'function') {
+          callback        = lowerThanPostId;
+          options         = undefined;
+          lowerThanPostId = undefined;
+        } else if (typeof lowerThanPostId === 'object') {
+          callback        = options;
+          options         = lowerThanPostId;
+          lowerThanPostId = undefined;
+        }
+
+        options = options || {};
+
+        if (lowerThanPostId) {
+          options.lowestId = lowerThanPostId;
+        }
+
+        return this.get('posts/replies/' + postId, options, callback);
+      },
+      fetchSuggested: function (options, callback) {
+        options = options || {};
+
+        return this.get('post/suggested', options, callback);
+      },
+      compose: function (body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post', postData, callback);
+      },
+      reply: function (postId, body, attachment, callback) {
+        if (typeof attachment === 'function') {
+          callback   = attachment;
+          attachment = undefined;
+        }
+
+        var postData = { body: body };
+
+        if (attachment) {
+          postData.attachment = attachment;
+        }
+
+        return this.post('post/reply/' + postId, postData, callback);
+      },
+      rate: function (postId, score, callback) {
+        return this.post('/post/rating/'+ postId, { score: score }, callback);
+      },
+      fetchLikers: function (section, identifier, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options = null;
+        }
+
+        return this.get('/rating/users/'+ section +'/' + identifier, options, callback);
+      },
+      delete: function (postId, callback) {
+        return this.post('post/delete/' + postId, callback);
+      },
+      pin: function (postId, onNewsPage, callback) {
+        var pinUrl = 'post/pin/';
+
+        if (typeof onNewsPage === 'function') {
+          callback   = onNewsPage;
+          onNewsPage = undefined;
+        }
+
+        if (onNewsPage) {
+          pinUrl += 'news/';
+        }
+
+        return this.get(pinUrl + postId, callback);
+      },
+      unpin: function (postId, onNewsPage, callback) {
+        var unpinUrl = 'post/unpin/';
+
+        if (typeof onNewsPage === 'function') {
+          callback   = onNewsPage;
+          onNewsPage = undefined;
+        }
+
+        if (onNewsPage) {
+          unpinUrl += 'news/';
+        }
+
+        return this.get(unpinUrl + postId, callback);
+      }
+    },
+    hotornot: {
+      upload: function (attachment, callback) {
+        return this.post('hotornot', { attachment: attachment }, callback);
+      },
+      fetch: function (options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = {};
+        }
+
+        options = options || {};
+
+        return this.get('hotornot', options, callback);
+      },
+      topPosts: [GENERATE_GET, '/hotornot/top/posts'],
+      topUsers: [GENERATE_GET, '/hotornot/top/users']
+    },
+    abuse: {
+      report: function (suspectUserId, section, identifier, reason, callback) {
+        if (typeof identifier === 'function') {
+          callback   = identifier;
+          reason     = section;
+          identifier = undefined;
+          section    = undefined;
+        }
+
+        var reportData = {
+          suspect: suspectUserId,
+          reason : reason
+        };
+
+        if (section) {
+          reportData.foreignKey = identifier;
+          return this.post('abuse/report/' + section, reportData, callback);
+        }
+
+        return this.post('abuse/report', reportData, callback);
+      }
+    }
+  };
+
+  Api.prototype = {
 
     /**
-     * Do a get call
-     *
-     * @param {string} url
-     * @param {{}}     parameters
-     * @param {Function(error, result)} callback
-     *
-     * @returns Api
+     *  HQ Events
      */
-    get: function(url, params, callback) {
-      this.request('GET', url, params, callback);
 
     Events: {
       CUSTOMER     : 'user',
@@ -1048,6 +1041,145 @@
       PROFILE_COVER   : 'profile_cover',
       SNAPSHOT        : 'snapshot',
       PUBLIC          : 'public'
+    },
+
+    handleSocketDisconnect: function () {
+      if (this.noQueue) {
+        return;
+      }
+
+      // If we get here, remove all running and queued requests and call their callback with an error
+
+      function failRequest (data) {
+        if (!(data instanceof Array)) {
+          return;
+        }
+
+        data[3] = data[3] || function () {};
+
+        data[3]('socket disconnected', null);
+      }
+
+      // First all running requests
+      while (this.requestsRunning.length > 0) {
+        failRequest(this.requestsRunning.shift());
+      }
+
+      // Now all queued requests
+      while (this.requestQueue.length > 0) {
+        failRequest(this.requestQueue.shift());
+      }
+    },
+
+    on: function (eventName, func) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (eventName instanceof Array) {
+        eventName.map(function (singleEventName) {
+          this.on(singleEventName, func);
+        });
+
+        return;
+      }
+
+      if (typeof func !== 'function') {
+        throw 'Not a valid function';
+      }
+
+      // If the event is not yet subscribed to, add it, and listen for it
+      if (!this.eventHandlers[eventName]) {
+        this.io.socket.on(eventName, this.trigger.bind(this, eventName));
+
+        this.eventHandlers[eventName] = [func];
+        return;
+      }
+
+      // First check if it exists
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        if (this.eventHandlers[eventName][i] === func) {
+          return;
+        }
+      }
+
+      // Add it
+      this.eventHandlers[eventName].push(func);
+    },
+
+    off: function (eventName, func) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (eventName instanceof Array) {
+        eventName.map(function (singleEventName) {
+          this.off(singleEventName, func);
+        });
+
+        return;
+      }
+
+      if (typeof func !== 'function') {
+        throw 'Not a valid function';
+      }
+
+      // event is not subscribed to
+      if (!this.eventHandlers[eventName]) {
+        return;
+      }
+
+      // Check if it exists
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        if (this.eventHandlers[eventName][i] === func) {
+          this.eventHandlers.splice(i, 1);
+          break;
+        }
+      }
+
+      // If there are no more listeners, unsubscribe
+      if (this.eventHandlers[eventName].length === 0) {
+        this.socket.off(eventName);
+        delete this.eventHandlers[eventName];
+      }
+    },
+
+    trigger: function (eventName, data) {
+      if (!this.eventHandlers) {
+        // events not initialized, just return
+        return;
+      }
+
+      if (eventName instanceof Array) {
+        eventName.map(function (singleEventName) {
+          this.trigger(singleEventName, data);
+        });
+
+        return;
+      }
+
+      // event is not subscribed to
+      if (!this.eventHandlers[eventName]) {
+        return;
+      }
+
+      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
+        setTimeout(this.eventHandlers[eventName][i].bind(this, data), 0);
+      }
+    },
+
+    /**
+     *  Queue stuff
+     */
+
+    // Init the queue, overrides some functions so everything must pass through the queue
+    initQueue: function () {
+      this.doRequest       = this.request;
+      this.request         = this.addToQueue;
+      this.requestQueue    = [];
+      this.requestsRunning = [];
     },
 
     addToQueue: function (method, url, params, callback) {
@@ -1104,242 +1236,22 @@
       this.startQueue();
     },
 
-    client: function() {
-      var xhr = new XMLHttpRequest();
-
-      return xhr;
-    },
-
-    /**
-     * @param {HtmlElement} formElement
-     * @param {{}} object Nested object with { fieldsetName: { inputName: { placeholder: '', value: '', type: 'text' } }  }
-     */
-    convertObjectToForm: function(formElement, object) {
-      for (var fieldsetName in object) {
-        var fieldset      = object[fieldsetName],
-            fieldsetElement = document.createElement('fieldset');
-
-        fieldsetElement.name = fieldsetName;
-
-        for (var inputName in fieldset) {
-          var input = typeof fieldset[inputName] === 'object' ? fieldset[inputName] : { name : inputName, placeholder: fieldset[inputName] },
-              id    = fieldsetName + '_' + inputName;
-
-          var labelElement = document.createElement('label'),
-              inputElement = document.createElement('input');
-
-          labelElement.setAttribute('for', id);
-          labelElement.textContent = input.label || input.name;
-
-          inputElement.id          = id;
-          inputElement.name        = input.name;
-          inputElement.placeholder = input.placeholder || input.name;
-          inputElement.type        = input.type || 'text';
-          inputElement.value       = input.value || 'wawah';
-          inputElement.setAttribute('required', input.required || 0);
-
-          fieldsetElement.appendChild(labelElement);
-          fieldsetElement.appendChild(inputElement);
-        }
-
-        formElement.appendChild(fieldsetElement);
-      }
-    },
-
-    /**
-     * Convert a Form object to an nested object
-     * @param {HtmlElement} formElement
-     * @returns {{}}
-     */
-    formValues: function(formElement) {
-      var fieldsets = formElement.childNodes,
-          vars      = {};
-
-      for (var i in fieldsets) {
-        var fieldset   = fieldsets[i],
-            fieldsetVars = {},
-            inputs     = fieldset.childNodes;
-
-        if (fieldset.tagName !== 'FIELDSET') {
-          continue;
-        }
-
-        for (var i in inputs) {
-          var input = inputs[i];
-
-          if (input.tagName !== 'INPUT') {
-            continue;
-          }
-
-          fieldsetVars[input.name] = input.value;
-        }
-
-        vars[fieldset.name] = fieldsetVars;
-      }
-
-      return vars;
-    },
-
-    /**
-     * Do a get call
-     *
-     * @param {string} url
-     * @param {{}}     parameters
-     * @param {Function(error, result)} callback
-     *
-     * @returns Api
-     */
-    get: function(url, params, callback) {
-      this.request('GET', url, params, callback);
-
-      return this;
-    },
-
-    handleSocketDisconnect: function () {
-      if (this.noQueue) {
-        return;
-      }
-
-      // If we get here, remove all running and queued requests and call their callback with an error
-
-      function failRequest (data) {
-        if (!(data instanceof Array)) {
-          return;
-        }
-
-        data[3] = data[3] || function () {};
-
-        data[3]('socket disconnected', null);
-      }
-
-      // First all running requests
-      while (this.requestsRunning.length > 0) {
-        failRequest(this.requestsRunning.shift());
-      }
-
-      // Now all queued requests
-      while (this.requestQueue.length > 0) {
-        failRequest(this.requestQueue.shift());
-      }
-    },
-
-    // Init the queue, overrides some functions so everything must pass through the queue
-    initQueue: function () {
-      this.doRequest       = this.request;
-      this.request         = this.addToQueue;
-      this.requestQueue    = [];
-      this.requestsRunning = [];
-    },
-
-    ioCallback: function (response, JWR, callback, url, startDate) {
-      if (this.logTime) {
-        console.info('('+ url +') Response Time:' + (new Date().getTime() - startDate.getTime()) + ' MS');
-      }
-
-      if (JWR.statusCode !== 200) {
-        return callback(JWR.statusCode, response);
-      }
-      if (!response) {
-        return callback('no_response', response);
-      }
-      if (response.Errors) {
-        return callback(response.Errors, response);
-      }
-      if (response.status && response.status != 200 && response.status != 'ok') {
-        return callback(response.status, response);
-      }
-
-      callback(null, response);
-    },
-
-    off: function (eventName, func) {
-      if (!this.eventHandlers) {
-        // events not initialized, just return
-        return;
-      }
-
-      if (eventName instanceof Array) {
-        eventName.map(function (singleEventName) {
-          this.off(singleEventName, func);
-        });
-
-        return;
-      }
-
-      if (typeof func !== 'function') {
-        throw 'Not a valid function';
-      }
-
-      // event is not subscribed to
-      if (!this.eventHandlers[eventName]) {
-        return;
-      }
-
-      // Check if it exists
-      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
-        if (this.eventHandlers[eventName][i] === func) {
-          this.eventHandlers.splice(i, 1);
-          break;
-        }
-      }
-
-      // If there are no more listeners, unsubscribe
-      if (this.eventHandlers[eventName].length === 0) {
-        this.socket.off(eventName);
-        delete this.eventHandlers[eventName];
-      }
-    },
-
-    on: function (eventName, func) {
-      if (!this.eventHandlers) {
-        // events not initialized, just return
-        return;
-      }
-
-      if (eventName instanceof Array) {
-        eventName.map(function (singleEventName) {
-          this.on(singleEventName, func);
-        });
-
-        return;
-      }
-
-      if (typeof func !== 'function') {
-        throw 'Not a valid function';
-      }
-
-      // If the event is not yet subscribed to, add it, and listen for it
-      if (!this.eventHandlers[eventName]) {
-        this.io.socket.on(eventName, this.trigger.bind(this, eventName));
-
-        this.eventHandlers[eventName] = [func];
-        return;
-      }
-
-      // First check if it exists
-      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
-        if (this.eventHandlers[eventName][i] === func) {
+    removeFromRunningRequests: function (obj) {
+      for (var i = 0; i < this.requestsRunning.length; i++) {
+        if (this.requestsRunning[i] == obj) {
+          this.requestsRunning.splice(i,1);
           return;
         }
       }
-
-      // Add it
-      this.eventHandlers[eventName].push(func);
     },
 
-    /**
-     * Do a post call
-     *
-     * @param {string} url
-     * @param {{}}     parameters
-     * @param {Function(error, result)} callback
-     *
-     * @returns Api
-     */
-    post: function(url, params, callback) {
-      this.request('POST', url, params, callback);
+    // Start the queue async
+    startQueue: function () {
+      if (this.requestsRunning.length >= this.concurrentCalls || this.requestQueue.length === 0) {
+        return;
+      }
 
-      return this;
+      setTimeout(this.processQueue.bind(this), 0);
     },
 
     // Process a queue item and advance to the next
@@ -1375,13 +1287,67 @@
       }.bind(this));
     },
 
-    removeFromRunningRequests: function (obj) {
-      for (var i = 0; i < this.requestsRunning.length; i++) {
-        if (this.requestsRunning[i] == obj) {
-          this.requestsRunning.splice(i,1);
-          return;
+    client: function() {
+      var xhr = new XMLHttpRequest();
+
+      return xhr;
+    },
+
+    /**
+     * Serialize the given object to an query string.
+     *
+     * @param   {{}} obj
+     * @returns {string}
+     */
+    serialize: function(obj, prefix) {
+      var str = [];
+      for(var p in obj) {
+        if (!obj.hasOwnProperty(p)) {
+          continue;
         }
+        var k = prefix ? prefix + '[' + p + ']' : p,
+            v = obj[p];
+
+        if (typeof v === 'object') {
+          if (v === null) {
+            // null values have to be kept intact
+            str.push(encodeURIComponent(k) + '=null');
+          } else {
+            str.push(this.serialize(v, k));
+          }
+          continue;
+        }
+
+        if (typeof v === 'boolean') {
+          // boolean's also can't be cast to a string
+          str.push(encodeURIComponent(k) + '=' + v);
+          continue;
+        }
+
+        str.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
       }
+      return str.join('&');
+    },
+
+    ioCallback: function (response, JWR, callback, url, startDate) {
+      if (this.logTime) {
+        console.info('('+ url +') Response Time:' + (new Date().getTime() - startDate.getTime()) + ' MS');
+      }
+
+      if (JWR.statusCode !== 200) {
+        return callback(JWR.statusCode, response);
+      }
+      if (!response) {
+        return callback('no_response', response);
+      }
+      if (response.Errors) {
+        return callback(response.Errors, response);
+      }
+      if (response.status && response.status != 200 && response.status != 'ok') {
+        return callback(response.status, response);
+      }
+
+      callback(null, response);
     },
 
     request: function(method, url, params, callback) {
@@ -1500,74 +1466,104 @@
     },
 
     /**
-     * Serialize the given object to an query string.
-     *
-     * @param   {{}} obj
-     * @returns {string}
+     * Convert a Form object to an nested object
+     * @param {HtmlElement} formElement
+     * @returns {{}}
      */
-    serialize: function(obj, prefix) {
-      var str = [];
-      for(var p in obj) {
-        if (!obj.hasOwnProperty(p)) {
+    formValues: function(formElement) {
+      var fieldsets = formElement.childNodes,
+          vars      = {};
+
+      for (var i in fieldsets) {
+        var fieldset   = fieldsets[i],
+            fieldsetVars = {},
+            inputs     = fieldset.childNodes;
+
+        if (fieldset.tagName !== 'FIELDSET') {
           continue;
         }
-        var k = prefix ? prefix + '[' + p + ']' : p,
-            v = obj[p];
 
-        if (typeof v === 'object') {
-          if (v === null) {
-            // null values have to be kept intact
-            str.push(encodeURIComponent(k) + '=null');
-          } else {
-            str.push(this.serialize(v, k));
+        for (var i in inputs) {
+          var input = inputs[i];
+
+          if (input.tagName !== 'INPUT') {
+            continue;
           }
-          continue;
+
+          fieldsetVars[input.name] = input.value;
         }
 
-        if (typeof v === 'boolean') {
-          // boolean's also can't be cast to a string
-          str.push(encodeURIComponent(k) + '=' + v);
-          continue;
+        vars[fieldset.name] = fieldsetVars;
+      }
+
+      return vars;
+    },
+
+    /**
+     * Do a post call
+     *
+     * @param {string} url
+     * @param {{}}     parameters
+     * @param {Function(error, result)} callback
+     *
+     * @returns Api
+     */
+    post: function(url, params, callback) {
+      this.request('POST', url, params, callback);
+
+      return this;
+    },
+
+    /**
+     * Do a get call
+     *
+     * @param {string} url
+     * @param {{}}     parameters
+     * @param {Function(error, result)} callback
+     *
+     * @returns Api
+     */
+    get: function(url, params, callback) {
+      this.request('GET', url, params, callback);
+
+      return this;
+    },
+
+    /**
+     * @param {HtmlElement} formElement
+     * @param {{}}      object Nested object with { fieldsetName: { inputName: { placeholder: '', value: '', type: 'text' } }  }
+     */
+    convertObjectToForm: function(formElement, object) {
+      for (var fieldsetName in object) {
+        var fieldset      = object[fieldsetName],
+            fieldsetElement = document.createElement('fieldset');
+
+        fieldsetElement.name = fieldsetName;
+
+        for (var inputName in fieldset) {
+          var input = typeof fieldset[inputName] === 'object' ? fieldset[inputName] : { name : inputName, placeholder: fieldset[inputName] },
+              id    = fieldsetName + '_' + inputName;
+
+          var labelElement = document.createElement('label'),
+              inputElement = document.createElement('input');
+
+          labelElement.setAttribute('for', id);
+          labelElement.textContent = input.label || input.name;
+
+          inputElement.id          = id;
+          inputElement.name        = input.name;
+          inputElement.placeholder = input.placeholder || input.name;
+          inputElement.type        = input.type || 'text';
+          inputElement.value       = input.value || 'wawah';
+          inputElement.setAttribute('required', input.required || 0);
+
+          fieldsetElement.appendChild(labelElement);
+          fieldsetElement.appendChild(inputElement);
         }
 
-        str.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
-      }
-      return str.join('&');
-    },
-
-    // Start the queue async
-    startQueue: function () {
-      if (this.requestsRunning.length >= this.concurrentCalls || this.requestQueue.length === 0) {
-        return;
-      }
-
-      setTimeout(this.processQueue.bind(this), 0);
-    },
-
-    trigger: function (eventName, data) {
-      if (!this.eventHandlers) {
-        // events not initialized, just return
-        return;
-      }
-
-      if (eventName instanceof Array) {
-        eventName.map(function (singleEventName) {
-          this.trigger(singleEventName, data);
-        });
-
-        return;
-      }
-
-      // event is not subscribed to
-      if (!this.eventHandlers[eventName]) {
-        return;
-      }
-
-      for (var i = 0; i < this.eventHandlers[eventName].length; i++) {
-        setTimeout(this.eventHandlers[eventName][i].bind(this, data), 0);
+        formElement.appendChild(fieldsetElement);
       }
     }
-
   };
 
   return Api;
