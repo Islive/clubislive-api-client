@@ -998,7 +998,7 @@
     },
     rating : {
       fetchSummary : function (model, foreignKey, callback) {
-        return this.get('rating/'+ model + '/' + foreignKey, callback);
+        return this.get('rating/' + model + '/' + foreignKey, callback);
       }
     },
   };
