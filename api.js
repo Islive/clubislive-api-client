@@ -995,7 +995,12 @@
 
         return this.post('abuse/report', reportData, callback);
       }
-    }
+    },
+    rating : {
+      fetchSummary : function (model, foreignKey, callback) {
+        return this.get('rating/'+ model + '/' + foreignKey, callback);
+      }
+    },
   };
 
   Api.prototype = {
