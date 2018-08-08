@@ -669,7 +669,11 @@
       rate: function (mediaId, score, callback) {
         return this.post('/media/rating/'+ mediaId, { score: score }, callback);
       },
-      fetchOwnRating: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/']
+      fetchOwnRating  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/'],
+      viewAttachments : function (data, callback) {
+        return this.get('/media/attachments', data, callback);
+      },
+      viewSnapshot : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
     },
     shop: {
       fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop'],
@@ -991,7 +995,12 @@
 
         return this.post('abuse/report', reportData, callback);
       }
-    }
+    },
+    rating : {
+      fetchSummary : function (model, foreignKey, callback) {
+        return this.get('rating/' + model + '/' + foreignKey, callback);
+      }
+    },
   };
 
   Api.prototype = {
