@@ -708,45 +708,6 @@
       },
       fetch   : [GENERATE_GET, 'activities'],
       fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
-      load: function (userId, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          options  = null;
-          userId = undefined;
-        }
-
-        if (typeof options === 'function') {
-          callback = options;
-          options  = null;
-        }
-
-        if (userId && typeof userId === 'object') {
-          options  = userId;
-          userId = undefined;
-        }
-
-        if (!userId) {
-          return this.get('activity', options, callback);
-        }
-
-        return this.get('activity/' + userId, options, callback);
-      },
-      loadFollowed: function (options, callback) {
-        if (!callback) {
-          callback = options;
-          options  = null;
-        }
-
-        return this.get('activity/followed', options, callback);
-      },
-      loadUser: function (user, options, callback) {
-        if (!callback) {
-          callback = options;
-          otions   = null;
-        }
-
-        return this.get('activity/all/' + user, options, callback);
-      },
       daily : function (options, callback) {
         options = options || {};
 
