@@ -669,7 +669,23 @@
       rate: function (mediaId, score, callback) {
         return this.post('/media/rating/'+ mediaId, { score: score }, callback);
       },
-      fetchOwnRating  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/rating/'],
+      fetchOwnRating  : function (media, callback) {
+        if (typeof media === 'function') {
+          callback = media;
+          media    = undefined;
+        }
+
+        // Legacy-support, media is the ID and not the object
+        if (typeof media === 'number') {
+          const container = media;
+          media = {
+            model : 'media',
+            id    : container,
+          };
+        }
+
+        return this.get('media', media, callback);
+      },
       viewAttachment  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/attachment/'],
       viewAttachments : function (data, callback) {
         return this.get('/media/attachments', data, callback);
