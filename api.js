@@ -684,7 +684,7 @@
           };
         }
 
-        return this.get('media', media, callback);
+        return this.get('/media/rating/', media, callback);
       },
       viewAttachment  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/attachment/'],
       viewAttachments : function (data, callback) {
