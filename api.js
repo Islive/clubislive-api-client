@@ -640,7 +640,7 @@
       },
       viewAlbum      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
       checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
-      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
+      remove         : [GENERATE_POST, 'media/remove'],
       search         : function (filters, callback) {
         if (!callback) {
           callback = filters;
@@ -654,23 +654,6 @@
       },
       rate: function (mediaId, score, callback) {
         return this.post('media/rating/'+ mediaId, { score: score }, callback);
-      },
-      fetchOwnRating  : function (media, callback) {
-        if (typeof media === 'function') {
-          callback = media;
-          media    = undefined;
-        }
-
-        // Legacy-support, media is the ID and not the object
-        if (typeof media === 'number') {
-          const container = media;
-          media = {
-            model : 'media',
-            id    : container,
-          };
-        }
-
-        return this.get('media/rating', media, callback);
       },
       fetchOwnRating  : function (media, callback) {
         if (typeof media === 'function') {
