@@ -673,9 +673,36 @@
 
         return this.get('media/rating', media, callback);
       },
-      viewAttachment  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/attachment/'],
+      fetchOwnRating  : function (media, callback) {
+        if (typeof media === 'function') {
+          callback = media;
+          media    = undefined;
+        }
+
+        // Legacy-support, media is the ID and not the object
+        if (typeof media === 'number') {
+          const container = media;
+          media = {
+            model : 'media',
+            id    : container,
+          };
+        }
+
+        return this.get('media/rating/', media, callback);
+      },
+      viewAttachment  : function (data, callback) {
+        // Legacy-support, media is the ID and not the object
+        if (typeof data === 'number') {
+          const container = data;
+          data = {
+            postId : container,
+          };
+        }
+
+        return this.get('media/attachment', data, callback);
+      },
       viewAttachments : function (data, callback) {
-        return this.get('/media/attachments', data, callback);
+        return this.get('media/attachments', data, callback);
       },
       viewSnapshot : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
     },
@@ -711,45 +738,6 @@
       },
       fetch   : [GENERATE_GET, 'activities'],
       fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
-      load: function (userId, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          options  = null;
-          userId = undefined;
-        }
-
-        if (typeof options === 'function') {
-          callback = options;
-          options  = null;
-        }
-
-        if (userId && typeof userId === 'object') {
-          options  = userId;
-          userId = undefined;
-        }
-
-        if (!userId) {
-          return this.get('activity', options, callback);
-        }
-
-        return this.get('activity/' + userId, options, callback);
-      },
-      loadFollowed: function (options, callback) {
-        if (!callback) {
-          callback = options;
-          options  = null;
-        }
-
-        return this.get('activity/followed', options, callback);
-      },
-      loadUser: function (user, options, callback) {
-        if (!callback) {
-          callback = options;
-          otions   = null;
-        }
-
-        return this.get('activity/all/' + user, options, callback);
-      },
       daily : function (options, callback) {
         options = options || {};
 
