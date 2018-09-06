@@ -654,7 +654,7 @@
         return this.post('media/buy', { media: mediaId }, callback);
       },
       rate: function (mediaId, score, callback) {
-        return this.post('/media/rating/'+ mediaId, { score: score }, callback);
+        return this.post('media/rating/'+ mediaId, { score: score }, callback);
       },
       fetchOwnRating  : function (media, callback) {
         if (typeof media === 'function') {
@@ -671,7 +671,7 @@
           };
         }
 
-        return this.get('media', media, callback);
+        return this.get('media/rating', media, callback);
       },
       viewAttachment  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/media/attachment/'],
       viewAttachments : function (data, callback) {
