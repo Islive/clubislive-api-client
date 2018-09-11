@@ -578,35 +578,21 @@
       create          : [GENERATE_POST, 'media'],
       moderate        : GENERATE_GET,
       update          : [GENERATE_POST, 'media/update'],
-      fetchOwn        : function (albumId, includeDeleted, callback) {
-        if (typeof albumId === 'function') {
-          callback       = albumId;
-          includeDeleted = undefined;
-          albumId        = undefined;
+      fetchOwn        : function (media, callback) {
+        if (typeof media === 'function') {
+          callback = media;
+          media    = undefined;
         }
 
-        if (typeof includeDeleted === 'function') {
-          callback = includeDeleted;
-
-          if (typeof albumId === 'boolean') {
-            includeDeleted = albumId;
-            albumId        = undefined;
-          } else {
-            includeDeleted = undefined;
-          }
+        // Legacy-support, media is the ID and not the object
+        if (typeof media === 'number') {
+          const container = media;
+          media = {
+            id : container,
+          };
         }
 
-        var params = {};
-
-        if (albumId) {
-          params.albumId = albumId;
-        }
-
-        if (includeDeleted) {
-          params.includeDeleted = true;
-        }
-
-        return this.get('media', params, callback);
+        return this.get('media', media, callback);
       },
       fetchBought     : [GENERATE_GET, 'media/bought'],
       fetchByFollowers: function (userId, limit, callback) {
@@ -654,7 +640,7 @@
       },
       viewAlbum      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
       checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
-      remove         : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/remove/'],
+      remove         : [GENERATE_POST, 'media/remove'],
       search         : function (filters, callback) {
         if (!callback) {
           callback = filters;
@@ -667,7 +653,7 @@
         return this.post('media/buy', { media: mediaId }, callback);
       },
       rate: function (mediaId, score, callback) {
-        return this.post('/media/rating/'+ mediaId, { score: score }, callback);
+        return this.post('media/rating/'+ mediaId, { score: score }, callback);
       },
       fetchOwnRating  : function (media, callback) {
         if (typeof media === 'function') {
@@ -684,7 +670,7 @@
           };
         }
 
-        return this.get('/media/rating/', media, callback);
+        return this.get('media/rating/', media, callback);
       },
       viewAttachment  : function (data, callback) {
         // Legacy-support, media is the ID and not the object
@@ -695,10 +681,10 @@
           };
         }
 
-        return this.get('/media/attachment', data, callback);
+        return this.get('media/attachment', data, callback);
       },
       viewAttachments : function (data, callback) {
-        return this.get('/media/attachments', data, callback);
+        return this.get('media/attachments', data, callback);
       },
       viewSnapshot : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
     },
