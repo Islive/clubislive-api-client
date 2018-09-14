@@ -975,6 +975,26 @@
         return this.get('rating/' + model + '/' + foreignKey, callback);
       }
     },
+    events: {
+      create: function (data, callback) {
+        return this.post('/schedule', data, callback);
+      },
+      find: function (options, callback) {
+        return this.get('/schedule/', options, callback);
+      },
+      findOne: function (id, callback) {
+        return this.get('/schedule/' + id, callback);
+      },
+      update: function (data, callback) {
+        return this.put('/schedule/' + data.id, data, callback)
+      },
+      updateUserState: function (data, callback) {
+        return this.put('/schedule/user/state', data, callback)
+      },
+      remove: function (id, callback) {
+        return this.delete('/schedule/' + id, callback);
+      }
+    }
   };
 
   Api.prototype = {
@@ -1479,6 +1499,21 @@
     },
 
     /**
+     * Do a put call
+     *
+     * @param {string} url
+     * @param {{}}     parameters
+     * @param {Function(error, result)} callback
+     *
+     * @returns Api
+     */
+    put: function(url, params, callback) {
+      this.request('PUT', url, params, callback);
+
+      return this;
+    },
+
+    /**
      * Do a post call
      *
      * @param {string} url
@@ -1504,6 +1539,21 @@
      */
     get: function(url, params, callback) {
       this.request('GET', url, params, callback);
+
+      return this;
+    },
+
+    /**
+     * Do a delete call
+     *
+     * @param {string} url
+     * @param {{}}     parameters
+     * @param {Function(error, result)} callback
+     *
+     * @returns Api
+     */
+    delete: function(url, params, callback) {
+      this.request('DELETE', url, params, callback);
 
       return this;
     },
