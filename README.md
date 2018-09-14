@@ -188,7 +188,7 @@ If any error is encounterd, **error** will be set
 * abuse
   * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
 
-* evens
+* events
   * **create** (object data, function callback)
   * **find** (object options, function callback)
   * **findOne** (number id, function callback)
