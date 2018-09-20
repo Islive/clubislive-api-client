@@ -143,8 +143,8 @@
   }
 
   var apiMethods = {
-    global: {
-      search: function (query, options, callback) {
+    global : {
+      search : function (query, options, callback) {
         if (typeof options === 'function') {
           callback = options;
           options  = undefined;
@@ -157,278 +157,114 @@
         return this.get('/search', options, callback);
       }
     },
-    performer: {
-      checkUsername   : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
-      register        : [GENERATE_POST, 'performer'],
-      login           : function (username, password, callback) {
-        return this.user.login('performer', username, password, callback);
+    abuse : {
+      report : function (suspectUserId, section, identifier, reason, callback) {
+        if (typeof identifier === 'function') {
+          callback   = identifier;
+          reason     = section;
+          identifier = undefined;
+          section    = undefined;
+        }
+
+        var reportData = {
+          suspect: suspectUserId,
+          reason : reason
+        };
+
+        if (section) {
+          reportData.foreignKey = identifier;
+          return this.post('abuse/report/' + section, reportData, callback);
+        }
+
+        return this.post('abuse/report', reportData, callback);
+      }
+    },
+    activity : {
+      daily : function (options, callback) {
+        options = options || {};
+
+        return this.get('activity/daily', options, callback);
       },
-      fetchOwn        : [GENERATE_GET, 'performer'],
-      search          : function (searchOptions, page, callback) {
-        if (!callback) {
-          callback = page;
-          if (typeof searchOptions === 'object') {
-            page = 1;
-          } else {
-            page          = searchOptions;
-            searchOptions = {};
-          }
-        }
-
-        if (typeof searchOptions !== 'object') {
-          searchOptions = {};
-        }
-
-        if (isNaN(page)) {
-          page = 1;
-        }
-
-        searchOptions.page = page;
-
-        return this.get('performer/search', searchOptions, callback);
-      },
-      searchByUsername: function (username, options, callback) {
-        if (!callback) {
+      fetch    : [GENERATE_GET, 'activities'],
+      fetchOne : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
+      history  : function (event, options, callback) {
+        if (typeof options === 'function') {
           callback = options;
           options  = {};
         }
 
-        return this.get('performer/search/' + username, options, callback);
+        options.event = event;
+
+        return this.get('/activities/history', options, callback);
       },
-      update          : GENERATE_POST,
-      fetchQuickTips  : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
-      setQuickTips    : [GENERATE_POST, '/performer/quicktips']
+      news : [GENERATE_GET, '/activities/news'],
     },
-    customer: {
-      register      : [GENERATE_POST, 'customer'],
-      login         : function (username, password, callback) {
-        return this.user.login('user', username, password, callback);
-      },
-      fetchOwn      : [GENERATE_GET, 'customer'],
-      update        : GENERATE_POST,
-      tip           : function (userId, amount, options, callback) {
-        var params = {
-          amount: amount
-        };
-
+    chat : {
+			addUserToShow : function(requestObject, callback) {
+				return this.post('chat/show/add', requestObject, callback);
+			},
+      end : function (username, callback) {
         if (!callback) {
-          callback = options;
-          options  = false;
+          callback = username;
+          username = undefined;
         }
 
-        if (options && options.type) {
-          params.type = options.type || false;
+        if (username) {
+          return this.get('chat/end/' + username, callback);
         }
 
-        if (options && options.name) {
-          params.name = options.name || false;
-        }
-
-        return this.post('customer/tip/' + userId, params, callback);
+        return this.get('chat/end', callback);
       },
-      remove        : function (callback) {
-        return this.post('customer/delete', callback);
+			endShow : function(mediaId, callback) {
+				return this.post('chat/show/end', { mediaId: mediaId }, callback);
+			},
+			getShow : function(mediaId, callback) {
+				return this.get('chat/show/get/' + mediaId, callback);
+			},
+      keepAlive : function (userId, callback) {
+        if (!callback) {
+          callback = userId;
+          userId = undefined;
+        }
+
+        if (userId) {
+          return this.get('chat/keepalive/' + userId, { skipQueue: true }, callback);
+        }
+
+        return this.get('chat/keepalive', callback);
       },
-      upload        : function (type, image, callback) {
-        return this.post('customer/upload', {type: type, image: image}, callback);
-      }
+      kick : function (username, callback) {
+        return this.get('chat/kick/' + username, callback);
+      },
+      latestEarnings :  [GENERATE_GET, 'chat/latest-earnings'],
+      setCyberToy    : function (type, status, callback) {
+        return this.get('chat/toy/'+ type +'/' + status, callback);
+      },
+      setFreechat : function (status, callback) {
+        return this.get('chat/freechat/' + status, callback);
+      },
+      setVIP : function (status, userId, callback) {
+        return this.get('chat/vip/' + status + '/' + userId, callback);
+      },
+      start : function (username, callback) {
+        if (!callback) {
+          callback = username;
+          username = undefined;
+        }
+
+        if (username) {
+          return this.get('chat/start/' + username, callback);
+        }
+
+        return this.get('chat/start', callback);
+      },
+			startShow : function(requestObject, callback) {
+				return this.post('chat/show/start', requestObject, callback);
+			},
     },
-    user: {
-      register: [GENERATE_POST, 'user'],
-      fetchOwn: [GENERATE_GET, 'user'],
-      update: GENERATE_POST,
-      checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
-      checkEmail: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
-      earnings: [GENERATE_GET, 'user/earnings'],
-      trackthisToken: [GENERATE_GET, 'user/trackthis-token'],
-      ignore: [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
-      login: function (role, username, password, callback) {
-        // Role is optional, defaults to 'user'
-        if (!callback) {
-          callback = password;
-          password = username;
-          username = role;
-          role     = undefined;
-        }
-
-        return this.post('user/login', { role: role, username: username, password: password }, callback);
-      },
-      loginByHash: function (hash, callback) {
-        return this.post('user/login/' + hash, callback);
-      },
-      forgotPassword: function (username, email, callback) {
-        // Role is optional, defaults to 'user'
-        if (!callback) {
-          callback = email;
-          email    = username;
-          username = null;
-        }
-
-        if (typeof username === 'string' && username.indexOf('@') > -1) {
-          email    = username;
-          username = null;
-        }
-
-        if (typeof email === 'string' && email.indexOf('@') === -1) {
-          username = email;
-          email    = null;
-        }
-
-        return this.post('user/forgot-password', { username: username, email: email }, callback);
-      },
-      verifyEmail: function (hash, callback) {
-        return this.post('user/verify-email', { hash: hash }, callback);
-      },
-      resetPassword: function (hash, password, callback) {
-        return this.post('user/reset-password', { hash: hash, password: password }, callback);
-      },
-      resendValidationMail: [GENERATE_GET, 'user/resend-validate-email'],
-      online: GENERATE_GET,
-      matches: GENERATE_GET,
-      uploadSnapshot: function (snapshot, type, params, callback) {
-        if (typeof type === 'function') {
-          callback = type;
-          params   = null;
-          type     = null;
-        } else if (typeof params === 'function') {
-          callback = params;
-
-          if (typeof type === 'string') {
-            params = null
-          } else {
-            params = type;
-            type   = null;
-          }
-        }
-
-        params = params || {};
-
-        params.snapshot = snapshot;
-
-        if (type) {
-          params.type = type;
-        }
-
-        return this.post('user/storage/snapshot', params, callback);
-      },
-      setProfileCover: function (attachment, callback) {
-        return this.post('attachment/profile', { attachment: attachment }, callback);
-      },
-      removeProfileCover: function (callback) {
-        return this.get('attachment/remove/profile', callback);
-      },
-      findByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
-      find          : function (searchOptions, page, callback) {
-        if (!callback) {
-          callback = page;
-          if (typeof searchOptions === 'object') {
-            page = 1;
-          } else {
-            page          = searchOptions;
-            searchOptions = {};
-          }
-        }
-
-        if (typeof searchOptions !== 'object') {
-          searchOptions = {};
-        }
-
-        if (isNaN(page)) {
-          page = 1;
-        }
-
-        searchOptions.page = page;
-
-        return this.get('user/find', searchOptions, callback);
-      },
-      suggestedFuddies : function (options, callback) {
-        options = options || {};
-
-        return this.get('user/suggested/fuddies', options, callback);
-      },
-      tip: function (userId, amount, options, callback) {
-        var params = {
-          amount: amount
-        };
-
-        if (!callback) {
-          callback = options;
-          options  = false;
-        }
-
-        if (options && options.type) {
-          params.type = options.type || false;
-        }
-
-        if (options && options.name) {
-          params.name = options.name || false;
-        }
-
-        return this.post('user/tip/' + userId, params, callback);
-      },
-      remove: function (callback) {
-        return this.post('user/delete', callback);
-      },
-      autocomplete: function (query, callback) {
-        return this.get('user/autocomplete', { q: query }, callback);
-      },
-      birthdays: function (options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options  = undefined;
-        }
-        return this.get('/user/birthdays', options, callback);
-      }
-    },
-    agenda: {
-      fetchSchedule: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'schedule/']
-    },
-    news: {
-      fetch: [GENERATE_GET, 'news']
-    },
-    message: {
-      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
-      inbox: function (page, callback) {
-        if (!callback) {
-          callback = page;
-          page     = 1;
-        }
-
-        if (isNaN(page)) {
-          page = 1;
-        }
-
-        return this.get('message/inbox', { page: page }, callback);
-      },
-      compose: function (to, title, content, callback) {
-        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
-      },
-      reply: function (to, hash, content, callback) {
-        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
-      },
-      unread  : GENERATE_GET,
-      markRead: function (hash, messageId, callback) {
-        if (!callback) {
-          callback  = messageId;
-          messageId = undefined;
-        }
-
-        var url = 'message/read/' + hash;
-
-        if (messageId) {
-          url += '/' + messageId;
-        }
-
-        return this.get(url, callback);
-      }
-    },
-    conversation: {
-      archive     : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
-      markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
-
-      fetchUnread : [GENERATE_GET, 'conversation/unread'],
-
-      fetch : function (userId, page, params, callback) {
+    conversation : {
+      archive : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/archive'],
+      fetch   : function (userId, page, params, callback) {
         if (typeof page === 'function') {
           callback = page;
           page     = undefined;
@@ -450,8 +286,7 @@
 
         return this.get('conversation/' + userId, params, callback);
       },
-
-      fetchAll: function (params, callback) {
+      fetchAll : function (params, callback) {
         if (typeof params === 'function') {
           callback = params;
           params   = {};
@@ -459,8 +294,9 @@
 
         return this.get('conversation/all', params, callback);
       },
-
-      send  : function (userId, message, attachment, callback) {
+      fetchUnread : [GENERATE_GET, 'conversation/unread'],
+      markAsRead  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'conversation/read'],
+      send        : function (userId, message, attachment, callback) {
         if (typeof attachment === 'function') {
           callback = attachment;
           attachment = null;
@@ -473,41 +309,45 @@
         }
 
         return this.post('conversation/' + userId, data, callback);
-      }
-    },
-    follow: {
-      isFollowing      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
-      fetchAll         : [GENERATE_GET, 'follow/all'],
-      fetchAllFollowers: function (userId, page, options, callback) {
-        if (typeof userId === 'function') {
-          callback = userId;
-          userId   = null;
-        } else if (typeof page === 'function') {
-          callback = page;
-          page     = undefined;
-        } else if (typeof options === callback) {
-          callback = options;
-          options  = undefined;
-
-          if (typeof page === 'object') {
-            options = page;
-            page    = undefined;
-          }
-        }
-
-        options = options || {};
-
-        if (page) {
-          options.page = page;
-        }
-
-        if (!userId) {
-          return this.get('followers', options, callback);
-        }
-
-        return this.get('followers/' + userId, options, callback);
       },
-      fetchAllFollowed: function (userId, page, options, callback) {
+    },
+    customer : {
+      fetchOwn : [GENERATE_GET, 'customer'],
+      login    : function (username, password, callback) {
+        return this.user.login('user', username, password, callback);
+      },
+      register : [GENERATE_POST, 'customer'],
+      remove   : function (callback) {
+        return this.post('customer/delete', callback);
+      },
+      tip : function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        };
+
+        if (!callback) {
+          callback = options;
+          options  = false;
+        }
+
+        if (options && options.type) {
+          params.type = options.type || false;
+        }
+
+        if (options && options.name) {
+          params.name = options.name || false;
+        }
+
+        return this.post('customer/tip/' + userId, params, callback);
+      },
+      update : GENERATE_POST,
+      upload : function (type, image, callback) {
+        return this.post('customer/upload', {type: type, image: image}, callback);
+      },
+    },
+    follow : {
+      fetchAll         : [GENERATE_GET, 'follow/all'],
+      fetchAllFollowed : function (userId, page, options, callback) {
         if (typeof userId === 'function') {
           callback = userId;
           userId   = null;
@@ -536,79 +376,104 @@
 
         return this.get('follows/' + userId, options, callback);
       },
-      follow           : function (userId, callback) {
+      fetchAllFollowers : function (userId, page, options, callback) {
+        if (typeof userId === 'function') {
+          callback = userId;
+          userId   = null;
+        } else if (typeof page === 'function') {
+          callback = page;
+          page     = undefined;
+        } else if (typeof options === callback) {
+          callback = options;
+          options  = undefined;
+
+          if (typeof page === 'object') {
+            options = page;
+            page    = undefined;
+          }
+        }
+
+        options = options || {};
+
+        if (page) {
+          options.page = page;
+        }
+
+        if (!userId) {
+          return this.get('followers', options, callback);
+        }
+
+        return this.get('followers/' + userId, options, callback);
+      },
+      follow : function (userId, callback) {
         return this.post('follow', { userId: userId }, callback);
       },
-      unfollow: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
+      isFollowing : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'follow/'],
+      unfollow    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'unfollow/']
     },
-    payment: {
-      getAssortiment: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
-      createSession : function (bundleId, extraOptions, callback) {
-        if (!callback) {
-          callback     = extraOptions;
-          extraOptions = undefined;
-        }
-
-        if (typeof extraOptions !== 'object') {
-          extraOptions = {};
-        }
-
-        extraOptions.bundle = bundleId;
-
-        return this.get('payment/start', extraOptions, callback);
-      },
-      getRedeemInfo: function (bundleId, callback) {
-        return this.get('payment/redeem', { bundle: bundleId }, callback);
-      },
-      redeemCode: function (bundleId, code, options, callback) {
-        if (!callback) {
+    hotornot : {
+      fetch : function (options, callback) {
+        if (typeof options === 'function') {
           callback = options;
           options  = {};
         }
 
         options = options || {};
 
-        options.bundle = bundleId;
-        options.redeem = code;
-
-        return this.post('payment/redeem', options, callback);
-      }
+        return this.get('hotornot', options, callback);
+      },
+      topPosts : [GENERATE_GET, '/hotornot/top/posts'],
+      topUsers : [GENERATE_GET, '/hotornot/top/users'],
+      upload   : function (attachment, callback) {
+        return this.post('hotornot', { attachment: attachment }, callback);
+      },
     },
-    media: {
-      create          : [GENERATE_POST, 'media'],
-      moderate        : GENERATE_GET,
-      update          : [GENERATE_POST, 'media/update'],
-      fetchOwn        : function (media, callback) {
-        if (typeof media === 'function') {
-          callback = media;
-          media    = undefined;
-        }
-
-        // Legacy-support, media is the ID and not the object
-        if (typeof media === 'number') {
-          const container = media;
-          media = {
-            id : container,
-          };
-        }
-
-        return this.get('media', media, callback);
+    message : {
+      compose : function (to, title, content, callback) {
+        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
       },
-      fetchBought     : [GENERATE_GET, 'media/bought'],
-      fetchByFollowers: function (userId, limit, callback) {
+      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
+      inbox           : function (page, callback) {
         if (!callback) {
-          callback = limit;
-          limit    = undefined;
+          callback = page;
+          page     = 1;
         }
 
-        var params = {};
-        if (limit) {
-          params.amount = limit;
+        if (isNaN(page)) {
+          page = 1;
         }
 
-        return this.get('media/following/' + userId, params, callback);
+        return this.get('message/inbox', { page: page }, callback);
       },
-      fetchAll       : function (type, page, gender, callback) {
+      markRead : function (hash, messageId, callback) {
+        if (!callback) {
+          callback  = messageId;
+          messageId = undefined;
+        }
+
+        var url = 'message/read/' + hash;
+
+        if (messageId) {
+          url += '/' + messageId;
+        }
+
+        return this.get(url, callback);
+      },
+      reply : function (to, hash, content, callback) {
+        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
+      },
+      unread : GENERATE_GET,
+    },
+    media : {
+      buy : function (mediaId, callback) {
+        return this.post('media/buy', { media: mediaId }, callback);
+      },
+      checkAccess : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
+      create      : [GENERATE_POST, 'media'],
+      fetchAlbum  : function (username, albumId, callback) {
+        return this.get('media/' + username + '/' + albumId, callback);
+      },
+      fetchAll : function (type, page, gender, callback) {
         if (typeof page === 'function') {
           callback = page;
           gender   = null;
@@ -633,29 +498,38 @@
 
         return this.get('media/all/' + type, searchOptions, callback);
       },
-      fetchByUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
-      pending        : GENERATE_GET,
-      fetchAlbum     : function (username, albumId, callback) {
-        return this.get('media/' + username + '/' + albumId, callback);
-      },
-      viewAlbum      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
-      checkAccess    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/access/'],
-      remove         : [GENERATE_POST, 'media/remove'],
-      search         : function (filters, callback) {
+      fetchBought      : [GENERATE_GET, 'media/bought'],
+      fetchByFollowers : function (userId, limit, callback) {
         if (!callback) {
-          callback = filters;
-          filters  = null;
+          callback = limit;
+          limit    = undefined;
         }
 
-        return this.get('media/search', filters, callback);
+        var params = {};
+        if (limit) {
+          params.amount = limit;
+        }
+
+        return this.get('media/following/' + userId, params, callback);
       },
-      buy: function (mediaId, callback) {
-        return this.post('media/buy', { media: mediaId }, callback);
+      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/'],
+      fetchOwn        : function (media, callback) {
+        if (typeof media === 'function') {
+          callback = media;
+          media    = undefined;
+        }
+
+        // Legacy-support, media is the ID and not the object
+        if (typeof media === 'number') {
+          const container = media;
+          media = {
+            id : container,
+          };
+        }
+
+        return this.get('media', media, callback);
       },
-      rate: function (mediaId, score, callback) {
-        return this.post('media/rating/'+ mediaId, { score: score }, callback);
-      },
-      fetchOwnRating  : function (media, callback) {
+      fetchOwnRating : function (media, callback) {
         if (typeof media === 'function') {
           callback = media;
           media    = undefined;
@@ -672,12 +546,28 @@
 
         return this.get('media/rating/', media, callback);
       },
+      moderate : GENERATE_GET,
+      pending  : GENERATE_GET,
+      rate     : function (mediaId, score, callback) {
+        return this.post('media/rating/'+ mediaId, { score: score }, callback);
+      },
+      remove   : [GENERATE_POST, 'media/remove'],
+      search   : function (filters, callback) {
+        if (!callback) {
+          callback = filters;
+          filters  = null;
+        }
+
+        return this.get('media/search', filters, callback);
+      },
+      update          : [GENERATE_POST, 'media/update'],
+      viewAlbum       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
       viewAttachment  : function (data, callback) {
         // Legacy-support, media is the ID and not the object
         if (typeof data === 'number') {
           const container = data;
-          data = {
-            postId : container,
+                data      = {
+            postId: container,
           };
         }
 
@@ -686,115 +576,87 @@
       viewAttachments : function (data, callback) {
         return this.get('media/attachments', data, callback);
       },
-      viewSnapshot : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
+      viewSnapshot    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
     },
-    shop: {
-      fetch: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop'],
-      buy: function (itemId, receiverId, message, callback) {
-        if (typeof message === 'function') {
-          callback = message;
-          message   = null;
+    news : {
+      fetch : [GENERATE_GET, 'news']
+    },
+    payment : {
+      createSession  : function (bundleId, extraOptions, callback) {
+        if (!callback) {
+          callback     = extraOptions;
+          extraOptions = undefined;
         }
 
-        var data = {
-          media   : itemId,
-          receiver: receiverId,
-          meta    : {
-            message: message
-          }
-        };
-        return this.post('media/buy', data, callback);
-      }
-    },
-    activity: {
-      news    : [GENERATE_GET, '/activities/news'],
-      history : function (event, options, callback) {
-        if (typeof options === 'function') {
+        if (typeof extraOptions !== 'object') {
+          extraOptions = {};
+        }
+
+        extraOptions.bundle = bundleId;
+
+        return this.get('payment/start', extraOptions, callback);
+      },
+      getAssortiment : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'payment/assortiment/'],
+      getRedeemInfo  : function (bundleId, callback) {
+        return this.get('payment/redeem', { bundle: bundleId }, callback);
+      },
+      redeemCode : function (bundleId, code, options, callback) {
+        if (!callback) {
           callback = options;
           options  = {};
         }
 
-        options.event = event;
-
-        return this.get('/activities/history', options, callback);
-      },
-      fetch   : [GENERATE_GET, 'activities'],
-      fetchOne: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'activities'],
-      daily : function (options, callback) {
         options = options || {};
 
-        return this.get('activity/daily', options, callback);
+        options.bundle = bundleId;
+        options.redeem = code;
+
+        return this.post('payment/redeem', options, callback);
       }
     },
-    chat: {
-      setVIP: function (status, userId, callback) {
-        return this.get('chat/vip/' + status + '/' + userId, callback);
+    performer : {
+      checkUsername  : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'performer/check-username/'],
+      fetchOwn       : [GENERATE_GET, 'performer'],
+      fetchQuickTips : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/performer/quicktips/'],
+      login          : function (username, password, callback) {
+        return this.user.login('performer', username, password, callback);
       },
-      setFreechat: function (status, callback) {
-        return this.get('chat/freechat/' + status, callback);
-      },
-      setCyberToy: function (type, status, callback) {
-        return this.get('chat/toy/'+ type +'/' + status, callback);
-      },
-      start: function (username, callback) {
+      register : [GENERATE_POST, 'performer'],
+      search   : function (searchOptions, page, callback) {
         if (!callback) {
-          callback = username;
-          username = undefined;
+          callback = page;
+          if (typeof searchOptions === 'object') {
+            page = 1;
+          } else {
+            page          = searchOptions;
+            searchOptions = {};
+          }
         }
 
-        if (username) {
-          return this.get('chat/start/' + username, callback);
+        if (typeof searchOptions !== 'object') {
+          searchOptions = {};
         }
 
-        return this.get('chat/start', callback);
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        searchOptions.page = page;
+
+        return this.get('performer/search', searchOptions, callback);
       },
-      keepAlive: function (userId, callback) {
+      searchByUsername : function (username, options, callback) {
         if (!callback) {
-          callback = userId;
-          userId = undefined;
+          callback = options;
+          options  = {};
         }
 
-        if (userId) {
-          return this.get('chat/keepalive/' + userId, { skipQueue: true }, callback);
-        }
-
-        return this.get('chat/keepalive', callback);
+        return this.get('performer/search/' + username, options, callback);
       },
-      kick: function (username, callback) {
-        return this.get('chat/kick/' + username, callback);
-      },
-      end: function (username, callback) {
-        if (!callback) {
-          callback = username;
-          username = undefined;
-        }
-
-        if (username) {
-          return this.get('chat/end/' + username, callback);
-        }
-
-        return this.get('chat/end', callback);
-      },
-			startShow: function(requestObject, callback) {
-				return this.post('chat/show/start', requestObject, callback);
-			},
-			endShow: function(mediaId, callback) {
-				return this.post('chat/show/end', { mediaId: mediaId }, callback);
-			},
-			getShow: function(mediaId, callback) {
-				return this.get('chat/show/get/' + mediaId, callback);
-			},
-			addUserToShow: function(requestObject, callback) {
-				return this.post('chat/show/add', requestObject, callback);
-			},
-      latestEarnings:  [GENERATE_GET, 'chat/latest-earnings']
+      setQuickTips : [GENERATE_POST, '/performer/quicktips'],
+      update       : GENERATE_POST,
     },
-    rules : {
-      promotion: function (callback) {
-        return this.get('rules/promotion', callback);
-      }
-    },
-    post: {
+    post : {
       all: [GENERATE_GET, 'posts/all'],
       fetch: function (userId, options, callback) {
         if (typeof userId === 'function') {
@@ -931,49 +793,180 @@
         return this.get(unpinUrl + postId, callback);
       }
     },
-    hotornot: {
-      upload: function (attachment, callback) {
-        return this.post('hotornot', { attachment: attachment }, callback);
-      },
-      fetch: function (options, callback) {
-        if (typeof options === 'function') {
-          callback = options;
-          options  = {};
-        }
-
-        options = options || {};
-
-        return this.get('hotornot', options, callback);
-      },
-      topPosts: [GENERATE_GET, '/hotornot/top/posts'],
-      topUsers: [GENERATE_GET, '/hotornot/top/users']
-    },
-    abuse: {
-      report: function (suspectUserId, section, identifier, reason, callback) {
-        if (typeof identifier === 'function') {
-          callback   = identifier;
-          reason     = section;
-          identifier = undefined;
-          section    = undefined;
-        }
-
-        var reportData = {
-          suspect: suspectUserId,
-          reason : reason
-        };
-
-        if (section) {
-          reportData.foreignKey = identifier;
-          return this.post('abuse/report/' + section, reportData, callback);
-        }
-
-        return this.post('abuse/report', reportData, callback);
-      }
-    },
     rating : {
       fetchSummary : function (model, foreignKey, callback) {
         return this.get('rating/' + model + '/' + foreignKey, callback);
       }
+    },
+    rules : {
+      promotion: function (callback) {
+        return this.get('rules/promotion', callback);
+      }
+    },
+    shop : {
+      buy : function (itemId, receiverId, message, callback) {
+        if (typeof message === 'function') {
+          callback = message;
+          message   = null;
+        }
+
+        var data = {
+          media   : itemId,
+          receiver: receiverId,
+          meta    : {
+            message: message
+          }
+        };
+        return this.post('media/buy', data, callback);
+      },
+      fetch : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'shop'],
+    },
+    user : {
+      autocomplete : function (query, callback) {
+        return this.get('user/autocomplete', { q: query }, callback);
+      },
+      birthdays : function (options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options  = undefined;
+        }
+        return this.get('/user/birthdays', options, callback);
+      },
+      checkEmail    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
+      checkUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
+      earnings      : [GENERATE_GET, 'user/earnings'],
+      find          : function (searchOptions, page, callback) {
+        if (!callback) {
+          callback = page;
+          if (typeof searchOptions === 'object') {
+            page = 1;
+          } else {
+            page          = searchOptions;
+            searchOptions = {};
+          }
+        }
+
+        if (typeof searchOptions !== 'object') {
+          searchOptions = {};
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        searchOptions.page = page;
+
+        return this.get('user/find', searchOptions, callback);
+      },
+      findByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/find/'],
+      fetchOwn       : [GENERATE_GET, 'user'],
+      forgotPassword : function (username, email, callback) {
+        // Role is optional, defaults to 'user'
+        if (!callback) {
+          callback = email;
+          email    = username;
+          username = null;
+        }
+
+        if (typeof username === 'string' && username.indexOf('@') > -1) {
+          email    = username;
+          username = null;
+        }
+
+        if (typeof email === 'string' && email.indexOf('@') === -1) {
+          username = email;
+          email    = null;
+        }
+
+        return this.post('user/forgot-password', { username: username, email: email }, callback);
+      },
+      ignore : [GENERATE_GET_APPEND_PARAM1_TO_URL, '/user/match/ignore/'],
+      login  : function (role, username, password, callback) {
+        // Role is optional, defaults to 'user'
+        if (!callback) {
+          callback = password;
+          password = username;
+          username = role;
+          role     = undefined;
+        }
+
+        return this.post('user/login', { role: role, username: username, password: password }, callback);
+      },
+      loginByHash : function (hash, callback) {
+        return this.post('user/login/' + hash, callback);
+      },
+      matches  : GENERATE_GET,
+      online   : GENERATE_GET,
+      register : [GENERATE_POST, 'user'],
+      remove : function (callback) {
+        return this.post('user/delete', callback);
+      },
+      removeProfileCover : function (callback) {
+        return this.get('attachment/remove/profile', callback);
+      },
+      resetPassword : function (hash, password, callback) {
+        return this.post('user/reset-password', { hash: hash, password: password }, callback);
+      },
+      resendValidationMail : [GENERATE_GET, 'user/resend-validate-email'],
+      setProfileCover      : function (attachment, callback) {
+        return this.post('attachment/profile', { attachment: attachment }, callback);
+      },
+      suggestedFuddies : function (options, callback) {
+        options = options || {};
+
+        return this.get('user/suggested/fuddies', options, callback);
+      },
+      tip : function (userId, amount, options, callback) {
+        var params = {
+          amount: amount
+        };
+
+        if (!callback) {
+          callback = options;
+          options  = false;
+        }
+
+        if (options && options.type) {
+          params.type = options.type || false;
+        }
+
+        if (options && options.name) {
+          params.name = options.name || false;
+        }
+
+        return this.post('user/tip/' + userId, params, callback);
+      },
+      trackthisToken : [GENERATE_GET, 'user/trackthis-token'],
+      update         : GENERATE_POST,
+      uploadSnapshot : function (snapshot, type, params, callback) {
+        if (typeof type === 'function') {
+          callback = type;
+          params   = null;
+          type     = null;
+        } else if (typeof params === 'function') {
+          callback = params;
+
+          if (typeof type === 'string') {
+            params = null
+          } else {
+            params = type;
+            type   = null;
+          }
+        }
+
+        params = params || {};
+
+        params.snapshot = snapshot;
+
+        if (type) {
+          params.type = type;
+        }
+
+        return this.post('user/storage/snapshot', params, callback);
+      },
+      verifyEmail : function (hash, callback) {
+        return this.post('user/verify-email', { hash: hash }, callback);
+      },
     },
   };
 
