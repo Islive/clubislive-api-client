@@ -428,42 +428,6 @@
         return this.post('hotornot', { attachment: attachment }, callback);
       },
     },
-    message : {
-      compose : function (to, title, content, callback) {
-        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
-      },
-      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
-      inbox           : function (page, callback) {
-        if (!callback) {
-          callback = page;
-          page     = 1;
-        }
-
-        if (isNaN(page)) {
-          page = 1;
-        }
-
-        return this.get('message/inbox', { page: page }, callback);
-      },
-      markRead : function (hash, messageId, callback) {
-        if (!callback) {
-          callback  = messageId;
-          messageId = undefined;
-        }
-
-        var url = 'message/read/' + hash;
-
-        if (messageId) {
-          url += '/' + messageId;
-        }
-
-        return this.get(url, callback);
-      },
-      reply : function (to, hash, content, callback) {
-        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
-      },
-      unread : GENERATE_GET,
-    },
     media : {
       buy : function (mediaId, callback) {
         return this.post('media/buy', { media: mediaId }, callback);
@@ -551,8 +515,8 @@
       rate     : function (mediaId, score, callback) {
         return this.post('media/rating/'+ mediaId, { score: score }, callback);
       },
-      remove   : [GENERATE_POST, 'media/remove'],
-      search   : function (filters, callback) {
+      remove : [GENERATE_POST, 'media/remove'],
+      search : function (filters, callback) {
         if (!callback) {
           callback = filters;
           filters  = null;
@@ -560,9 +524,9 @@
 
         return this.get('media/search', filters, callback);
       },
-      update          : [GENERATE_POST, 'media/update'],
-      viewAlbum       : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
-      viewAttachment  : function (data, callback) {
+      update         : [GENERATE_POST, 'media/update'],
+      viewAlbum      : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/view/'],
+      viewAttachment : function (data, callback) {
         // Legacy-support, media is the ID and not the object
         if (typeof data === 'number') {
           const container = data;
@@ -576,7 +540,43 @@
       viewAttachments : function (data, callback) {
         return this.get('media/attachments', data, callback);
       },
-      viewSnapshot    : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
+      viewSnapshot : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'media/snapshot/'],
+    },
+    message : {
+      compose : function (to, title, content, callback) {
+        return this.post('message', { to: to, message: { title: title, content: content } }, callback);
+      },
+      fetchByUsername : [GENERATE_GET_APPEND_PARAM1_TO_URL, 'message/fetch/'],
+      inbox           : function (page, callback) {
+        if (!callback) {
+          callback = page;
+          page     = 1;
+        }
+
+        if (isNaN(page)) {
+          page = 1;
+        }
+
+        return this.get('message/inbox', { page: page }, callback);
+      },
+      markRead : function (hash, messageId, callback) {
+        if (!callback) {
+          callback  = messageId;
+          messageId = undefined;
+        }
+
+        var url = 'message/read/' + hash;
+
+        if (messageId) {
+          url += '/' + messageId;
+        }
+
+        return this.get(url, callback);
+      },
+      reply : function (to, hash, content, callback) {
+        return this.post('message/' + hash, { to: to, message: { content: content } }, callback);
+      },
+      unread : GENERATE_GET,
     },
     news : {
       fetch : [GENERATE_GET, 'news']
