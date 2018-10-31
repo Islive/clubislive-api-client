@@ -234,10 +234,10 @@
       }
     },
     user: {
-      supportmail: [GENERATE_POST, 'user/supportmail'],
       register: [GENERATE_POST, 'user'],
       fetchOwn: [GENERATE_GET, 'user'],
       update: GENERATE_POST,
+      supportmail: GENERATE_POST,
       checkUsername: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-username/'],
       checkEmail: [GENERATE_GET_APPEND_PARAM1_TO_URL, 'user/check-email/'],
       earnings: [GENERATE_GET, 'user/earnings'],
