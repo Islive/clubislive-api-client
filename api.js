@@ -234,6 +234,7 @@
       }
     },
     user: {
+      supportmail: [GENERATE_POST, 'user/supportmail'],
       register: [GENERATE_POST, 'user'],
       fetchOwn: [GENERATE_GET, 'user'],
       update: GENERATE_POST,
