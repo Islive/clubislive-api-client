@@ -184,3 +184,14 @@ If any error is encounterd, **error** will be set
   * **update** (object form, function callback)
   * **uploadSnapshot** (string snapshot, [*string type*], [*object options*], function callback)
   * **verifyEmail** (string hash, function callback)
+
+* abuse
+  * **report** (number suspectUserId, [*string section*], [*number identifier*], string reason, function callback)
+
+* events
+  * **create** (object data, function callback)
+  * **find** (object options, function callback)
+  * **findOne** (number id, function callback)
+  * **update** (object data, function callback)
+  * **updateUserState** (object data, function callback)
+  * **remove** (number id, function callback)

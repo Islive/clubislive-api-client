@@ -976,6 +976,26 @@
         return this.get('rating/' + model + '/' + foreignKey, callback);
       }
     },
+    events: {
+      create: function (data, callback) {
+        return this.post('/schedule', data, callback);
+      },
+      find: function (options, callback) {
+        return this.get('/schedule/', options, callback);
+      },
+      findOne: function (id, callback) {
+        return this.get('/schedule/' + id, callback);
+      },
+      update: function (data, callback) {
+        return this.put('/schedule/' + data.id, data, callback)
+      },
+      updateUserState: function (data, callback) {
+        return this.put('/schedule/user/state', data, callback)
+      },
+      remove: function (id, callback) {
+        return this.delete('/schedule/' + id, callback);
+      }
+    }
   };
 
   Api.prototype = {
@@ -1336,7 +1356,7 @@
         params   = {};
       }
 
-      if (method !== 'GET' && method !== 'POST') {
+      if(['GET', 'POST', 'PUT', 'DELETE'].indexOf(method) === -1) {
         throw new Error('Invalid method ' + method);
       }
 
@@ -1389,8 +1409,19 @@
           this.io.socket.get(url, params, function (response, JWR) {
             return this.ioCallback(response, JWR, callback, url, now);
           }.bind(this));
+
         } else if (method === 'POST') {
           this.io.socket.post(url, params, function (response, JWR) {
+            return this.ioCallback(response, JWR, callback, url, now);
+          }.bind(this));
+
+        } else if (method === 'PUT') {
+          this.io.socket.put(url, params, function (response, JWR) {
+            return this.ioCallback(response, JWR, callback, url, now);
+          }.bind(this));
+
+        } else if (method === 'DELETE') {
+          this.io.socket.delete(url, params, function (response, JWR) {
             return this.ioCallback(response, JWR, callback, url, now);
           }.bind(this));
         } else {
@@ -1406,10 +1437,7 @@
 
       c.setRequestHeader('x-apikey',  this.apiKey);
       c.setRequestHeader('x-version', this.apiVersion);
-
-      if (method === 'POST') {
-        c.setRequestHeader('Content-type', 'application/json');
-      }
+      c.setRequestHeader('Content-type', 'application/json');
 
       c.onreadystatechange = function() {
         var response = null,
@@ -1442,7 +1470,7 @@
         callback(error, response);
       };
 
-      c.send(method === 'POST' ? JSON.stringify(params) : null);
+      c.send(method !== 'GET' ? JSON.stringify(params) : null);
     },
 
     /**
@@ -1480,6 +1508,21 @@
     },
 
     /**
+     * Do a put call
+     *
+     * @param {string} url
+     * @param {{}}     parameters
+     * @param {Function(error, result)} callback
+     *
+     * @returns Api
+     */
+    put: function(url, params, callback) {
+      this.request('PUT', url, params, callback);
+
+      return this;
+    },
+
+    /**
      * Do a post call
      *
      * @param {string} url
@@ -1505,6 +1548,21 @@
      */
     get: function(url, params, callback) {
       this.request('GET', url, params, callback);
+
+      return this;
+    },
+
+    /**
+     * Do a delete call
+     *
+     * @param {string} url
+     * @param {{}}     parameters
+     * @param {Function(error, result)} callback
+     *
+     * @returns Api
+     */
+    delete: function(url, params, callback) {
+      this.request('DELETE', url, params, callback);
 
       return this;
     },
