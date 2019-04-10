@@ -368,10 +368,8 @@
         return this.post('user/tip/' + userId, params, callback);
       },
       payment: function (credits, callback) {
-        if (!callback) {
-          callback = credits;
-          credits = 0;
-        }
+        callback = callback || function(){}
+        if (!credits) return callback(null, true)
         return this.post('user/payment/', { credits }, callback);
       },
       remove: function (callback) {
