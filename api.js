@@ -367,18 +367,12 @@
 
         return this.post('user/tip/' + userId, params, callback);
       },
-      payment: function (userId, amount, callback) {
+      payment: function (credits, callback) {
         if (!callback) {
-          callback = amount;
-          amount = 0;
+          callback = credits;
+          credits = 0;
         }
-
-        var params = {
-          userId: userId,
-          amount: amount
-        };
-
-        return this.post('user/payment/', params, callback);
+        return this.post('user/payment/', { credits }, callback);
       },
       remove: function (callback) {
         return this.post('user/delete', callback);
