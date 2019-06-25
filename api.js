@@ -754,17 +754,8 @@
 
         return this.get('chat/start', callback);
       },
-      keepAlive: function (userId, callback) {
-        if (!callback) {
-          callback = userId;
-          userId = undefined;
-        }
-
-        if (userId) {
-          return this.get('chat/keepalive/' + userId, { skipQueue: true }, callback);
-        }
-
-        return this.get('chat/keepalive', callback);
+      keepAlive: function (data, callback) {
+        return this.put('chat/keepalive', data, callback);
       },
       kick: function (username, callback) {
         return this.get('chat/kick/' + username, callback);
